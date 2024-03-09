@@ -79,33 +79,34 @@ def createNetCDF(coast,prefix, varname):
               45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57,
               58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
               74, 79, 84, 89, 94, 99, ]
-	
-    if coast == 'smooth:
-        pathw = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
-        pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
-	pathnN = '/home/athelandersson/NETCDFs/smooth_NO'
-	pathwN = '/home/athelandersson/NETCDFs/smooth'
+        
+    if coast == 'smooth':
+        pathw = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_fe$
+        pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_$
+        pathnN = '/home/athelandersson/NETCDFs/smooth_NO/'
+        pathwN = '/home/athelandersson/NETCDFs/smooth/'
     elif coast == 'straight':
-        pathw = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight_SVB/01_febTS'
-        pathn = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight/01_febTS'
-    	pathnN = '/home/athelandersson/NETCDFs/straight_NO'
-	pathwN = '/home/athelandersson/NETCDFs/straight'
+        pathw = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight_SVB/01_$
+        pathn = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight/01_febT$
+        pathnN = '/home/athelandersson/NETCDFs/straight_NO/'
+        pathwN = '/home/athelandersson/NETCDFs/straight/'
 
     
 
-    for whatdaystart,whatdayfinish in zip(np.arange(2,10,1),np.arange(3,11,1)):	
-        dayarr = np.arange(whatdaystart * 24 * 60, whatdayfinish * 24 * 60, 10)
-        day = dayarr.tolist()	
-        dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day)
-        dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day)
+    for whatdaystart,whatdayfinish in zip(np.arange(1,10,1),np.arange(2,11,1)):
+        dayarr = np.arange(whatdaystart * 24 * 60 * 2, whatdayfinish * 24 * 60 $
+        day = dayarr.tolist()
+        dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4$
+        dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4$
         
-        pathwNEW = pathwN + str(varname) + 'withSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
-        pathnNEW = pathnN + str(varname) + 'noSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
+       	pathwNEW = pathwN + str(varname) + 'withSVB' + str(whatdaystart) + '_' $
+        pathnNEW = pathnN + str(varname) + 'noSVB' + str(whatdaystart) + '_' + $
         
-        dsw.to_netcdf(path=pathwNEW)
-        #print('Done with SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
+       	dsw.to_netcdf(path=pathwNEW)
+        print('Done with SVB, ' +str(prefix)+ '  day ' + str(whatdaystart) + ' $
         dsn.to_netcdf(path=pathnNEW)
-        #print('Done without SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
+        print('Done without SVB, ' +str(prefix)+ ' day ' + str(whatdaystart) + $
+
 
 def findlonlat(hFacCuse,d,var):
  # ## Doing the picking out 
