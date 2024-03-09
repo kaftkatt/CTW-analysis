@@ -18,10 +18,10 @@ from math import radians, cos, sin, asin, sqrt, atan, degrees
 def loadNetCDFs(dirw,dirn,varname):
     dsw = []
     dsn = []
-    for i in np.arange(0, 8, 1):
+    for i in np.arange(1, 10, 1):
 	
-        pathn = dirn + str(varname) + 'noSVB' + str(2 + i) + '_' + str(3 + i) + '.nc'
-        pathw = dirw + str(varname) + 'withSVB' + str(2 + i) + '_' + str(3 + i) + '.nc'
+        pathn = dirn + str(varname) + 'noSVB' + str(i) + '_' + str(1 + i) + '.nc'
+        pathw = dirw + str(varname) + 'withSVB' + str(i) + '_' + str(1 + i) + '.nc'
 
         dswin = xr.open_dataset(pathw)
         dsnin = xr.open_dataset(pathn)
