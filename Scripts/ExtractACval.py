@@ -8,9 +8,9 @@ dep=55
 for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 	dirw = '/home/athelandersson/NETCDFs/smooth/'
 	dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
-
-	dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, varname)
-
+	
+	dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, var)
+	
 	name='Val'
 	name2='lonAC'
 	name3='latAC'
@@ -24,46 +24,90 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 	hFacCusew=hFacCw.values
 	hFacCusen=hFacCn.values
 	
+	if var == 'dynVars': 
+		for VAR in ['UVEL','VVEL','WVEL','SALT','THETA']:
+			pathn= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACnoSVBPREFILT.nc'
+			pathw= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACwithSVBPREFILT.nc'
+			for l in np.arange(0,10,1):
+				
+				exec (f'W=dsw[l].{VAR}[:,55,:,:].values')
+				exec (f'N=dsn[l].{VAR}[:,55,:,:].values')
+				
+				TIMEdyn=dsw[l].time.astype(int).values*1e-9
+				ntdyn = np.size(TIMEdyn)
+				
+				val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l)
+				valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l)
+				    
+				if l == 0: valOUTw = val;valOUTn = valn;time = TIMEdyn
+				else: valOUTw=np.concatenate((valOUTw,val),axis=0); valOUTn=np.concatenate((valOUTn,valn),axis=0); time=np.concatenate((time,TIMEdyn),axis=0)
+				print(str(l))
+			
+			
+			
+			dsnALL = xr.Dataset({name: (("time","x"), valOUTn),
+			                 name2:(("x"), lon_fixn),
+			                 name3:(("x"), lat_fixn)
+			                    },
+			           coords ={
+			                 "x" : dist_cummuln,
+			                 "time": time,
+			              },
+			               )
+			dswALL = xr.Dataset({name: (("time","x"), valOUTw),
+			                 name2:(("x"), lon_fix),
+			                 name3:(("x"), lat_fix)
+			                    },
+			           coords ={
+			                 "x" : dist_cummul,
+			                 "time": time,
+			              },
+			               )
+		        
+			dsnALL.to_netcdf(pathn)
+			dswALL.to_netcdf(pathw)
 	
-	
-	pathn= str(var)+'ACdep55noSVB.nc'
-	pathw= str(var)+'ACdep55withSVB.nc'
-
-
-	for l in np.arange(0,10,1):
+	else: 
+		if var == 'phiHyd':
+			VAR='PHIHYD'
+		elif var == 'rhoAnoma': 
+			VAR='RHOAnoma'
+		pathn= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACnoSVBPREFILT.nc'
+		pathw= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACwithSVBPREFILT.nc'	
+		for l in np.arange(0,10,1):
+			
+			exec (f'W=dsw[l].{VAR}[:,55,:,:].values')
+			exec (f'N=dsn[l].{VAR}[:,55,:,:].values')
+			
+			TIMEdyn=dsw[l].time.astype(int).values*1e-9
+			ntdyn = np.size(TIMEdyn)
+			
+			val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l)
+			valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l)
+			    
+			if l == 0: valOUTw = val;valOUTn = valn;time = TIMEdyn
+			else: valOUTw=np.concatenate((valOUTw,val),axis=0); valOUTn=np.concatenate((valOUTn,valn),axis=0); time=np.concatenate((time,TIMEdyn),axis=0)
+			print(str(l))
+			
 		
-		exec (f'W=dsw[l].{var}[:,55,:,:].values')
-		exec (f'N=dsn[l].{var}[:,55,:,:].values')
+		dsnALL = xr.Dataset({name: (("time","x"), valOUTn),
+		                 name2:(("x"), lon_fixn),
+		                 name3:(("x"), lat_fixn)
+		                    },
+		           coords ={
+		                 "x" : dist_cummuln,
+		                 "time": time,
+		              },
+		               )
+		dswALL = xr.Dataset({name: (("time","x"), valOUTw),
+		                 name2:(("x"), lon_fix),
+		                 name3:(("x"), lat_fix)
+		                    },
+		           coords ={
+		                 "x" : dist_cummul,
+		                 "time": time,
+		              },
+		               )
 		
-		TIMEdyn=dsw[l].time.astype(int).values*1e-9
-		ntdyn = np.size(TIMEdyn)
-		
-		val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l)
-		valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l)
-		    
-		if l == 0: valOUTw = val;valOUTn = valn;time = TIMEdyn
-		else: valOUTw=np.concatenate((valOUTw,val),axis=0); valOUTn=np.concatenate((valOUTn,valn),axis=0); time=np.concatenate((time,TIMEdyn),axis=0)
-		print(str(l))
-		
-	    
-	dsnALL = xr.Dataset({name: (("time","x"), valOUTn),
-	                 name2:(("x"), lon_fixn),
-	                 name3:(("x"), lat_fixn)
-	                    },
-	           coords ={
-	                 "x" : dist_cummuln,
-	                 "time": time,
-	              },
-	               )
-	dswALL = xr.Dataset({name: (("time","x"), valOUTw),
-	                 name2:(("x"), lon_fix),
-	                 name3:(("x"), lat_fix)
-	                    },
-	           coords ={
-	                 "x" : dist_cummul,
-	                 "time": time,
-	              },
-	               )
-               
-	dsnALL.to_netcdf(pathn)
-	dswALL.to_netcdf(pathw)
+		dsnALL.to_netcdf(pathn)
+		dswALL.to_netcdf(pathw)
