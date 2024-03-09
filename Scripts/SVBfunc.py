@@ -82,13 +82,13 @@ def createNetCDF(coast,prefix, varname):
     if coast == 'smooth':
         pathw = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
         pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
-	pathnN = '/home/athelandersson/NETCDFs/smooth_NO/'
-	pathwN = '/home/athelandersson/NETCDFs/smooth/'
+        pathnN = '/home/athelandersson/NETCDFs/smooth_NO/'
+        pathwN = '/home/athelandersson/NETCDFs/smooth/'
     elif coast == 'straight':
         pathw = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight_SVB/01_febTS'
         pathn = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight/01_febTS'
-    	pathnN = '/home/athelandersson/NETCDFs/straight_NO/'
-	pathwN = '/home/athelandersson/NETCDFs/straight/'
+        pathnN = '/home/athelandersson/NETCDFs/straight_NO/'
+        pathwN = '/home/athelandersson/NETCDFs/straight/'
 
     
 
