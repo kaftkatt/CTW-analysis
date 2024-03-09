@@ -21,9 +21,9 @@ import pylab as pl
 
 
 i=0
-varname='DYNVARS'
-pathn='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01_noSVB_febTS/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
-pathw='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01_SVB_febTS/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+varname='dynVars'
+pathn='/home/athelandersson/NETCDFs/smooth/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathw='/home/athelandersson/NETCDFs/smooth_NO/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
         
 dsw  = xr.open_dataset(pathw)
 dsn = xr.open_dataset(pathn)
@@ -35,9 +35,9 @@ TIMEvel=time*1e-9
 
 
 i2=2
-varname='DYNVARS'
-pathn2='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01_noSVB_febTS/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw2='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01_SVB_febTS/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+varname='dynVars'
+pathn2='/home/athelandersson/NETCDFs/smooth/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathw2='/home/athelandersson/NETCDFs/smooth_NO/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
         
 dsw2  = xr.open_dataset(pathw2)
 dsn2 = xr.open_dataset(pathn2)
@@ -48,9 +48,9 @@ time2=dsw2.time.values.astype(int)
 TIMEvel2=time2*1e-9
 
 i2=6
-varname='DYNVARS'
-pathn3='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01_noSVB_febTS/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw3='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01_SVB_febTS/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+varname='dynVars'
+pathn3='/home/athelandersson/NETCDFs/smooth/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathw3='/home/athelandersson/NETCDFs/smooth_NO/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
         
 dsw3  = xr.open_dataset(pathw3)
 dsn3 = xr.open_dataset(pathn3)
