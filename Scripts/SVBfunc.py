@@ -79,7 +79,7 @@ def createNetCDF(coast,prefix, varname):
               58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
               74, 79, 84, 89, 94, 99, ]
 	
-    if coast == 'smooth:
+    if coast == 'smooth':
         pathw = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
         pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
 	pathnN = '/home/athelandersson/NETCDFs/smooth_NO/'
