@@ -36,8 +36,8 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 				TIMEdyn=dsw[l].time.astype(int).values*1e-9
 				ntdyn = np.size(TIMEdyn)
 				
-				val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l)
-				valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l)
+				val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l,VAR)
+				valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l,VAR)
 				    
 				if l == 0: valOUTw = val;valOUTn = valn;time = TIMEdyn
 				else: valOUTw=np.concatenate((valOUTw,val),axis=0); valOUTn=np.concatenate((valOUTn,valn),axis=0); time=np.concatenate((time,TIMEdyn),axis=0)
@@ -82,8 +82,8 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 			TIMEdyn=dsw[l].time.astype(int).values*1e-9
 			ntdyn = np.size(TIMEdyn)
 			
-			val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l)
-			valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l)
+			val, lon_fix,lat_fix,dist_cummul=SVBfunc.varsalongcoasts(hFacCusew,LAT,LON,Zdyn,W,ntdyn,dep,l,VAR)
+			valn,lon_fixn,lat_fixn,dist_cummuln=SVBfunc.varsalongcoasts(hFacCusen,LAT,LON,Zdyn,N,ntdyn,dep,l,VAR)
 			    
 			if l == 0: valOUTw = val;valOUTn = valn;time = TIMEdyn
 			else: valOUTw=np.concatenate((valOUTw,val),axis=0); valOUTn=np.concatenate((valOUTn,valn),axis=0); time=np.concatenate((time,TIMEdyn),axis=0)
