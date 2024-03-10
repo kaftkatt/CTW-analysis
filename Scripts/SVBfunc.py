@@ -1068,7 +1068,7 @@ def plotpointsAC(LON,LAT,lon_inds,lat_inds,var):
 	ax.set_xlim(238-360, 246-360)
 	ax.set_ylim(27,35.3)
 	ax.set_aspect(1)
-	plt.savefig('PAC' + str(var) + '.png')
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/PAC' + str(var) + '.png')
 	
 	
 def plotsnapshot(ax,VAL,dep,LON,LAT,vmin,vmax,depth,label,nr,TIME,mask):
