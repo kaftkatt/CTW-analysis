@@ -231,7 +231,7 @@ def loadingcoastpts(hFacCuse,Z,LAT,LON,prevalue,name,name2,name3,nt,t,FILENAME):
     plotpointsAC(LON,LAT,lon_fix,lat_fix)
 
 #For dynvars and pressure, just don't forget to change the depth
-def varsalongcoasts(hFacCuse,LAT,LON,Z,valvar,nt,dep,plot):
+def varsalongcoasts(hFacCuse,LAT,LON,Z,valvar,nt,dep,plot,var):
 
     
     lat_fix, lon_fix=findlonlat(hFacCuse,dep,1)
@@ -263,7 +263,7 @@ def varsalongcoasts(hFacCuse,LAT,LON,Z,valvar,nt,dep,plot):
     lat_fix=lat_fix[5:-5]
    
     if plot==7:
-    	plotpointsAC(LON,LAT,lon_fix,lat_fix)
+    	plotpointsAC(LON,LAT,lon_fix,lat_fix,var)
     
     return val[:,val[0,:]!=0],lon_fix[val[0,:]!=0],lat_fix[val[0,:]!=0],dist_cummul[val[0,:]!=0]
     
@@ -1030,16 +1030,16 @@ def plotMap(ax,LON,LAT,depth,mask,fig,nr):
 	ax.set_aspect(1)
 	ax.text(-0.1, 1.2, nr, fontweight='bold', color='k', transform=ax.transAxes)
         
-def plotpointsAC(LON,LAT,lon_inds,lat_inds):
+def plotpointsAC(LON,LAT,lon_inds,lat_inds,var):
 	params = {'font.size': 18,
           'figure.figsize': (30, 30),
          'font.family':'serif'}
 	pl.rcParams.update(params)
 	
-	dirw='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01b_SVB_febTS/'
-	dirn='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01b_noSVB_febTS/'
+	dirw = '/home/athelandersson/NETCDFs/smooth/'
+	dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
 
-	dsw,dsn=loadNetCDFs(dirw,dirn,'RHO')
+	dsw,dsn=loadNetCDFs(dirw,dirn,'rhoAnoma')
 	depth = dsw[0].Depth
 	
 	fig, ax = plt.subplots(1,1,figsize=(10,9))
@@ -1068,7 +1068,7 @@ def plotpointsAC(LON,LAT,lon_inds,lat_inds):
 	ax.set_xlim(238-360, 246-360)
 	ax.set_ylim(27,35.3)
 	ax.set_aspect(1)
-	plt.show()
+	plt.savefig('PAC' + str(var) + '.png')
 	
 	
 def plotsnapshot(ax,VAL,dep,LON,LAT,vmin,vmax,depth,label,nr,TIME,mask):
