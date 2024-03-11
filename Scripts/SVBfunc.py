@@ -416,44 +416,44 @@ def butter_lowpass_filter(data, cutoff, fs, order):
 
 #Output every 10 min (600 seconds) until location nr 432 (day 5 in minutes 7200) then to 433 its 20 mins. So to filter the first 5 days with 1/600 fs we write VALdif[:433] and then VALdif[433:]. 
 def FiltDetrend(VAL,filt,detrend):
-    if detrend==1:
-    	VALdif=sig.detrend(VAL,0)
-    if filt==1:
-        VALfilt=np.zeros(np.shape(VALdif))
-        
-        
-        VALfiltAll=np.zeros(np.shape(VALdif[inds,:]))
-        
-       	order = 3      
-        cutoff =np.array([1/432000, 1/43200])
+	if detrend==1:
+		VALdif=sig.detrend(VAL,0)
+	if filt==1:
+		VALfilt=np.zeros(np.shape(VALdif))
 
-        if fs2 != 0:
-                inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
-                
-                for d in np.arange(np.size(VALdif,1)):
-                      data = VALdif[:433,d] 
-                      VALfilt[:433,d] = butter_lowpass_filter(data, cutoff, fs2, order)
 
-                
-                for d in np.arange(np.size(VALdif,1)):
-                      data = VALdif[433:,d] 
-                      VALfilt[433:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+		VALfiltAll=np.zeros(np.shape(VALdif[inds,:]))
 
-                
-                for d in np.arange(np.size(VALdif,1)):
-                      data = VALdif[inds,d] 
-                      VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+		order = 3      
+		cutoff =np.array([1/432000, 1/43200])
+
+		if fs2 != 0:
+			inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
+
+			for d in np.arange(np.size(VALdif,1)):
+				data = VALdif[:433,d] 
+				VALfilt[:433,d] = butter_lowpass_filter(data, cutoff, fs2, order)
+
+
+			for d in np.arange(np.size(VALdif,1)):
+				data = VALdif[433:,d] 
+				VALfilt[433:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+			
+			
+			for d in np.arange(np.size(VALdif,1)):
+				data = VALdif[inds,d] 
+				VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
 	
 	else:
-                for d in np.arange(np.size(VALdif,1)):
-                      data = VALdif[:,d] 
-                      VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
-                
-                
-                Valfilt=np.zeros(np.shape(VALfiltAll))
-                inds=np.zeros(np.shape(VALdif,0))
-    
-    return(VALdif,VALfilt,VALfiltAll,inds)
+		for d in np.arange(np.size(VALdif,1)):
+			data = VALdif[:,d] 
+			VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+	
+	
+		Valfilt=np.zeros(np.shape(VALfiltAll))
+		inds=np.zeros(np.shape(VALdif,0))
+
+return(VALdif,VALfilt,VALfiltAll,inds)
        	
 def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend):
 	
