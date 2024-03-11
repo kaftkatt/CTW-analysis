@@ -444,14 +444,14 @@ def FiltDetrend(VAL,filt,detrend,fs,fs2):
 				data = VALdif[inds,d] 
 				VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
 	
-	else:
-		for d in np.arange(np.size(VALdif,1)):
-			data = VALdif[:,d] 
-			VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+		else:
+			for d in np.arange(np.size(VALdif,1)):
+				data = VALdif[:,d] 
+				VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
 		
 		
-		Valfilt=np.zeros(np.shape(VALfiltAll))
-		inds=np.zeros(np.shape(VALdif,0))
+			Valfilt=np.zeros(np.shape(VALfiltAll))
+			inds=np.zeros(np.shape(VALdif,0))
 		
 	return(VALdif,VALfilt,VALfiltAll,inds)
        	
