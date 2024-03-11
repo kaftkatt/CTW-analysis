@@ -11,9 +11,11 @@ for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN'
 
   valw=dswALL.Val
   valn=dsnALL.Val
-
+  fs=1/1200
+  fs2=0
+  
   FILENAME='/home/athelandersson/NETCDFs/' + str(varname)+ 'AC.nc'
 
-  SVBfunc.SavingFilteredValues(valw,valn,dswALL,FILENAME,1,1)
+  SVBfunc.SavingFilteredValues(valw,valn,dswALL,FILENAME,1,1,fs,fs2)
 
 
