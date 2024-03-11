@@ -415,7 +415,7 @@ def butter_lowpass_filter(data, cutoff, fs, order):
     return y
 
 #Output every 10 min (600 seconds) until location nr 432 (day 5 in minutes 7200) then to 433 its 20 mins. So to filter the first 5 days with 1/600 fs we write VALdif[:433] and then VALdif[433:]. 
-def FiltDetrend(VAL,filt,detrend):
+def FiltDetrend(VAL,filt,detrend,fs,fs2):
 	if detrend==1:
 		VALdif=sig.detrend(VAL,0)
 	if filt==1:
@@ -448,14 +448,14 @@ def FiltDetrend(VAL,filt,detrend):
 		for d in np.arange(np.size(VALdif,1)):
 			data = VALdif[:,d] 
 			VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
-	
-	
+		
+		
 		Valfilt=np.zeros(np.shape(VALfiltAll))
 		inds=np.zeros(np.shape(VALdif,0))
 		
 	return(VALdif,VALfilt,VALfiltAll,inds)
        	
-def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend):
+def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend,fs,fs2):
 	
 	dist = dsw.x.values
 	TIME=dsw.time.values #TIME = dsw.time.astype(int).values*1e-9
@@ -463,7 +463,7 @@ def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend):
 	lon_ac=dsw.lonAC.values
 	lat_ac=dsw.latAC.values
 	
-	valdet,valfilt,valfiltall,inds = FiltDetrend(VAL,filt,detrend)
+	valdet,valfilt,valfiltall,inds = FiltDetrend(VAL,filt,detrend,fs,fs2)
 
 	ds = xr.Dataset({'Valdet': (("time","dist"),valdet),
                  	'Valfilt':(("time","dist"),valfilt),
