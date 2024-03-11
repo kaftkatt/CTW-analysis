@@ -28,7 +28,7 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 		for VAR in ['UVEL','VVEL','WVEL','SALT','THETA']:
 			pathn= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACnoSVBPREFILT.nc'
 			pathw= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACwithSVBPREFILT.nc'
-			for l in np.arange(0,10,1):
+			for l in np.arange(0,9,1):
 				
 				exec (f'W=dsw[l].{VAR}[:,55,:,:].values')
 				exec (f'N=dsn[l].{VAR}[:,55,:,:].values')
@@ -74,7 +74,7 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 			VAR='RHOAnoma'
 		pathn= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACnoSVBPREFILT.nc'
 		pathw= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACwithSVBPREFILT.nc'	
-		for l in np.arange(0,10,1):
+		for l in np.arange(0,9,1):
 			
 			exec (f'W=dsw[l].{VAR}[:,55,:,:].values')
 			exec (f'N=dsn[l].{VAR}[:,55,:,:].values')
