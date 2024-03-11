@@ -421,26 +421,37 @@ def FiltDetrend(VAL,filt,detrend):
     if filt==1:
         VALfilt=np.zeros(np.shape(VALdif))
         
-        inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
+        
         VALfiltAll=np.zeros(np.shape(VALdif[inds,:]))
         
-       	order = 3
-       	fs = 1/1200       
+       	order = 3      
         cutoff =np.array([1/432000, 1/43200])
-       	
-       	fs2=1/600
-       	
-        for d in np.arange(np.size(VALdif,1)):
-              data = VALdif[:433,d] 
-              VALfilt[:433,d] = butter_lowpass_filter(data, cutoff, fs2, order)
-              
-        for d in np.arange(np.size(VALdif,1)):
-              data = VALdif[433:,d] 
-              VALfilt[433:,d] = butter_lowpass_filter(data, cutoff, fs, order)
-        
-        for d in np.arange(np.size(VALdif,1)):
-              data = VALdif[inds,d] 
-              VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+
+        if fs2 != 0:
+                inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
+                
+                for d in np.arange(np.size(VALdif,1)):
+                      data = VALdif[:433,d] 
+                      VALfilt[:433,d] = butter_lowpass_filter(data, cutoff, fs2, order)
+
+                
+                for d in np.arange(np.size(VALdif,1)):
+                      data = VALdif[433:,d] 
+                      VALfilt[433:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+
+                
+                for d in np.arange(np.size(VALdif,1)):
+                      data = VALdif[inds,d] 
+                      VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+	
+         else:
+                for d in np.arange(np.size(VALdif,1)):
+                      data = VALdif[:,d] 
+                      VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
+                
+                
+                Valfilt=np.zeros(np.shape(VALfiltAll))
+                inds=np.zeros(np.shape(VALdif,0))
     
     return(VALdif,VALfilt,VALfiltAll,inds)
        	
