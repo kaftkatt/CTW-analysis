@@ -444,7 +444,7 @@ def FiltDetrend(VAL,filt,detrend):
                       data = VALdif[inds,d] 
                       VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
 	
-         else:
+	else:
                 for d in np.arange(np.size(VALdif,1)):
                       data = VALdif[:,d] 
                       VALfiltAll[:,d] = butter_lowpass_filter(data, cutoff, fs, order)
