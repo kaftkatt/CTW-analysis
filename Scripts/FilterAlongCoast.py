@@ -1,7 +1,7 @@
 import xarray as xr
 import SVBfunc
 
-for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN]:
+for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN']:
 
   pathn= '/home/athelandersson/NETCDFs/' + str(varname)+'ACnoSVBPREFILT.nc'
   pathw= '/home/athelandersson/NETCDFs/' + str(varname)+'ACwithSVBPREFILT.nc'
