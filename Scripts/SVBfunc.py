@@ -450,7 +450,7 @@ def FiltDetrend(VAL,filt,detrend,fs,fs2):
 		
 		
 			Valfilt=np.zeros(np.shape(VALfiltAll))
-			inds=np.zeros(np.shape(VALdif,0))
+			inds=VALfilt[:,0]==0
 		
 	return(VALdif,VALfilt,VALfiltAll,inds)
        	
