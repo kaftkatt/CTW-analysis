@@ -452,8 +452,8 @@ def FiltDetrend(VAL,filt,detrend):
 	
 		Valfilt=np.zeros(np.shape(VALfiltAll))
 		inds=np.zeros(np.shape(VALdif,0))
-
-return(VALdif,VALfilt,VALfiltAll,inds)
+		
+	return(VALdif,VALfilt,VALfiltAll,inds)
        	
 def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend):
 	
