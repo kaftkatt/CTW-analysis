@@ -1,3 +1,4 @@
+hej2=[35,54,79,120,154,194,219]
 sp=[]
 shelf=np.zeros(len(dep))
 shelfind=np.zeros(len(dep))	
