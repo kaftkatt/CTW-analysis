@@ -1,13 +1,3 @@
-#To run the linear regression
----------------------------------------------
-import SVBfunc
-VAR=['PHIHYD','VVEL','UVEL']#,'WVEL']
-FILT=['no','filt']
-#for var in VAR:
-var='WVEL'
-for filt in FILT:
-	SVBfunc.linearregressionSave(filt,var)
-----------------------------------------------------------
 #Plotting resulting mode weights
 import xarray as xr
 import matplotlib.pyplot as plt
@@ -18,7 +8,7 @@ from scipy.io import loadmat
 from os.path import exists
 
 corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02]
-VAR=['PHIHYD','VVEL','UVEL'] #,'WVEL']
+VAR=['PHIHYD','VVEL','UVEL','WVEL']
 FILT=['no','filt']
 
 filt=FILT[1]
