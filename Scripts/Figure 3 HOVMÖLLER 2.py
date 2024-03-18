@@ -23,17 +23,16 @@ pathETA='/home/athelandersson/NETCDFs/ETANAC.nc'
 dsETA= xr.open_dataset(pathETA)
 pathVEL='/home/athelandersson/NETCDFs/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
-dswAC= xr.open_dataset('/home/athelandersson/NETCDFs/WVELACnoSVBPREFILT.nc')
 
 
 # In[3]:
 
 
-eta=dsETA.ETAfiltcoast.values
+eta=dsETA.ValfiltAll.values
 distETA=dsETA.dist.values
 TIME=dsETA.time.values
-lon_ac=dswAC.lonAC
-lat_ac=dswAC.latAC
+lon_ac=dsETA.lonAC
+lat_ac=dsETA.latAC
 
 
 # In[4]:
@@ -41,8 +40,8 @@ lat_ac=dswAC.latAC
 
 WVEL=dsVEL.Wfilt.values
 dist=dsVEL.dist.values
-lat_acVEL=dsVEL.lat_ac.values
-lon_acVEL=dsVEL.lon_ac.values
+lat_acVEL=dsVEL.latAC.values
+lon_acVEL=dsVEL.lonAC.values
 
 
 # In[5]:
@@ -71,6 +70,7 @@ mask = np.ma.getmask(hfa)
 depth=dsw.Depth
 depthno=dsn.Depth
 
+'''
 matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_Perp.mat')
 x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
 
@@ -107,8 +107,6 @@ vmax=0.2
 ax1 = fig.add_subplot(gs[0, 1])
 SVBfunc.plot_HOVMOLLER(ax1,distETA,TIME,eta*1000,'',
                'SSH [mm]',vmin,vmax,fig,lat_acVEL,lon_acVEL,0,cbarall,'(b)')
-
-
 
 
 ax2 = fig.add_subplot(gs[1,0])
@@ -201,21 +199,17 @@ vmax=5
 cbarall=0
 
 ax0 = fig.add_subplot(gs[0, 0])
-plot_HOVMÖLLER(ax0,dist,TIME,WVEL*1e6,'',
-               'Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall)
+SVBfunc.plot_HOVMOLLER(ax0,dist,TIME,WVEL*1e6,'',
+               'Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(a)')
 
-ax0.text(-0.15, 1.2, '(a)', fontweight='bold', color='k', 
-        transform=ax0.transAxes)
 
 
 vmin=-0.2
 vmax=0.2
 ax1 = fig.add_subplot(gs[0, 1])
-plot_HOVMÖLLER(ax1,distETA,TIME,eta*1000,'',
-               'SSH [mm]',vmin,vmax,fig,lat_acVEL,lon_acVEL,0,cbarall)
+SVBfunc.plot_HOVMOLLER(ax1,distETA,TIME,eta*1000,'',
+               'SSH [mm]',vmin,vmax,fig,lat_acVEL,lon_acVEL,0,cbarall,'(b)')
 
-ax1.text(-0.1, 1.2, '(b)', fontweight='bold', color='k', 
-        transform=ax1.transAxes)
 
 
 ax2 = fig.add_subplot(gs[0,2])
@@ -243,6 +237,9 @@ ax2.set_aspect(1)
 ax2.text(-0.1, 1.2, '(c)', fontweight='bold', color='k', 
         transform=ax2.transAxes)
 
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/HovFig3.png')
+
+'''
 markers=Line2D.filled_markers
 markers=np.delete(markers,np.arange(2,5,1))
 colors=[ '#4daf4a', '#a65628', '#984ea3',
