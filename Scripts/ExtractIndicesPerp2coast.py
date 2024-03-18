@@ -120,7 +120,21 @@ for i in range(250):
 mdic = {"dist": dist, "d":dep, 'indexXlon':iniX,'indexYlat':iniY }
 savemat("BT_P.mat", mdic)
 
-fig,(ax,ax1)=plt.subplots(1,2)
+pathVEL='/home/athelandersson/NETCDFs/WVELAC.nc'
+dsVEL= xr.open_dataset(pathVEL)
+
+WVEL=dsVEL.ValfiltAll.values
+distVEL=dsVEL.dist.values
+TIMEVEL=dsVEL.time2.values
+lat_acVEL=dsVEL.latAC.values
+lon_acVEL=dsVEL.lonAC.values
+
+ETA=ds.ValfiltAll.values
+
+fig = plt.figure()
+gs = GridSpec(nrows=2, ncols=2)
+
+ax = fig.add_subplot(gs[0, 0])
 ax.set_facecolor('tan')
 ax.set_title('Original')
 pc = ax.contourf(LON, LAT, np.ma.masked_array(depth, mask=mask), 50,
@@ -136,14 +150,43 @@ ax.set_xlabel('Lon [°]')
 ax.set_ylabel('Lat [°]')
 ax.set_box_aspect(1)
 
+ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k', 
+        transform=ax2.transAxes)
 
 colors=[ '#4daf4a', '#a65628', '#984ea3',
                    '#e41a1c', '#dede00','#377eb8'
        ,'#ff7f00','#f781bf','#999999']
 
+ax1 = fig.add_subplot(gs[0, 1])
+ax.set_xlabel('Distance from coast [km]')
+ax.set_ylabel('Depth [m]')
 for i in range(len(dep)):
 	ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,color=colors[i],linewidth=2)
-	plt.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
+	ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
+
+ax1.text(-0.1, 1.2, '(b)', fontweight='bold', color='k', 
+        transform=ax2.transAxes)
+
+ax = fig.add_subplot(gs[1, 0])
+
+vmin=-5
+vmax=5
+cbarall=1
+SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(c)')
+
+for i in range(len(hej2)):
+	ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
+
+ax = fig.add_subplot(gs[1, 0])
+
+vmin=-0.2
+vmax=0.2
+cbarall=1
+SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,1,cbarall,'(d)')
+
+for i in range(len(hej2)):
+	ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
+
 
 
 	
