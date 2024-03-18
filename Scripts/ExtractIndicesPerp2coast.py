@@ -131,6 +131,13 @@ lon_acVEL=dsVEL.lonAC.values
 
 ETA=ds.ValfiltAll.values
 
+params = {'font.size': 16,
+          'figure.figsize': (11, 12),
+         'font.family':'sans'}
+pl.rcParams.update(params)
+plt.rcParams['figure.dpi'] = 300
+plt.rcParams['savefig.dpi'] = 300
+
 fig = plt.figure()
 gs = GridSpec(nrows=2, ncols=2)
 
@@ -176,7 +183,7 @@ SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{
 for i in range(len(hej2)):
 	ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
 
-ax = fig.add_subplot(gs[1, 0])
+ax = fig.add_subplot(gs[1, 1])
 
 vmin=-0.2
 vmax=0.2
