@@ -38,7 +38,7 @@ lat_ac=dsETA.latAC
 # In[4]:
 
 
-WVEL=dsVEL.Wfilt.values
+WVEL=dsVEL.Valfilt.values
 dist=dsVEL.dist.values
 lat_acVEL=dsVEL.latAC.values
 lon_acVEL=dsVEL.lonAC.values
