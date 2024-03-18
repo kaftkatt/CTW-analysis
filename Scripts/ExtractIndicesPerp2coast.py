@@ -56,7 +56,7 @@ iniY=[]
 dist=[]
 dep=[]
 
-for i in range(250):
+for i in hej2:
 	ind=i
 	
 	lon1=LON[lon_ac[ind]]
@@ -118,7 +118,7 @@ for i in range(250):
 
 
 mdic = {"dist": dist, "d":dep, 'indexXlon':iniX,'indexYlat':iniY }
-savemat("BT_P.mat", mdic)
+savemat("/home/athelandersson/CTW-analysis/Files/BT_P2.mat", mdic)
 
 pathVEL='/home/athelandersson/NETCDFs/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
@@ -150,12 +150,11 @@ ax.set_xlabel('Lon [°]')
 ax.set_ylabel('Lat [°]')
 ax.set_box_aspect(1)
 
-ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k', 
-        transform=ax2.transAxes)
+ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k',transform=ax.transAxes)
 
 colors=[ '#4daf4a', '#a65628', '#984ea3',
                    '#e41a1c', '#dede00','#377eb8'
-       ,'#ff7f00','#f781bf','#999999']
+       ,'#ff7f00','#f781bf','#999999','tab:blue']
 
 ax1 = fig.add_subplot(gs[0, 1])
 ax.set_xlabel('Distance from coast [km]')
@@ -165,7 +164,7 @@ for i in range(len(dep)):
 	ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
 
 ax1.text(-0.1, 1.2, '(b)', fontweight='bold', color='k', 
-        transform=ax2.transAxes)
+        transform=ax1.transAxes)
 
 ax = fig.add_subplot(gs[1, 0])
 
