@@ -155,7 +155,7 @@ ax.contour(LON, LAT, depthno[:, :], levels=[0], colors='brown', linestyles=':', 
 
 ax.set_xlabel('Lon [°]')
 ax.set_ylabel('Lat [°]')
-ax.set_box_aspect(1)
+
 
 ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k',transform=ax.transAxes)
 
@@ -177,7 +177,7 @@ ax = fig.add_subplot(gs[1, 0])
 
 vmin=-5
 vmax=5
-cbarall=1
+cbarall=0
 SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(c)')
 
 for i in range(len(hej2)):
@@ -187,13 +187,13 @@ ax = fig.add_subplot(gs[1, 1])
 
 vmin=-0.2
 vmax=0.2
-cbarall=1
+cbarall=0
 SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,1,cbarall,'(d)')
 
 for i in range(len(hej2)):
 	ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
 
-
+fig.tight_layout()
 
 	
 plt.savefig('/home/athelandersson/CTW-analysis/Figures/indsperp.png')	
