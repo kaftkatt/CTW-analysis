@@ -19,11 +19,11 @@ import SVBfunc
 # In[2]:
 
 hej=[58, 85, 205, 227]
-pathETA='/media/amelia/Trillian/SVB/ETA.nc'
+pathETA='/home/athelandersson/NETCDFs/ETANAC.nc'
 dsETA= xr.open_dataset(pathETA)
-pathVEL='/media/amelia/Trillian/SVB/coastVEL.nc'
+pathVEL='/home/athelandersson/NETCDFs/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
-dswAC= xr.open_dataset("/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01_SVB_febTS/ETAwithSVBACall.nc")
+dswAC= xr.open_dataset('/home/athelandersson/NETCDFs/WVELACnoSVBPREFILT.nc')
 
 
 # In[3]:
@@ -48,10 +48,10 @@ lon_acVEL=dsVEL.lon_ac.values
 # In[5]:
 
 
-varname='PHIHYD'
+varname='phiHyd'
 i=0
-pathn='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01b_noSVB_febTS/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
-pathw='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01b_SVB_febTS/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathn='/home/athelandersson/NETCDFs/smooth_NO/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathw='/home/athelandersson/NETCDFs/smooth/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
         
 dsw  = xr.open_dataset(pathw)
 dsn = xr.open_dataset(pathn)
@@ -71,7 +71,7 @@ mask = np.ma.getmask(hfa)
 depth=dsw.Depth
 depthno=dsn.Depth
 
-matfile=loadmat('BT_Perp.mat')
+matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_Perp.mat')
 x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
 
 
@@ -174,7 +174,9 @@ ax3.text(-0.08, 1.02, '(d)', fontweight='bold', color='k',
         transform=ax3.transAxes)
 fig.tight_layout()
 
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/HovFig2.png')
 
+'''
 # ## For the presentation
 
 # In[11]:
@@ -371,9 +373,7 @@ ax3.yaxis.set_label_position("right")
 
 fig.tight_layout()
 
-
-# In[ ]:
-
+'''
 
 
 
