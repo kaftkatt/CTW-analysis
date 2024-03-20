@@ -16,7 +16,7 @@ for var in varlist:
 		else:	
 			dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'dynVars')
 			
-		VALfilt,VALMITpre,dist,Z,times=SVBfunc.ExtractAndFiltCrossect(i,dsw,dsn,1,1,var,corrind)
+		VALfilt,VALMITpre,dist,Z,times=SVBfunc.ExtractAndFiltCrossectNEW(i,dsw,dsn,1,1,var,corrind)
 		
 		
 		FILENAME='Locations/' + str(var) + str(corrind[i]) + 'no.nc'
