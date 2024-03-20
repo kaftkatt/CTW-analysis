@@ -16,7 +16,7 @@ for var in varlist:
 		else:	
 			dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'dynVars')
 			
-		VALfilt,VALfilttwe,VALMITpre,dist,Z,times,timestwe=SVBfunc.ExtractAndFiltCrossect(i,dsw,dsn,1,1,var,corrind)
+		VALfilt,VALMITpre,dist,Z,times=SVBfunc.ExtractAndFiltCrossect(i,dsw,dsn,1,1,var,corrind)
 		
 		
 		FILENAME='Locations/' + str(var) + str(corrind[i]) + 'no.nc'
@@ -33,14 +33,12 @@ for var in varlist:
 		
 		
 		FILENAMEfilt='Locations/' + str(var) + str(corrind[i]) + 'filt.nc'
-		dsf = xr.Dataset({'VAL': (("time","z","x"), VALfilt),
-				'VAL2': (("time2","z","x"), VALfilttwe)
+		dsf = xr.Dataset({'VAL': (("time","z","x"), VALfilt)
 				    },
 				coords ={
 				    "x" : dist,
 				    "z" : Z,
-				    "time": times,
-				    "time2": timestwe
+				    "time": times
 				},
 				)
 		dsf.to_netcdf(FILENAMEfilt)
