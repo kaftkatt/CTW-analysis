@@ -615,10 +615,11 @@ def ExtractAndFiltCrossect(i,dsw,dsn,filt,detrend,var,corrind):
 	VALfilttwe=np.zeros((72*8,np.size(VALMITpre[0,:,0]),np.size(VALMITpre[0,0,:])))
 	
 	if filt==1:
-		
+		fs=1/1200
+		fs2=1/600
 		print('Filtering begins')
 		for d in np.arange(np.size(VALMITpre,2)):
-	    		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend)
+	    		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
 	    		VALfilttwe[:,:,d]=VALfiltAll
 	    		VALfilt[:,:,d]=VALfiltout
 	else:
@@ -642,7 +643,109 @@ def ExtractAndFiltCrossect(i,dsw,dsn,filt,detrend,var,corrind):
 	
 
 	return(VALfilt,VALfilttwe,VALMITpre,x[i],Z,times,times[inds])
+
+def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind):
+
+	Z=dsw[0].Zl.values
+	hFacC = dsw[0].hFacC
+	hfac = np.ma.masked_values(hFacC, 0)
+	mask = np.ma.getmask(hfac)
 	
+	time23=dsw[0].time.values.astype(int)
+	time34=dsw[1].time.values.astype(int)
+	time45=dsw[2].time.values.astype(int)
+	time56=dsw[3].time.values.astype(int)
+	time67=dsw[4].time.values.astype(int)
+	time78=dsw[5].time.values.astype(int)
+	time89=dsw[6].time.values.astype(int)
+	time910=dsw[7].time.values.astype(int)
+
+	Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+
+	times=Time*1e-9
+	
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_P2.mat')
+	x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
+
+	maskin=mask[:,indYlat[i],indXlon[i]]
+	VALMITpre=np.zeros((len(Time),np.size(maskin[:,0]),np.size(maskin[0,:])))
+	if var=='UVEL':
+		print('u')
+		for tt in np.arange(0,9,1):
+	    		
+			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+				    
+			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1):
+				VALb=dsw[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALn=dsn[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+			
+	elif var=='VVEL':
+		print('v')
+		for tt in np.arange(0,9,1):
+			VALMIT=np.zeros((len(dsw[tt].VVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+				    
+			for t in np.arange(0,len(dsw[tt].VVEL[:,1,1,1]),1):
+				VALb=dsw[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALn=dsn[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+			VALMITpre[len(dsw[tt-1].VVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+			
+	elif var=='WVEL':
+		print('w')
+		for tt in np.arange(0,9,1):
+			VALMIT=np.zeros((len(dsw[tt].WVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+				    
+			for t in np.arange(0,len(dsw[tt].WVEL[:,1,1,1]),1):
+				VALb=dsw[tt].WVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALn=dsn[tt].WVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+
+			VALMITpre[len(dsw[tt-1].WVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+
+	
+	elif var=='PHIHYD':
+		print('phi')
+		for tt in np.arange(0,9,1):
+			VALMIT=np.zeros((len(dsw[tt].PHIHYD[:,1,1,1]),len(Z),len(indXlon[i])))
+			for t in np.arange(0,len(dsw[tt].PHIHYD[:,1,1,1]),1):
+				VALb=dsw[tt].PHIHYD[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALn=dsn[tt].PHIHYD[t,:,:,:].values[:,indYlat[i],indXlon[i]]
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+		
+
+			VALMITpre[len(dsw[tt-1].PHIHYD[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+				
+				
+	VALfilt=np.zeros(np.shape(VALMITpre))
+	
+	if filt==1:
+		fs=1/1200
+		fs2=0
+		
+		print('Filtering begins')
+		for d in np.arange(np.size(VALMITpre,2)):
+	    		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
+	    		VALfilt[:,:,d]=VALfiltout
+	else:
+		print('No filtering')
+		VALfilt = 0
+		VALfilttwe=0
+		inds=0	
+
+	return(VALfilt,VALMITpre,x[i],Z,times)
       
 def get_Brink(file_fig):#,file_h): #, file_ratio):
     # Brink mode
@@ -826,9 +929,9 @@ def linearregressionSave(filt,var):
 		eke=[]
 
 
-		for l in np.arange(1,10,1):
-			if exists('/home/amelia/Master project/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
-				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/amelia/Master project/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
+		for l in np.arange(1,25,1):
+			if exists('/home/athelandersson/CTW-analysis/Files/Perp-Crossects/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
+				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/Perp-Crossects/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
 				u.append(uo.imag) 
 				v.append(vo)
 				w.append(wo.imag)
@@ -839,21 +942,17 @@ def linearregressionSave(filt,var):
 				epe=np.append(epe,epeo)
 				eke=np.append(eke,ekeo)
 					
-		if var=='PHIHYD':
-			dirn='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01b_noSVB_febTS/'
-			dirw='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01b_SVB_febTS/'
-			
-			dsw,dsn=loadNetCDFs(dirw,dirn,'PHIHYD')
-		else:	
-			dirn='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01_noSVB_febTS/'
-			dirw='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01_SVB_febTS/'
-			
-			dsw,dsn=loadNetCDFs(dirw,dirn,'DYNVARS')
+			dirn='/home/athelandersson/NETCDFs/smooth_NO/'
+			dirw='/home/athelandersson/NETCDFs/smooth/'
+			if VAR == 'PHIHYD':
+				dsw,dsn=loadNetCDFs(dirw,dirn,'phiHyd')
+			else:
+				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars')
 			
 
-		ds=xr.open_dataset('Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
+		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
 
-		matfile=loadmat('BT_P.mat')
+		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_P2.mat')
 		dist,indXlon,indYlat=matfile['dist'][ik],matfile['indexXlon'][ik],matfile['indexYlat'][ik]
 	
 		Z=dsw[0].Zl.values
@@ -873,7 +972,7 @@ def linearregressionSave(filt,var):
 			valinBrink=w
 		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,mask,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,TIME)
 		
-		FILENAME=str(var)+'/LinReg' + str(corrinds[ik]) + str(filt)+ '.nc'
+		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(var) + '/LinReg' + str(corrinds[ik]) + str(filt)+ '.nc'
 		ds = xr.Dataset({'valfit': (("time","z","x"), VALfit),
 				 'valmit': (("time","z","x"), VALmit),
 				 'varbrink': (("nrM","z","x"), varbrink),
