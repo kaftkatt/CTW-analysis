@@ -9,7 +9,6 @@ dirn='/home/athelandersson/NETCDFs/smooth_NO/'
 dirw='/home/athelandersson/NETCDFs/smooth/'
 
 for var in varlist:
-	var='WVEL'
 	for i in range(len(hej)):
 		if var=='PHIHYD':			
 			dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'phiHyd')
