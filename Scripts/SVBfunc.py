@@ -650,17 +650,18 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind):
 	hFacC = dsw[0].hFacC
 	hfac = np.ma.masked_values(hFacC, 0)
 	mask = np.ma.getmask(hfac)
-	
-	time23=dsw[0].time.values.astype(int)
-	time34=dsw[1].time.values.astype(int)
-	time45=dsw[2].time.values.astype(int)
-	time56=dsw[3].time.values.astype(int)
-	time67=dsw[4].time.values.astype(int)
-	time78=dsw[5].time.values.astype(int)
-	time89=dsw[6].time.values.astype(int)
-	time910=dsw[7].time.values.astype(int)
 
-	Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+	time12=dsw[0].time.values.astype(int)
+	time23=dsw[1].time.values.astype(int)
+	time34=dsw[2].time.values.astype(int)
+	time45=dsw[3].time.values.astype(int)
+	time56=dsw[4].time.values.astype(int)
+	time67=dsw[5].time.values.astype(int)
+	time78=dsw[6].time.values.astype(int)
+	time89=dsw[7].time.values.astype(int)
+	time910=dsw[8].time.values.astype(int)
+
+	Time=np.concatenate((time12,time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
 
 	times=Time*1e-9
 	
