@@ -18,7 +18,7 @@ for var in varlist:
 		VALfilt,VALMITpre,dist,Z,times=SVBfunc.ExtractAndFiltCrossectNEW(i,dsw,dsn,1,1,var,corrind)
 		
 		
-		FILENAME='Locations/' + str(var) + str(corrind[i]) + 'no.nc'
+		FILENAME='/home/athelandersson/CTW-analysis/Files/Locations/' + str(var) + str(corrind[i]) + 'no.nc'
 		ds = xr.Dataset({'VAL': (("time","z","x"), VALMITpre)
 				    },
 				coords ={
@@ -31,7 +31,7 @@ for var in varlist:
 		ds.to_netcdf(FILENAME)
 		
 		
-		FILENAMEfilt='Locations/' + str(var) + str(corrind[i]) + 'filt.nc'
+		FILENAMEfilt='/home/athelandersson/CTW-analysis/Files/Locations/' + str(var) + str(corrind[i]) + 'filt.nc'
 		dsf = xr.Dataset({'VAL': (("time","z","x"), VALfilt)
 				    },
 				coords ={
