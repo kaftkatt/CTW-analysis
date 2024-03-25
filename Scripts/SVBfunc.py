@@ -424,7 +424,7 @@ def FiltDetrend(VAL,filt,detrend,fs,fs2):
 		order = 3      
 		cutoff =np.array([1/432000, 1/43200])
 
-		if fs2 != 0:
+		if fs2 == 0:
 			inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
 			VALfiltAll=np.zeros(np.shape(VALdif[inds,:]))
 
@@ -739,7 +739,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind):
 		print('Filtering begins')
 		for d in np.arange(np.size(VALMITpre,2)):
 	    		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
-	    		VALfilt[:,:,d]=VALfiltout
+	    		VALfilt[:,:,d]=VALfiltAll
 	else:
 		print('No filtering')
 		VALfilt = 0
