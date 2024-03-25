@@ -888,11 +888,8 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,tim
     fit=np.zeros((len(time)))
     RMSE=np.zeros((len(time)))
     for t in np.arange(0,len(time),1):
-            if filt == 'no':
-                 VALmit=ds.VAL[t,:,:].values
-            else:
-                 VALmit=ds.VAL2[t,:,:].values
-
+            print(str(time[t]))
+            VALmit=ds.VAL[t,:,:].values
             beta_hat,yhat,xbeta,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint=lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,maskin)
             VALfit[t,:,:]=valout
             betas[t,:]=beta_hat
@@ -918,7 +915,8 @@ def linearregressionSave(filt,var):
 	
 	
 	for ik in np.arange(0,len(hej),1):
-
+		print(str(corrinds[ik]))
+		
 		u=[]
 		v=[]
 		w=[]
@@ -928,11 +926,11 @@ def linearregressionSave(filt,var):
 		omega=[]
 		epe=[]
 		eke=[]
-
-
+		
+		
 		for l in np.arange(1,25,1):
-			if exists('/home/athelandersson/CTW-analysis/Files/Perp-Crossects/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
-				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/Perp-Crossects/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
+			if exists('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
+				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
 				u.append(uo.imag) 
 				v.append(vo)
 				w.append(wo.imag)
@@ -942,26 +940,23 @@ def linearregressionSave(filt,var):
 				omega=np.append(omega,omegao)
 				epe=np.append(epe,epeo)
 				eke=np.append(eke,ekeo)
-					
+			
 			dirn='/home/athelandersson/NETCDFs/smooth_NO/'
 			dirw='/home/athelandersson/NETCDFs/smooth/'
-			if VAR == 'PHIHYD':
+			if var == 'PHIHYD':
 				dsw,dsn=loadNetCDFs(dirw,dirn,'phiHyd')
 			else:
 				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars')
 			
-
+		
 		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
-
+		
 		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_P2.mat')
 		dist,indXlon,indYlat=matfile['dist'][ik],matfile['indexXlon'][ik],matfile['indexYlat'][ik]
-	
+		
 		Z=dsw[0].Zl.values
 		
-		if filt == 'no':
-			TIME=ds.time.values
-		else:
-			TIME=ds.time2.values
+		TIME=ds.time.values
 		
 		if var == 'PHIHYD':
 			valinBrink=p
