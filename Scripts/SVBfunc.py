@@ -418,6 +418,8 @@ def butter_lowpass_filter(data, cutoff, fs, order):
 def FiltDetrend(VAL,filt,detrend,fs,fs2):
 	if detrend==1:
 		VALdif=sig.detrend(VAL,0)
+	elif detrend==0:
+		VALdif=VAL
 	if filt==1:
 		VALfilt=np.zeros(np.shape(VALdif))
 
