@@ -1087,7 +1087,7 @@ def openBrink(loc):
 ## FOR PLOTTING ----------------------------------------------------------------------------------
 
 def get_snapshot_at_level(t,dep,dsw,dsn):
-    ind=1
+    ind=0
     if t>=72 and t <(72*2):
         ind=1
         t=t-72
@@ -1109,6 +1109,9 @@ def get_snapshot_at_level(t,dep,dsw,dsn):
     elif t>=(72*7) and t<(72*8):
         ind=7
         t=t-(72*7)
+    elif t>=(72*8) and t<(72*9):
+        ind=8
+        t=t-(72*8)
     
     Ww=dsw[ind].WVEL[t,dep,:,:].values
     Wn=dsn[ind].WVEL[t,dep,:,:].values
