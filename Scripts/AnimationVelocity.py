@@ -21,8 +21,8 @@ from math import radians, cos
 
 
 # In[3]:
-dirn = '/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01_noSVB_febTS/'
-dirw = '/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01_SVB_febTS/'
+dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
+dirw = '/home/athelandersson/NETCDFs/smooth/'
 
 dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'DYNVARS')
 
