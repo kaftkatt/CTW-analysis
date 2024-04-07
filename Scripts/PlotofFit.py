@@ -4,7 +4,7 @@ import numpy as np
 from matplotlib.ticker import FormatStrFormatter
 from scipy.io import loadmat
 
-corrinds=[30.77,31.13,32.65,33.02]
+corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02]
 VAR=['PHIHYD','VVEL','UVEL'] #,'WVEL']
 FILT=['no','filt']
 
@@ -13,7 +13,7 @@ var=VAR[0]
 ds=[]
 
 for lat in corrinds:
-	ds.append(xr.open_dataset(str(var)+'/LinReg' + str(lat) + str(filt)+ '.nc'))
+	ds.append(xr.open_dataset('/home/athelandersson/CTW-analysis/Files/'+ str(var)+'/LinReg' + str(lat) + str(filt)+ '.nc'))
 
 ik=0
 grid_X=ds[ik].gridX.values
@@ -22,13 +22,13 @@ VALfit=ds[ik].valfit.values
 VAL=ds[ik].valmit.values
 TIME=ds[ik].time.values
 
-matfile=loadmat('BT_PERP.mat')
+matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_P2.mat')
 indXlon,indYlat=matfile['indexXlon'][ik],matfile['indexYlat'][ik]
 	
-dirw='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL_SVB/01b_SVB_febTS/'
-dirn='/media/amelia/Trillian/SVB/exp06_512x612x100_ORL/01b_noSVB_febTS/'
+dirw='/home/athelandersson/NETCDFs/smooth/'
+dirn='/home/athelandersson/NETCDFs/smooth_NO/'
 
-dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'PHIHYD')
+dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'phiHyd')
 hFacC = dsw[0].hFacC
 
 hfa = np.ma.masked_values(hFacC, 0)
@@ -122,4 +122,5 @@ fig.colorbar(cax2, cax=cbar_ax)
 cbar_ax.set_ylabel('Pressure [Pa]')
 cbar_ax.yaxis.set_major_formatter(FormatStrFormatter('%.2g'))
 
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/CrossSects.png')
 
