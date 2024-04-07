@@ -24,13 +24,13 @@ from math import radians, cos
 dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
 dirw = '/home/athelandersson/NETCDFs/smooth/'
 
-dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'DYNVARS')
+dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'dynVars')
 
 
 
 def animate(t):
     t=t+100
-    tt=(t*20+2880)/60
+    tt=(t*20+1440)/60
     dep=55
     vmin=-0.000002
     vmax=0.000002
@@ -111,7 +111,7 @@ ax.set_ylim(27,35.3)
 anim = FuncAnimation(fig, animate,frames=5, repeat=False)
 
     
-anim.save('WVEL_attempt3.mp4', writer=writer, dpi=600)
+anim.save('WVEL.mp4', writer=writer, dpi=600)
 
 
 
