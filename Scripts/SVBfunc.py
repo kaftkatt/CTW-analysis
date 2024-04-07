@@ -1058,8 +1058,8 @@ def openBrink(loc):
 
 
 	for l in np.arange(0,10,1):
-		if exists('/home/amelia/Master project/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat') == True:
-			uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/amelia/Master project/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat')	
+		if exists('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat') == True:
+			uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat')	
 		else: 
 			uo=0
 			vo=0

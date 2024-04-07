@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.ticker import FormatStrFormatter
 from scipy.io import loadmat
+import SVBfunc
+from matplotlib.gridspec import GridSpec
+import pylab as pl
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02]
 VAR=['PHIHYD','VVEL','UVEL'] #,'WVEL']
@@ -71,14 +75,14 @@ ax = fig.add_subplot(gs[0, 0])
 ax.text(0.88, 1.34, 'At' + str(corrinds[ik])+'°N', fontweight='bold', fontsize=22,color='k', 
                 transform=ax.transAxes)
                 
-cax1=SVBfunc.plotbrink(ax,grid_X,grid_Z,levels,xlab,ylab,-1,np.ma.masked_array(VAL[t]*1e4,mask=mask),modes,lat,day1)
+cax1=SVBfunc.plotbrink(ax,grid_X,grid_Z,levels,xlab,ylab,-1,-1,np.ma.masked_array(VAL[t]*1e4,mask=mask),modes,lat,day1)
 ax.set_ylim([np.min(np.ma.masked_array(grid_Z,mask=mask)),0])
 ax.text(0.96, 1.06, '(a)', fontweight='bold', color='k', 
             transform=ax.transAxes)
             
             
 ax = fig.add_subplot(gs[0, 1],sharey=ax)
-cax1=SVBfunc.plotbrink(ax,grid_X,grid_Z,levels,xlab,ylab,-2,np.ma.masked_array(VALfit[t]*1e4,mask=mask),modes,lat,day2)
+cax1=SVBfunc.plotbrink(ax,grid_X,grid_Z,levels,xlab,ylab,-2,-2,np.ma.masked_array(VALfit[t]*1e4,mask=mask),modes,lat,day2)
 
 cbar_ax1 = fig.add_axes([0.95, 0.74, 0.03, 0.13])
 fig.colorbar(cax1, cax=cbar_ax1)
@@ -115,7 +119,7 @@ for i in np.arange(0,modes-1,1):
                 transform=ax.transAxes)
         elif i<=6:
             ax = fig.add_subplot(gs[4, i-5],sharey=ax)
-        cax2=SVBfunc.plotbrink(ax,grid_X,grid_Z,levelsb,xlab,ylab,i,np.ma.masked_array(vals[i+1],mask=mask),modes,lat,day1)
+        cax2=SVBfunc.plotbrink(ax,grid_X,grid_Z,levelsb,xlab,ylab,i,i,np.ma.masked_array(vals[i+1],mask=mask),modes,lat,day1)
 
 cbar_ax = fig.add_axes([0.95, 0.35, 0.03, 0.3])
 fig.colorbar(cax2, cax=cbar_ax)

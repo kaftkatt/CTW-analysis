@@ -100,4 +100,4 @@ fig.colorbar(cax2, cax=cbar_ax)
 cbar_ax.set_ylabel(clabelB)
 cbar_ax.yaxis.set_major_formatter(FormatStrFormatter('%.2g'))
 
-plt.show()
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/CrossSectsbrink.png')

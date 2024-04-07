@@ -108,7 +108,7 @@ cbar = plt.colorbar(cax)
 cbar.set_label('Vertical velocity [m/s]')
 ax.set_ylim(27,35.3)
 
-anim = FuncAnimation(fig, animate,frames=5, repeat=False)
+anim = FuncAnimation(fig, animate,frames=647, repeat=False)
 
     
 anim.save('/home/athelandersson/CTW-analysis/Figures/WVEL.mp4', writer=writer, dpi=600)
