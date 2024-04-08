@@ -90,10 +90,10 @@ def createNetCDF(coast,prefix, varname):
         	day = dayarr.tolist()	
         	dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
         	dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
-        
+        	
         	pathwNEW = pathwN + str(varname) + 'withSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
         	pathnNEW = pathnN + str(varname) + 'noSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
-        
+		
         	dsw.to_netcdf(path=pathwNEW)
         	print('Done with SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
         	dsn.to_netcdf(path=pathnNEW)
