@@ -84,28 +84,38 @@ def createNetCDF(coast,prefix, varname):
         pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
         pathnN = '/home/athelandersson/NETCDFs/smooth_NO/'
         pathwN = '/home/athelandersson/NETCDFs/smooth/'
-    elif coast == 'straight':
+
+	for whatdaystart,whatdayfinish in zip(np.arange(1,10,1),np.arange(2,11,1)):	
+        	dayarr = np.arange(whatdaystart * 24 * 60 * 2, whatdayfinish * 24 * 60 * 2, 40)
+        	day = dayarr.tolist()	
+        	dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
+        	dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
+        
+        	pathwNEW = pathwN + str(varname) + 'withSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
+        	pathnNEW = pathnN + str(varname) + 'noSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
+        
+        	dsw.to_netcdf(path=pathwNEW)
+        	print('Done with SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
+        	dsn.to_netcdf(path=pathnNEW)
+       		print('Done without SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
+    elif coast == 'originial':
         pathw = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight_SVB/01_febTS'
         pathn = '/data/SO2/sio-kramosmusalem/exp10_512x612x100_straight/01_febTS'
-        pathnN = '/home/athelandersson/NETCDFs/straight_NO/'
-        pathwN = '/home/athelandersson/NETCDFs/straight/'
-
-    
-
-    for whatdaystart,whatdayfinish in zip(np.arange(1,10,1),np.arange(2,11,1)):	
-        dayarr = np.arange(whatdaystart * 24 * 60 * 2, whatdayfinish * 24 * 60 * 2, 40)
-        day = dayarr.tolist()	
-        dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
-        dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
-        
-        pathwNEW = pathwN + str(varname) + 'withSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
-        pathnNEW = pathnN + str(varname) + 'noSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
-        
-        dsw.to_netcdf(path=pathwNEW)
-        print('Done with SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
-        dsn.to_netcdf(path=pathnNEW)
-        print('Done without SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
-        
+        pathnN = '/home/athelandersson/NETCDFs/original_NO/'
+        pathwN = '/home/athelandersson/NETCDFs/original/'
+        for whatdaystart,whatdayfinish in zip(np.arange(2,10,1),np.arange(3,11,1)):	
+	        dayarr = np.arange(whatdaystart * 24 * 60, whatdayfinish * 24 * 60, 10)
+	        day = dayarr.tolist()	
+	        dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
+	        dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day, delta_t=30)
+	        
+	        pathwNEW = pathwN + str(varname) + 'withSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
+	        pathnNEW = pathnN + str(varname) + 'noSVB' + str(whatdaystart) + '_' + str(whatdayfinish) + '.nc'
+	        
+	        dsw.to_netcdf(path=pathwNEW)
+	        print('Done with SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
+	        dsn.to_netcdf(path=pathnNEW)
+	        print('Done without SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
 
 
 def findlonlat(hFacCuse,d,var):
