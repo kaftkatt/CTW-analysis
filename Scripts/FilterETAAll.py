@@ -2,10 +2,19 @@ import xarray as xr
 import numpy as np
 import SVBfunc
 
-dirn='/home/athelandersson/NETCDFs/smooth_NO/'
-dirw='/home/athelandersson/NETCDFs/smooth/'
+coast='original'
 
-dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'eta',1)
+if coast == 'original':
+	ts=8
+	indstart=2
+elif coast == 'smooth':
+	ts=9
+	indstart=1
+
+dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
+dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'
+
+dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'eta',indstart)
 
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
@@ -21,15 +30,18 @@ time56=dsw[4].time.values.astype(int)
 time67=dsw[5].time.values.astype(int)
 time78=dsw[6].time.values.astype(int)
 time89=dsw[7].time.values.astype(int)
-time910=dsw[8].time.values.astype(int)
 
-Time=np.concatenate((time12,time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+if coast== 'smooth':
+	time910=dsw[8].time.values.astype(int)
+	Time=np.concatenate((time12,time23, time34, time45, time56,time67, time78,time89, time910), axis=0)
+elif coast == 'original':
+	Time=np.concatenate((time12,time23, time34, time45, time56,time67, time78,time89), axis=0)
 
 times=Time*1e-9
 
-VALMITpre=np.zeros((len(Time),np.size(mask[0,:,:]),np.size(mask[0,:,:])))
+VALMITpre=np.zeros((len(Time),np.size(mask[0,:,1]),np.size(mask[0,1,:])))
 
-for tt in np.arange(0,9,1):
+for tt in np.arange(0,ts,1):
 	
 	VALMIT=np.zeros(np.shape(dsw[tt].ETAN))
 		    
@@ -56,11 +68,10 @@ for d in np.arange(np.size(VALMITpre,2)):
 	VALdif,VALfiltout,VALfiltAll,inds = SVBfunc.FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
 	VALfilt[:,:,d]=VALfiltAll
 
-r
 
 
 
-FILENAMEfilt='/home/athelandersson/NETCDFs/ETA.nc'
+FILENAMEfilt='/home/athelandersson/NETCDFs/' + str(coast) + '/ETA.nc'
 dsf = xr.Dataset({"VALfilt": (("time","y","x"), VALfilt),
 		"VAL": (("time","y","x"), VALMITpre)
 		    },
