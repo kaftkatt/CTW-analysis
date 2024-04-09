@@ -29,7 +29,7 @@ WVEL=WVELOrg-WVELSm
 ETASm=dsSm.ValfiltAll.values[72:]
 ETAOrg=ds.ValfiltAll.values[:,:len(ETASm[0,:])]
 
-ETA=ETASm-ETAOrg
+ETA=ETAOrg-ETASm
 
 TIMEVEL=dsVEL.time2.values
 distAC=dsSm.dist.values
@@ -79,4 +79,4 @@ for i in range(len(hej2)):
 
 fig.tight_layout()
 
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/CompHOV.png')	
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/CompOp.png')	

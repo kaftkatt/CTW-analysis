@@ -128,4 +128,4 @@ ax.set_ylim(27,35.3)
 anim = FuncAnimation(fig, animate,frames=575, repeat=False)
 
     
-anim.save('/home/athelandersson/CTW-analysis/Figures/WVELDIF.mp4', writer=writer, dpi=600)
+anim.save('/home/athelandersson/CTW-analysis/Figures/WVELDIFop.mp4', writer=writer, dpi=600)

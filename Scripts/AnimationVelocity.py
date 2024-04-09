@@ -20,9 +20,8 @@ import pylab as pl
 from math import radians, cos
 
 
-coast='original'
-if coast= 'original':
-    tstart=2
+coast='smooth'
+tstart=2
 
 dirn = '/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
 dirw = '/home/athelandersson/NETCDFs/' + str(coast) + '/'
@@ -65,7 +64,7 @@ pl.rcParams.update(params)
 
 
 #Index to call from the list of netcdfs
-ind=1 #0 is day 2-3, 1 is day 3-4 until index 7 (day 9-10)
+ind=0 #0 is day 2-3, 1 is day 3-4 until index 7 (day 9-10)
 dep=55  #483.2 meter depth is the 55th element
 t=0
 tt=(((72*ind+t)*20)+2880)/60 # Gives amount of hours from start of the model, starts at hour 48 if ind=0 and t=0
@@ -114,7 +113,7 @@ ax.set_ylim(27,35.3)
 anim = FuncAnimation(fig, animate,frames=575, repeat=False)
 
     
-anim.save('/home/athelandersson/CTW-analysis/Figures/original/WVEL.mp4', writer=writer, dpi=600)
+anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + 'WVEL.mp4', writer=writer, dpi=600)
 
 
 
