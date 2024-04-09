@@ -20,17 +20,20 @@ import pylab as pl
 from math import radians, cos
 
 
-# In[3]:
-dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
-dirw = '/home/athelandersson/NETCDFs/smooth/'
+coast='original'
+if coast= 'original':
+    tstart=2
 
-dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'dynVars')
+dirn = '/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
+dirw = '/home/athelandersson/NETCDFs/' + str(coast) + '/'
+
+dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'dynVars',tstart)
 
 
 
 def animate(t):
     t=t
-    tt=(t*20+1440)/60
+    tt=(t*20+2880)/60
     dep=55
     vmin=-0.000002
     vmax=0.000002
@@ -65,7 +68,7 @@ pl.rcParams.update(params)
 ind=1 #0 is day 2-3, 1 is day 3-4 until index 7 (day 9-10)
 dep=55  #483.2 meter depth is the 55th element
 t=0
-tt=(((72*ind+t)*20)+1440)/60 # Gives amount of hours from start of the model, starts at hour 48 if ind=0 and t=0
+tt=(((72*ind+t)*20)+2880)/60 # Gives amount of hours from start of the model, starts at hour 48 if ind=0 and t=0
 
 
 Ww=dsw[ind].WVEL
@@ -108,10 +111,10 @@ cbar = plt.colorbar(cax)
 cbar.set_label('Vertical velocity [m/s]')
 ax.set_ylim(27,35.3)
 
-anim = FuncAnimation(fig, animate,frames=647, repeat=False)
+anim = FuncAnimation(fig, animate,frames=575, repeat=False)
 
     
-anim.save('/home/athelandersson/CTW-analysis/Figures/WVEL.mp4', writer=writer, dpi=600)
+anim.save('/home/athelandersson/CTW-analysis/Figures/original/WVEL.mp4', writer=writer, dpi=600)
 
 
 
