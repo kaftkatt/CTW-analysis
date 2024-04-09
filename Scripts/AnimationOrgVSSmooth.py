@@ -43,7 +43,7 @@ def animate(t):
     print(t)
     WOrg = SVBfunc.get_snapshot_at_level( torg,dep,dswOrg,dsnOrg)
     WSm = SVBfunc.get_snapshot_at_level( tsm,dep,dsw,dsn)
-    W=WSm-WOrg
+    W=WOrg-WSm
     
     cax.set_array(np.ma.masked_array(W,mask=maskw[dep,:,:]))
     ax.set_title(f'At depth {Z[dep].values:.2f} m. After {tt:.1f} hours')
@@ -99,6 +99,7 @@ hFacCusew=hFacCw.values
 hfa = np.ma.masked_values(hFacCusew, 0)
 maskw = np.ma.getmask(hfa)
 
+Win=WinOrg-WinSm
 
 # In[29]:
 
