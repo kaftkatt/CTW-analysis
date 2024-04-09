@@ -16,36 +16,22 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import SVBfunc
 
 
-# In[2]:
-
-hej=[58, 85, 205, 227]
 pathETA='/home/athelandersson/NETCDFs/ETANAC.nc'
 dsETA= xr.open_dataset(pathETA)
 pathVEL='/home/athelandersson/NETCDFs/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
 
-
-# In[3]:
-
-
-eta=dsETA.ValfiltAll.values
+eta=dsETA.ValfiltAll.values[72:]
 distETA=dsETA.dist.values
-TIME=dsETA.time.values
+TIME=dsETA.time.values[72:]/60
 lon_ac=dsETA.lonAC
 lat_ac=dsETA.latAC
 
 
-# In[4]:
-
-
-WVEL=dsVEL.Valfilt.values
+WVEL=dsVEL.Valfilt.values[72:]
 dist=dsVEL.dist.values
 lat_acVEL=dsVEL.latAC.values
 lon_acVEL=dsVEL.lonAC.values
-
-
-# In[5]:
-
 
 varname='phiHyd'
 i=0
@@ -54,10 +40,6 @@ pathw='/home/athelandersson/NETCDFs/smooth/'+ str(varname)+'withSVB'+ str(2+i)+'
         
 dsw  = xr.open_dataset(pathw)
 dsn = xr.open_dataset(pathn)
-
-
-# In[6]:
-
 
 LAT=dsw.YC
 LON=dsw.XC-360

@@ -6,8 +6,8 @@ import xarray as xr
 
 dep=55
 for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
-	dirw = '/home/athelandersson/NETCDFs/smooth/'
-	dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
+	dirw = '/home/athelandersson/NETCDFs/original/'
+	dirn = '/home/athelandersson/NETCDFs/original_NO/'
 	
 	dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, var)
 	
@@ -26,9 +26,9 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 	
 	if var == 'dynVars': 
 		for VAR in ['UVEL','VVEL','WVEL','SALT','THETA']:
-			pathn= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACnoSVBPREFILT.nc'
-			pathw= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACwithSVBPREFILT.nc'
-			for l in np.arange(0,9,1):
+			pathn= '/home/athelandersson/NETCDFs/original_NO/' + str(VAR)+'ACnoSVBPREFILT.nc'
+			pathw= '/home/athelandersson/NETCDFs/original/' + str(VAR)+'ACwithSVBPREFILT.nc'
+			for l in np.arange(0,8,1):
 				
 				exec (f'W=dsw[l].{VAR}[:,55,:,:].values')
 				exec (f'N=dsn[l].{VAR}[:,55,:,:].values')
@@ -72,9 +72,9 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars']:
 			VAR='PHIHYD'
 		elif var == 'rhoAnoma': 
 			VAR='RHOAnoma'
-		pathn= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACnoSVBPREFILT.nc'
-		pathw= '/home/athelandersson/NETCDFs/' + str(VAR)+'ACwithSVBPREFILT.nc'	
-		for l in np.arange(0,9,1):
+		pathn= '/home/athelandersson/NETCDFs/original_NO/' + str(VAR)+'ACnoSVBPREFILT.nc'
+		pathw= '/home/athelandersson/NETCDFs/original/' + str(VAR)+'ACwithSVBPREFILT.nc'	
+		for l in np.arange(0,8,1):
 			
 			exec (f'W=dsw[l].{VAR}[:,55,:,:].values')
 			exec (f'N=dsn[l].{VAR}[:,55,:,:].values')

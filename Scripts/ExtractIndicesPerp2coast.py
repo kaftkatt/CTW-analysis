@@ -27,12 +27,19 @@ i=0
 #hejVEL=hejVEL.astype(int) 
 
 hej2=[35,54,79,120,154,194,219]
+coast='original'
+if coast == 'original':
+	tstart=0
+	indstart=2
+elif coast == 'smooth':
+	tstart=72
+	indstart=1
 
-dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
-dirw = '/home/athelandersson/NETCDFs/smooth/'
-dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'phiHyd')
+dirn = '/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
+dirw = '/home/athelandersson/NETCDFs/' + str(coast) + '/'
+dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'phiHyd',indstart)
 
-pathETA='/home/athelandersson/NETCDFs/ETANAC.nc'
+pathETA='/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
 ds= xr.open_dataset(pathETA)
 
 lon_ac=ds.lonAC.values
@@ -118,18 +125,22 @@ for i in hej2:
 
 
 mdic = {"dist": dist, "d":dep, 'indexXlon':iniX,'indexYlat':iniY }
-savemat("/home/athelandersson/CTW-analysis/Files/BT_P2.mat", mdic)
+savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_P.mat", mdic)
 
-pathVEL='/home/athelandersson/NETCDFs/WVELAC.nc'
+pathVEL='/home/athelandersson/NETCDFs/' + str(coast) + '/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
 
-WVEL=dsVEL.ValfiltAll.values
+WVEL=dsVEL.ValfiltAll.values[tstart:]
 distVEL=dsVEL.dist.values
-TIMEVEL=dsVEL.time2.values
+if coast == 'original':
+	TIMEVEL=dsVEL.time2.values
+elif coast == 'smooth':
+	TIMEVEL=dsVEL.time2.values[tstart:]/60
+
 lat_acVEL=dsVEL.latAC.values
 lon_acVEL=dsVEL.lonAC.values
 
-ETA=ds.ValfiltAll.values
+ETA=ds.ValfiltAll.values[tstart:]
 
 params = {'font.size': 16,
           'figure.figsize': (11, 12),
@@ -143,20 +154,22 @@ gs = GridSpec(nrows=2, ncols=2)
 
 ax = fig.add_subplot(gs[0, 0])
 ax.set_facecolor('tan')
-ax.set_title('Original')
 pc = ax.contourf(LON, LAT, np.ma.masked_array(depth, mask=mask), 50,
 	         vmin=0, vmax=5000, cmap=cmocean.cm.deep) 
 
-cb = plt.colorbar(pc)  
 cn = ax.contour(LON, LAT, depth, colors=['0.2', '0.4', '0.6', '0.8'],
-	        levels=[200, 500, 1000, 2000])
-cb.set_label('Depth [m]')
+	        levels=[200,500, 1000, 2000])
 ax.contour(LON, LAT, depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5)
-
+divider = make_axes_locatable(ax)
+axdiv = divider.new_vertical(size = '5%', pad = 0.5)
+fig.add_axes(axdiv)
+cbar_ax = plt.colorbar(pc, cax=axdiv,orientation='horizontal',ticks=[0,1000,2000,3000,4000])
+cbar_ax.ax.xaxis.set_label_position("top")
+cbar_ax.set_label('Depth [m]')
 ax.set_xlabel('Lon [°]')
 ax.set_ylabel('Lat [°]')
 
-
+ax.set_aspect(1)
 ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k',transform=ax.transAxes)
 
 colors=[ '#4daf4a', '#a65628', '#984ea3',
@@ -164,13 +177,13 @@ colors=[ '#4daf4a', '#a65628', '#984ea3',
        ,'#ff7f00','#f781bf','#999999','tab:blue']
 
 ax1 = fig.add_subplot(gs[0, 1])
-ax.set_xlabel('Distance from coast [km]')
-ax.set_ylabel('Depth [m]')
+ax1.set_xlabel('Distance from coast [km]')
+ax1.set_ylabel('Depth [m]')
 for i in range(len(dep)):
 	ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,color=colors[i],linewidth=2)
 	ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
 
-ax1.text(-0.1, 1.2, '(b)', fontweight='bold', color='k', 
+ax1.text(-0.1, 1.02, '(b)', fontweight='bold', color='k', 
         transform=ax1.transAxes)
 
 ax = fig.add_subplot(gs[1, 0])
@@ -196,4 +209,4 @@ for i in range(len(hej2)):
 fig.tight_layout()
 
 	
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/indsperp.png')	
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp1.png')	

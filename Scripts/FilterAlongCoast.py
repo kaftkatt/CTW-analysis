@@ -1,10 +1,12 @@
 import xarray as xr
 import SVBfunc
 
+coast='original'
+
 for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN']:
 
-  pathn= '/home/athelandersson/NETCDFs/' + str(varname)+'ACnoSVBPREFILT.nc'
-  pathw= '/home/athelandersson/NETCDFs/' + str(varname)+'ACwithSVBPREFILT.nc'
+  pathn= '/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'  + str(varname)+'ACnoSVBPREFILT.nc'
+  pathw= '/home/athelandersson/NETCDFs/' + str(coast) + '/' + str(varname)+'ACwithSVBPREFILT.nc'
 
   dswALL = xr.open_dataset(pathw)
   dsnALL = xr.open_dataset(pathn)
@@ -14,7 +16,7 @@ for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN'
   fs=1/1200
   fs2=0
   
-  FILENAME='/home/athelandersson/NETCDFs/' + str(varname)+ 'AC.nc'
+  FILENAME='/home/athelandersson/NETCDFs/' + str(coast) + '/' + str(varname)+ 'AC.nc'
 
   SVBfunc.SavingFilteredValues(valw,valn,dswALL,FILENAME,1,1,fs,fs2)
 

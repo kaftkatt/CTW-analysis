@@ -15,10 +15,10 @@ from scipy.io import loadmat
 
 from math import radians, cos, sin, asin, sqrt, atan, degrees
 
-def loadNetCDFs(dirw,dirn,varname):
+def loadNetCDFs(dirw,dirn,varname,startday):
     dsw = []
     dsn = []
-    for i in np.arange(1, 10, 1):
+    for i in np.arange(startday, 10, 1):
 	
         pathn = dirn + str(varname) + 'noSVB' + str(i) + '_' + str(1 + i) + '.nc'
         pathw = dirw + str(varname) + 'withSVB' + str(i) + '_' + str(1 + i) + '.nc'
@@ -98,12 +98,16 @@ def createNetCDF(coast,prefix, varname):
 			dsn.to_netcdf(path=pathnNEW)
 			print('Done without SVB, day ' + str(whatdaystart) + ' - ' + str(whatdayfinish))
 	elif coast == 'originial':
-		pathw = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01_SVB_febTS_output'
-		pathn = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL/01_noSVB_febTS'
+		if np.logical_or(varname == 'phiHyd',varname == 'rhoAnoma'):
+			pathw = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01b_SVB_febTS_output/'
+			pathn = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL/01b_noSVB_febTS/'
+		else:
+			pathw = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01_SVB_febTS_output/'
+			pathn = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL/01_noSVB_febTS/'
 		pathnN = '/home/athelandersson/NETCDFs/original_NO/'
 		pathwN = '/home/athelandersson/NETCDFs/original/'
 		for whatdaystart,whatdayfinish in zip(np.arange(2,10,1),np.arange(3,11,1)):	
-			dayarr = np.arange(whatdaystart * 24 * 60, whatdayfinish * 24 * 60, 10)
+			dayarr = np.arange(whatdaystart * 24 * 60, whatdayfinish * 24 * 60, 20)
 			day = dayarr.tolist()	
 			dsw = open_mdsdataset(pathw, pathw, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day)
 			dsn = open_mdsdataset(pathn, pathn, prefix=[prefix], default_dtype='>f4', levels=levels, iters=day)
@@ -197,7 +201,7 @@ def haversine(lon1, lat1, lon2, lat2):
     r = 6371 # Radius of earth in kilometers. Use 3956 for miles. Determines return value units.
     return c * r
 
-def loadingcoastpts(hFacCuse,Z,LAT,LON,prevalue,name,name2,name3,nt,t,FILENAME):
+def loadingcoastpts(hFacCuse,Z,LAT,LON,prevalue,nt,t,var):
 
     dep=0
     lat_fix, lon_fix=findlonlat(hFacCuse,dep,0)
@@ -225,19 +229,11 @@ def loadingcoastpts(hFacCuse,Z,LAT,LON,prevalue,name,name2,name3,nt,t,FILENAME):
         val[:,p-1] = value[:,jj-1,ii-1]
 
     
-            
-    ds = xr.Dataset({name: (("time","x"), val[:,val[0,:]!=0]),
-                    name2:(("x"), lon_fix[val[0,:] != 0]),
-                    name3:(("x"), lat_fix[val[0,:] != 0])
-                    },
-                    coords ={
-                    "x" : dist_cummul[val[0,:] != 0],
-                    "time": t,
-                    },
-                   )
+    if t==7:
+       plotpointsAC(LON,LAT,lon_fix,lat_fix,var)
     
-    ds.to_netcdf(FILENAME)
-    plotpointsAC(LON,LAT,lon_fix,lat_fix)
+    return val[:,val[0,:]!=0],lon_fix[val[0,:] != 0],lat_fix[val[0,:] != 0],dist_cummul[val[0,:] != 0]
+
 
 #For dynvars and pressure, just don't forget to change the depth
 def varsalongcoasts(hFacCuse,LAT,LON,Z,valvar,nt,dep,plot,var):
