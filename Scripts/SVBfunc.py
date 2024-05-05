@@ -651,7 +651,7 @@ def ExtractAndFiltCrossect(i,dsw,dsn,filt,detrend,var,corrind):
 
 	return(VALfilt,VALfilttwe,VALMITpre,x[i],Z,times,times[inds])
 
-def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind):
+def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 
 	Z=dsw[0].Zl.values
 	hFacC = dsw[0].hFacC
@@ -672,7 +672,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind):
 
 	times=Time*1e-9
 	
-	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_P2.mat')
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + 'BT_P2.mat')
 	x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
 
 	maskin=mask[:,indYlat[i],indXlon[i]]
@@ -915,7 +915,7 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,tim
     
     return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,maskin,valmitint
 
-def linearregressionSave(filt,var):
+def linearregressionSave(filt,var,coast):
 
 	hej=[35,54,79,120,154,194,219]  
 	corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] 
@@ -936,8 +936,8 @@ def linearregressionSave(filt,var):
 		
 		
 		for l in np.arange(1,25,1):
-			if exists('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
-				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
+			if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
+				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
 				u.append(uo.imag) 
 				v.append(vo)
 				w.append(wo.imag)
@@ -956,9 +956,9 @@ def linearregressionSave(filt,var):
 				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars')
 			
 		
-		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
+		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
 		
-		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/BT_P2.mat')
+		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P2.mat')
 		dist,indXlon,indYlat=matfile['dist'][ik],matfile['indexXlon'][ik],matfile['indexYlat'][ik]
 		
 		Z=dsw[0].Zl.values
@@ -975,7 +975,7 @@ def linearregressionSave(filt,var):
 			valinBrink=w
 		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,mask,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,TIME)
 		
-		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(var) + '/LinReg' + str(corrinds[ik]) + str(filt)+ '.nc'
+		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/' + str(var) + '/LinReg' + str(corrinds[ik]) + str(filt)+ '.nc'
 		ds = xr.Dataset({'valfit': (("time","z","x"), VALfit),
 				 'valmit': (("time","z","x"), VALmit),
 				 'varbrink': (("nrM","z","x"), varbrink),
@@ -1063,8 +1063,8 @@ def openBrink(loc):
 
 
 	for l in np.arange(0,10,1):
-		if exists('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat') == True:
-			uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat')	
+		if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat') == True:
+			uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(loc) +'mode' + str(l) + '.mat')	
 		else: 
 			uo=0
 			vo=0
