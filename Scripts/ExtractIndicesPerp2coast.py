@@ -63,7 +63,7 @@ iniY=[]
 dist=[]
 dep=[]
 
-for i in hej2:
+for i in np.arange(len(lon_ac)):
 	ind=i
 	
 	lon1=LON[lon_ac[ind]]
@@ -125,7 +125,7 @@ for i in hej2:
 
 
 mdic = {"dist": dist, "d":dep, 'indexXlon':iniX,'indexYlat':iniY }
-savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_P.mat", mdic)
+savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_PALL.mat", mdic)
 
 pathVEL='/home/athelandersson/NETCDFs/' + str(coast) + '/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
@@ -209,4 +209,4 @@ for i in range(len(hej2)):
 fig.tight_layout()
 
 	
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp1.png')	
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL.png')	
