@@ -26,8 +26,10 @@ i=0
 
 #hejVEL=hejVEL.astype(int) 
 
-hej2=[35,54,79,120,154,194,219]
-coast='original'
+
+
+
+coast='smooth'
 if coast == 'original':
 	tstart=0
 	indstart=2
@@ -46,6 +48,9 @@ lon_ac=ds.lonAC.values
 lat_ac=ds.latAC.values
 distAC=ds.dist.values
 
+#hej2=[35,54,79,120,154,194,219]
+hej2=np.arange(len(lon_ac))
+
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
 
@@ -63,7 +68,7 @@ iniY=[]
 dist=[]
 dep=[]
 
-for i in np.arange(len(lon_ac)):
+for i in hej2:
 	ind=i
 	
 	lon1=LON[lon_ac[ind]]
@@ -114,8 +119,11 @@ for i in np.arange(len(lon_ac)):
 	dist_rot = np.cumsum(dist_array)
 	dist_rot = np.insert(dist_rot,0,0)
 	
-	hunKm=np.where(dist_rot>=100)[0][0]
-	
+	if np.any(dist_rot>=100):
+		hunKm=np.where(dist_rot>=100)[0][0]
+	else:
+		hunKm=len(dist_rot)
+
 	iniX.append(indlon[:hunKm])
 	iniY.append(indlat[:hunKm])
 	dist.append(dist_rot[:hunKm])
@@ -124,8 +132,13 @@ for i in np.arange(len(lon_ac)):
 	
 
 
+
 mdic = {"dist": dist, "d":dep, 'indexXlon':iniX,'indexYlat':iniY }
-savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_PALL.mat", mdic)
+if len(hej2)>20:
+	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_PALL.mat", mdic)
+else:
+	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_P.mat", mdic)
+
 
 pathVEL='/home/athelandersson/NETCDFs/' + str(coast) + '/WVELAC.nc'
 dsVEL= xr.open_dataset(pathVEL)
@@ -179,9 +192,15 @@ colors=[ '#4daf4a', '#a65628', '#984ea3',
 ax1 = fig.add_subplot(gs[0, 1])
 ax1.set_xlabel('Distance from coast [km]')
 ax1.set_ylabel('Depth [m]')
+
 for i in range(len(dep)):
-	ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,color=colors[i],linewidth=2)
-	ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
+	if len(hej2)>20:
+		ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,linewidth=2)
+		ax1.plot(dist[i],-dep[i],linewidth=2)
+	else:
+                ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,color=colors[i],linewidth=2)
+                ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
+
 
 ax1.text(-0.1, 1.02, '(b)', fontweight='bold', color='k', 
         transform=ax1.transAxes)
@@ -194,7 +213,10 @@ cbarall=0
 SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(c)')
 
 for i in range(len(hej2)):
-	ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
+	if len(hej2)>20:
+		ax.axhline(y=distAC[hej2[i]],linewidth=2,alpha=0.7)
+	else:
+		ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
 
 ax = fig.add_subplot(gs[1, 1])
 
@@ -204,9 +226,14 @@ cbarall=0
 SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,1,cbarall,'(d)')
 
 for i in range(len(hej2)):
-	ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
+	if len(hej2)>20:
+		ax.axhline(y=distAC[hej2[i]],linewidth=2,alpha=0.7)
+	else:
+		ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
 
 fig.tight_layout()
 
-	
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL.png')	
+if len(hej2)>20:
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL.png')	
+else:
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp.png')	
