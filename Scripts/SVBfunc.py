@@ -1091,7 +1091,7 @@ def openBrink(loc):
 
 ## FOR PLOTTING ----------------------------------------------------------------------------------
 
-def get_snapshot_at_level(t,dep,dsw,dsn):
+def get_snapshot_at_level(t,dep,dsw,dsn,var):
     ind=0
     if t>=72 and t <(72*2):
         ind=1
@@ -1117,10 +1117,14 @@ def get_snapshot_at_level(t,dep,dsw,dsn):
     elif t>=(72*8) and t<(72*9):
         ind=8
         t=t-(72*8)
-    
-    Ww=dsw[ind].WVEL[t,dep,:,:].values
-    Wn=dsn[ind].WVEL[t,dep,:,:].values
-    W = Ww-Wn
+    if var=='WVEL':
+        Ww=dsw[ind].WVEL[t,dep,:,:].values
+        Wn=dsn[ind].WVEL[t,dep,:,:].values
+        W = Ww-Wn
+    elif var=='ETAn':
+        W=dsn[ind].ETAN[t,:,:].values
+    else:
+        W=dsw[ind].ETAN[t,:,:].values
     return(W)
 
 def plotMap(ax,LON,LAT,depth,mask,fig,nr):

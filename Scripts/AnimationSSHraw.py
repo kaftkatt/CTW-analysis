@@ -19,7 +19,7 @@ import ffmpeg
 import pylab as pl
 from math import radians, cos
 
-
+var='ETAw'
 coast='smooth'
 tstart=2
 
@@ -34,14 +34,14 @@ def animate(t):
     t=t
     tt=(t*20+2880)/60
     dep=0
-    vmin=-0.000002
-    vmax=0.000002
+    vmin=-0.2
+    vmax=0.2
     print(t)
-    W = SVBfunc.get_snapshot_at_level( t,dep,dsw,dsn)
+    W = SVBfunc.get_snapshot_at_level( t,dep,dsw,dsn,var)
     
 
-    cax.set_array(np.ma.masked_array(W,mask=maskw[dep,:,:]))
-    ax.set_title(f'At depth {Z[dep].values:.2f} m. After {tt:.1f} hours')
+    cax.set_array(np.ma.masked_array(W*1000,mask=maskw[dep,:,:]))
+    ax.set_title(f'After {tt:.1f} hours')
 
 
 # In[5]:
@@ -62,15 +62,18 @@ pl.rcParams.update(params)
 
 # In[7]:
 
-
+t=0
+ind=0
 
 tt=(((72*ind+t)*20)+2880)/60 # Gives amount of hours from start of the model, starts at hour 48 if ind=0 and t=0
 
-t=0
-ind=0
+
 Ww=dsw[ind].ETAN
 Wn=dsn[ind].ETAN
-Win=Ww[t,:,:]
+if var == 'ETAn':
+	Win=Wn[t,:,:].values
+else:
+	Win=Ww[t,:,:].values
 dep=0
 LON=dsw[ind].XC-360
 LAT=dsw[ind].YC
