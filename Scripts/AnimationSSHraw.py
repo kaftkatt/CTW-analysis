@@ -19,8 +19,8 @@ import ffmpeg
 import pylab as pl
 from math import radians, cos
 
-var='ETAn'
-coast='smooth'
+var='ETAw'
+coast='original'
 tstart=2
 
 dirn = '/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
@@ -106,7 +106,7 @@ ax.contour(LON,LAT,depth,  colors=['0.2','0.4'],
                 levels=[0,500])
 ax.set(xlabel=xlab, ylabel=ylab)
 
-ax.set_title(f'At depth {Z[dep].values:.2f} m. After {tt:.1f} hours')
+ax.set_title(f'After {tt:.1f} hours')
 ax.set_xlim(-122,-114)     
 cbar = plt.colorbar(cax)
 cbar.set_label('SSH [mm]')
@@ -115,7 +115,7 @@ ax.set_ylim(27,35.3)
 anim = FuncAnimation(fig, animate,frames=575, repeat=False)
 
     
-anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + 'SSHwithSVB.mp4', writer=writer, dpi=600)
+anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/SSH'+str(var)+'.mp4', writer=writer, dpi=600)
 
 
 
