@@ -29,7 +29,7 @@ i=0
 
 
 
-coast='smooth'
+coast='original'
 if coast == 'original':
 	tstart=0
 	indstart=2

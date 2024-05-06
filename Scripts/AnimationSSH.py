@@ -19,7 +19,7 @@ import ffmpeg
 import pylab as pl
 from math import radians, cos
 
-coast='both'
+coast='smooth'
 
 #SSH
 if coast == 'both':
@@ -39,15 +39,15 @@ else:
 
 
 if coast == 'original':
-	etafiltall=dsETA.VALfilt.values
+	etafiltall=dsETA.VAL.values
 	TIME=dsETA.time.values
 elif coast == 'smooth':
-	etafiltall=dsETA.VALfilt.values[72:]
+	etafiltall=dsETA.VAL.values[72:]
 	TIME=dsETA.time.values[72:]
 else:
-	etafiltallOrig=dsETA.VALfilt.values
+	etafiltallOrig=dsETA.VAL.values
 	TIME=dsETA.time.values
-	etafiltallSm=dsETASm.VALfilt.values[72:]
+	etafiltallSm=dsETASm.VAL.values[72:]
 	etafiltall=etafiltallSm-etafiltallOrig
 
 LON=dsETA.x.values
@@ -115,7 +115,7 @@ ax.set_ylim(27,35.3)
 anim = FuncAnimation(fig, animateETA,frames=575, repeat=False)
 
     
-anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/SSH.mp4', writer=writer, dpi=600)
+anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/SSHnoFilt.mp4', writer=writer, dpi=600)
 
 
 
