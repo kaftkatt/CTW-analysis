@@ -19,7 +19,7 @@ import ffmpeg
 import pylab as pl
 from math import radians, cos
 
-var='ETAw'
+var='ETAn'
 coast='smooth'
 tstart=2
 
@@ -112,7 +112,7 @@ cbar = plt.colorbar(cax)
 cbar.set_label('SSH [mm]')
 ax.set_ylim(27,35.3)
 
-anim = FuncAnimation(fig, animate,frames=5, repeat=False)
+anim = FuncAnimation(fig, animate,frames=575, repeat=False)
 
     
 anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + 'SSHwithSVB.mp4', writer=writer, dpi=600)
