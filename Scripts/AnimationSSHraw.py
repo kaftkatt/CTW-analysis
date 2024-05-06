@@ -34,8 +34,8 @@ def animate(t):
     t=t
     tt=(t*20+2880)/60
     dep=0
-    vmin=-5
-    vmax=5
+    vmin=-1
+    vmax=1
     print(t)
     W = SVBfunc.get_snapshot_at_level( t,dep,dsw,dsn,var)
     
@@ -93,8 +93,8 @@ maskw = np.ma.getmask(hfa)
 
 fig, ax = plt.subplots()
 
-vmin=-5
-vmax=5
+vmin=-1
+vmax=1
 
 xlab='Longitude [°]'
 ylab='Latitude [°]'
