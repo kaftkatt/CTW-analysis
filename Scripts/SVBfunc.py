@@ -935,7 +935,7 @@ def linearregressionSave(filt,var,coast):
 		eke=[]
 		
 		
-		for l in np.arange(1,25,1):
+		for l in np.arange(0,25,1):
 			if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
 				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
 				u.append(uo.imag) 
@@ -948,8 +948,8 @@ def linearregressionSave(filt,var,coast):
 				epe=np.append(epe,epeo)
 				eke=np.append(eke,ekeo)
 			
-			dirn='/home/athelandersson/NETCDFs/smooth_NO/'
-			dirw='/home/athelandersson/NETCDFs/smooth/'
+			dirn='/home/athelandersson/NETCDFs/' + str(coast)
+			dirw='/home/athelandersson/NETCDFs/' + str(coast)
 			if var == 'PHIHYD':
 				dsw,dsn=loadNetCDFs(dirw,dirn,'phiHyd')
 			else:
