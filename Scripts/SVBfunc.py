@@ -672,7 +672,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 
 	times=Time*1e-9
 	
-	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + 'BT_P2.mat')
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P.mat')
 	x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
 
 	maskin=mask[:,indYlat[i],indXlon[i]]
@@ -916,7 +916,11 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,tim
     return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,maskin,valmitint
 
 def linearregressionSave(filt,var,coast):
-
+	if coast == 'smooth':
+		startday=1
+	elif coast == 'original':
+		startday=2
+	
 	hej=[35,54,79,120,154,194,219]  
 	corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] 
 	
@@ -937,6 +941,7 @@ def linearregressionSave(filt,var,coast):
 		
 		for l in np.arange(0,25,1):
 			if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
+				print('Mode ' + str(l))
 				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
 				u.append(uo.imag) 
 				v.append(vo)
@@ -948,17 +953,22 @@ def linearregressionSave(filt,var,coast):
 				epe=np.append(epe,epeo)
 				eke=np.append(eke,ekeo)
 			
+<<<<<<< HEAD
 			dirn='/home/athelandersson/NETCDFs/' + str(coast)
 			dirw='/home/athelandersson/NETCDFs/' + str(coast)
+=======
+			dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
+			dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'
+>>>>>>> 440afcf (newfile)
 			if var == 'PHIHYD':
-				dsw,dsn=loadNetCDFs(dirw,dirn,'phiHyd')
+				dsw,dsn=loadNetCDFs(dirw,dirn,'phiHyd',startday)
 			else:
-				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars')
+				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars',startday)
 			
 		
 		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
 		
-		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P2.mat')
+		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P.mat')
 		dist,indXlon,indYlat=matfile['dist'][ik],matfile['indexXlon'][ik],matfile['indexYlat'][ik]
 		
 		Z=dsw[0].Zl.values
