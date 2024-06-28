@@ -1,0 +1,16 @@
+name: SVB_A
+channels:
+  - defaults
+dependencies:
+  - dask
+  - scipy
+  - xarray
+  - python
+  - jupyterlab
+  - matplotlib
+  - seaborn
+  - ffmpeg
+  - netcdf4
+  - cartopy
+prefix: /home/athelandersson/.conda/envs
+
