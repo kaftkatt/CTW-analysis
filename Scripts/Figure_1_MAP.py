@@ -141,6 +141,6 @@ ax2.text(-0.3, 1.05, '(b)', fontweight='bold',
          color='k', transform=ax2.transAxes)
 fig.tight_layout()
 
-plt.savefig('map.png')
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/map.png')
 
 
