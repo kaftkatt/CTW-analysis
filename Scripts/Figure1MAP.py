@@ -1,6 +1,5 @@
 from xmitgcm import open_mdsdataset
 from matplotlib.gridspec import GridSpec
-from matplotlib.gridspec import GridSpecFromSubplotSpec
 from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
@@ -8,14 +7,9 @@ from SVBfunc import loadNetCDFs
 
 import cmocean as cmo
 import matplotlib.pyplot as plt
-import xarray as xr
 import numpy as np
 import scipy.io as sio
 import pylab as pl
-import warnings
-
-
-warnings.filterwarnings('ignore')
 import cartopy.mpl.geoaxes
 
 
