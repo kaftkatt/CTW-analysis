@@ -132,8 +132,8 @@ ax.contour(LON,LAT,depth, colors=['0.2','0.6'],
 ax.set(ylabel=ylab)
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
-ax.text(-0.1,1.2, '(b)', transform=ax.transAxes)
+ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(-0.1,1.2, '(a)', transform=ax.transAxes)
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -149,8 +149,8 @@ ax.contour(LON,LAT,depth, colors=['0.2','0.6'],
 ax.set(ylabel=ylab)
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel2[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
-ax.text(-0.1,1.05, '(d)', transform=ax.transAxes)
+ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel2[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(-0.1,1.05, '(c)', transform=ax.transAxes)
 
 
 ax.set_xlim(-122,-114) 
@@ -168,8 +168,8 @@ ax.contour(LON,LAT,depth, colors=['0.2','0.6'],
 ax.set(xlabel=xlab)
 ax.set(ylabel=ylab)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel3[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
-ax.text(-0.1,1.05, '(f)', transform=ax.transAxes)
+ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel3[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(-0.1,1.05, '(e)', transform=ax.transAxes)
 
 
 ax.set_xlim(-122,-114) 
@@ -241,8 +241,8 @@ ax.set_xlim(-122,-114)
 ax.set_ylim(27,35.3)
 ax.set_aspect(1)
 
-cbar_ax = fig.add_axes([1, 0.15, 0.03, 0.7])
-fig.colorbar(cax, cax=cbar_ax)
-cbar_ax.set_ylabel(ctitle)
+
+cb_ax = fig.add_axes([.91,.124,.04,.754])
+fig.colorbar(cax,orientation='vertical',cax=cb_ax)
 
 plt.savefig('/home/athelandersson/CTW-analysis/Figures/both/fig2WWEL.png')
