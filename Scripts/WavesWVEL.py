@@ -12,8 +12,8 @@ coast = 'smooth'
 
 i=0
 varname='dynVars'
-pathn='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
-pathw='/home/athelandersson/NETCDFs/'+ str(coast) +'_NO/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathn='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathw='/home/athelandersson/NETCDFs/'+ str(coast) +'/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
         
 dsw  = xr.open_dataset(pathw)
 dsn = xr.open_dataset(pathn)
@@ -26,8 +26,8 @@ TIMEvel=time*1e-9
 
 i2=2
 varname='dynVars'
-pathn2='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw2='/home/athelandersson/NETCDFs/'+ str(coast) +'_NO/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathn2='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathw2='/home/athelandersson/NETCDFs/'+ str(coast) +'/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
         
 dsw2  = xr.open_dataset(pathw2)
 dsn2 = xr.open_dataset(pathn2)
@@ -39,8 +39,8 @@ TIMEvel2=time2*1e-9
 
 i2=6
 varname='dynVars'
-pathn3='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw3='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathn3='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathw3='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
         
 dsw3  = xr.open_dataset(pathw3)
 dsn3 = xr.open_dataset(pathn3)
@@ -55,8 +55,8 @@ coast = 'original'
 
 i=0
 varname='dynVars'
-pathn='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
-pathw='/home/athelandersson/NETCDFs/'+ str(coast) +'_NO/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathn='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
+pathw='/home/athelandersson/NETCDFs/'+ str(coast) +'/'+ str(varname)+'withSVB'+ str(2+i)+'_'+ str(3+i) +'.nc'
         
 dswo  = xr.open_dataset(pathw)
 dsno = xr.open_dataset(pathn)
@@ -69,8 +69,8 @@ TIMEvelo=timeo*1e-9
 
 i2=2
 varname='dynVars'
-pathn2='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw2='/home/athelandersson/NETCDFs/'+ str(coast) +'_NO/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathn2='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathw2='/home/athelandersson/NETCDFs/'+ str(coast) +'/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
         
 dsw2o  = xr.open_dataset(pathw2)
 dsn2o = xr.open_dataset(pathn2)
@@ -82,8 +82,8 @@ TIMEvel2o=time2o*1e-9
 
 i2=6
 varname='dynVars'
-pathn3='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw3='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathn3='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
+pathw3='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
         
 dsw3o  = xr.open_dataset(pathw3)
 dsn3o = xr.open_dataset(pathn3)
