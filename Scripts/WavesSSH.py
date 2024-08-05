@@ -11,11 +11,11 @@ from SVBfunc import haversine
 coast = 'smooth'
 
 pathETA='/home/athelandersson/NETCDFs/'+ str(coast) + '/ETA.nc'
-pathmask='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/etanoSVB1_2.nc'
+pathmask='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/etanoSVB2_3.nc'
 dsn=xr.open_dataset(pathmask)
 dsETA= xr.open_dataset(pathETA)
 
-etafiltall=dsETA.ETAfiltall.values
+etafiltall=dsETA.VALfilt.values
 LON=dsETA.x.values
 LAT=dsETA.y.values
 TIME=dsETA.time.values
@@ -32,10 +32,10 @@ coast = 'original'
 pathETA='/home/athelandersson/NETCDFs/'+ str(coast) + '/ETA.nc'
 dsETA= xr.open_dataset(pathETA)
 
-pathmask='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/etanoSVB1_2.nc'
+pathmask='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/etanoSVB2_3.nc'
 dsn=xr.open_dataset(pathmask)
 
-etafiltallo=dsETA.ETAfiltall.values
+etafiltallo=dsETA.VALfilt.values
 TIMEo=dsETA.time.values
 hFacCo = dsn.hFacC.values
 
@@ -96,7 +96,6 @@ ax.contour(LON,LAT,depth,  colors=['0.2','0.6'],
 
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 ax.set(ylabel=ylab)
-cbar_ax.set_label('SSH [mm]')
 
 ax.text(-0.1,1.05, '(c)', transform=ax.transAxes)
 ax.text(0.4,0.87, f'Surface \nDay {TIME[ind2]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
@@ -114,7 +113,6 @@ ax.contour(LON,LAT,depth,  colors=['0.2','0.6'],
 
 
 ax.set(xlabel=xlab, ylabel=ylab)
-cbar_ax.set_label('SSH [mm]')
 
 ax.text(-0.1,1.05, '(e)', transform=ax.transAxes)
 ax.text(0.4,0.87, f'Surface \nDay {TIME[ind3]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
