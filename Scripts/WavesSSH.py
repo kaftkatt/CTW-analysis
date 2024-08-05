@@ -75,12 +75,7 @@ cax = ax.pcolormesh(LON,LAT,np.ma.masked_array(etafiltall[ind,:,:]*1000, mask=ma
 ax.contour(LON,LAT,depth,  colors=['0.2','0.6'], 
                 levels=[0,500])
 
-divider = make_axes_locatable(ax)
-axdiv = divider.new_vertical(size = '5%', pad = 0.5)
-fig.add_axes(axdiv)
-cbar_ax = plt.colorbar(cax, cax=axdiv,orientation='horizontal')
-cbar_ax.ax.xaxis.set_label_position("top")
-cbar_ax.set_label('SSH [mm]')
+
 
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 ax.set( ylabel=ylab)
@@ -182,5 +177,9 @@ ax.text(-0.1,1.05, '(f)', transform=ax.transAxes)
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
 ax.set_aspect(1)
+
+cb_ax = fig.add_axes([.91,.124,.04,.754])
+fig.colorbar(cax,orientation='vertical',cax=cb_ax)
+cb_ax.set_label('SSH [mm]')
 
 plt.savefig('/home/athelandersson/CTW-analysis/Figures/both/fig2SSH.png')
