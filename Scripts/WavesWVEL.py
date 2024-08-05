@@ -244,5 +244,6 @@ ax.set_aspect(1)
 
 cb_ax = fig.add_axes([.91,.124,.04,.754])
 fig.colorbar(cax,orientation='vertical',cax=cb_ax)
+cb_ax.set_label(ctitle)
 
 plt.savefig('/home/athelandersson/CTW-analysis/Figures/both/fig2WWEL.png')
