@@ -5,7 +5,7 @@ coast='original'
 
 hej=[35,54,79,120,154,194,219]  
 corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
-varlist=['PHIHYD','UVEL','VVEL','WVEL','ashore','cshore']
+varlist= ['ashore','cshore'] #['PHIHYD','UVEL','VVEL','WVEL','ashore','cshore']
 
 dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
 dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'
