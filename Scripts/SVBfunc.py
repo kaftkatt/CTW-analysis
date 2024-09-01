@@ -735,7 +735,91 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 
 			VALMITpre[len(dsw[tt-1].PHIHYD[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
 			print('Day '+str(tt+2))
-				
+	if var=='cshore':
+		print('crosshore')
+		pathETA='/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
+		ds= xr.open_dataset(pathETA)
+		
+		lon_ac=ds.lonAC.values
+		lat_ac=ds.latAC.values
+		distAC=ds.dist.values
+	
+		
+		LAT = dsw[0].YC
+		LON = dsw[0].XC - 360
+		
+		ind=i
+
+		lon1=LON[lon_ac[ind]]
+		lat1=LAT[lat_ac[ind]]
+		lon2=LON[-1]
+		lat2=LAT[lat_ac[ind]]
+		a=haversine(lon1, lat1, lon2, lat2)
+		
+		lon3=LON[-1]
+		lat3=LAT[0]
+		
+		b=haversine(lon2, lat2, lon3, lat3)
+		
+		deg=-atan(a/b)
+
+			
+		for tt in np.arange(0,9,1):
+	    		
+			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+				    
+			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1):
+				VALb=(cos(deg) * dsw[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]] - dsw[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]*sin(deg))
+				VALn=(cos(deg) * dsn[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]] - dsn[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]*sin(deg))
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+			
+	if var=='ashore':
+		print('alongshore')
+		pathETA='/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
+		ds= xr.open_dataset(pathETA)
+		
+		lon_ac=ds.lonAC.values
+		lat_ac=ds.latAC.values
+		distAC=ds.dist.values
+	
+		
+		LAT = dsw[0].YC
+		LON = dsw[0].XC - 360
+		
+		ind=i
+
+		lon1=LON[lon_ac[ind]]
+		lat1=LAT[lat_ac[ind]]
+		lon2=LON[-1]
+		lat2=LAT[lat_ac[ind]]
+		a=haversine(lon1, lat1, lon2, lat2)
+		
+		lon3=LON[-1]
+		lat3=LAT[0]
+		
+		b=haversine(lon2, lat2, lon3, lat3)
+		
+		deg=-atan(a/b)
+		R1=LON*cos(deg)-LAT*sin(deg)
+		R2=LON*sin(deg)+LAT*cos(deg)
+			
+		for tt in np.arange(0,9,1):
+	    		
+			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+				    
+			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1):
+				VALb=(sin(deg) * dsw[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]] +  dsw[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]] * cos(deg))
+				VALn=(sin(deg) * dsn[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]] +  dsn[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]] * cos(deg))
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+	
 				
 	VALfilt=np.zeros(np.shape(VALMITpre))
 	
