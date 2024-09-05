@@ -1076,9 +1076,9 @@ def linearregressionSave(filt,var,coast):
 		
 		if var == 'PHIHYD':
 			valinBrink=p
-		elif var == 'VVEL':
+		elif var == 'ashore':
 			valinBrink=v
-		elif var == 'UVEL':
+		elif var == 'cshore':
 			valinBrink=u
 		elif var == 'WVEL':
 			valinBrink=w
