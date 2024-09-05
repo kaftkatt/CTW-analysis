@@ -657,18 +657,31 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	hFacC = dsw[0].hFacC
 	hfac = np.ma.masked_values(hFacC, 0)
 	mask = np.ma.getmask(hfac)
-
-	time12=dsw[0].time.values.astype(int)
-	time23=dsw[1].time.values.astype(int)
-	time34=dsw[2].time.values.astype(int)
-	time45=dsw[3].time.values.astype(int)
-	time56=dsw[4].time.values.astype(int)
-	time67=dsw[5].time.values.astype(int)
-	time78=dsw[6].time.values.astype(int)
-	time89=dsw[7].time.values.astype(int)
-	time910=dsw[8].time.values.astype(int)
-
-	Time=np.concatenate((time12,time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+	if coast == 'smooth':
+		day=9
+		time12=dsw[0].time.values.astype(int)
+		time23=dsw[1].time.values.astype(int)
+		time34=dsw[2].time.values.astype(int)
+		time45=dsw[3].time.values.astype(int)
+		time56=dsw[4].time.values.astype(int)
+		time67=dsw[5].time.values.astype(int)
+		time78=dsw[6].time.values.astype(int)
+		time89=dsw[7].time.values.astype(int)
+		time910=dsw[8].time.values.astype(int)
+		
+		Time=np.concatenate((time12, time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+	else:
+		day=8
+		time23=dsw[0].time.values.astype(int)
+		time34=dsw[1].time.values.astype(int)
+		time45=dsw[2].time.values.astype(int)
+		time56=dsw[3].time.values.astype(int)
+		time67=dsw[4].time.values.astype(int)
+		time78=dsw[5].time.values.astype(int)
+		time89=dsw[6].time.values.astype(int)
+		time910=dsw[7].time.values.astype(int)
+		
+		Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#
 
 	times=Time*1e-9
 	
@@ -764,7 +777,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		deg=-atan(a/b)
 
 			
-		for tt in np.arange(0,9,1):
+		for tt in np.arange(0,day,1):
 	    		
 			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
 				    
@@ -807,7 +820,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		R1=LON*cos(deg)-LAT*sin(deg)
 		R2=LON*sin(deg)+LAT*cos(deg)
 			
-		for tt in np.arange(0,9,1):
+		for tt in np.arange(0,day,1):
 	    		
 			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
 				    
