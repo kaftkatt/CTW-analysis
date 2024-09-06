@@ -657,6 +657,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	hFacC = dsw[0].hFacC
 	hfac = np.ma.masked_values(hFacC, 0)
 	mask = np.ma.getmask(hfac)
+	
 	if coast == 'smooth':
 		day=9
 		time12=dsw[0].time.values.astype(int)
@@ -670,6 +671,7 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		time910=dsw[8].time.values.astype(int)
 		
 		Time=np.concatenate((time12, time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+		times=Time*1e-9
 	else:
 		day=8
 		time23=dsw[0].time.values.astype(int)
@@ -682,14 +684,18 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		time910=dsw[7].time.values.astype(int)
 		
 		Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#
-
-	times=Time*1e-9
+		inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
+		times=Time[inds]*1e-9
+	
 	
 	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P.mat')
 	x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
 
 	maskin=mask[:,indYlat[i],indXlon[i]]
-	VALMITpre=np.zeros((len(Time),np.size(maskin[:,0]),np.size(maskin[0,:])))
+	if coast == 'original': 
+		VALMITpre=np.zeros((72*5+144*3,np.size(maskin[:,0]),np.size(maskin[0,:])))
+	elif coast == 'smooth':
+		VALMITpre=np.zeros((len(Time),np.size(maskin[:,0]),np.size(maskin[0,:])))
 	if var=='UVEL':
 		print('u')
 		for tt in np.arange(0,9,1):
@@ -833,7 +839,9 @@ def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
 			print('Day '+str(tt+2))
 	
-				
+	if coast == 'original': 
+		VALMITpre=VALMITpre[inds]
+		
 	VALfilt=np.zeros(np.shape(VALMITpre))
 	
 	if filt==1:
