@@ -36,8 +36,8 @@ lon_ac=ds.lonAC.values
 lat_ac=ds.latAC.values
 distAC=ds.dist.values
 
-#hej2=[35,54,79,120,154,194,219]
-hej2=np.arange(1,len(lon_ac)-1,1)
+hej2=[35,54,79,120,154,194,219]
+#hej2=np.arange(1,len(lon_ac)-1,1)
 
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
@@ -58,14 +58,17 @@ dep=[]
 
 for ind in hej2:
 	
-	lon1=LON[lon_ac[ind-1]]
-	lat1=LAT[lat_ac[ind-1]]
-	lon2=LON[lon_ac[ind-1]]
-	lat2=LAT[lat_ac[ind+1]]
+	lon1=LON[lon_ac[ind-2]]
+	lat1=LAT[lat_ac[ind-2]]
+	lon2=LON[lon_ac[ind-2]]
+	lat2=LAT[lat_ac[ind+2]]
 	a=SVBfunc.haversine(lon1, lat1, lon2, lat2)
-	
-	lon3=LON[lon_ac[ind+1]]
-	lat3=LAT[lat_ac[ind+1]]
+	print(LON[lon_ac[ind-2]].values)
+	print(LON[lon_ac[ind+2]].values)
+	print(LAT[lat_ac[ind-2]].values)
+	print(LAT[lat_ac[ind+2]].values)
+	lon3=LON[lon_ac[ind+2]]
+	lat3=LAT[lat_ac[ind+2]]
 	
 	b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
 	
