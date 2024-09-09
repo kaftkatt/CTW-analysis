@@ -1,9 +1,8 @@
 import SVBfunc
 import xarray as xr
-COASTS=['original','smooth']
+COASTS=['original'] #,'smooth']
 
 for coast in COASTS:
-	
 	hej=[35,54,79,120,154,194,219]  
 	corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
 	varlist= ['ashore','cshore'] #['PHIHYD','UVEL','VVEL','WVEL','ashore','cshore']

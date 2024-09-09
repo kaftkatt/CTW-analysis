@@ -1001,10 +1001,7 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,tim
     RMSE=np.zeros((len(time)))
     for t in np.arange(0,len(time),1):
             print(str(time[t]))
-            if np.logical_and(coast == 'original', filt == 'filt'):
-                VALmit=ds.VAL2[t,:,:].values
-            else:
-                VALmit=ds.VAL[t,:,:].values
+            VALmit=ds.VAL[t,:,:].values
             beta_hat,yhat,xbeta,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint=lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,maskin)
             VALfit[t,:,:]=valout
             betas[t,:]=beta_hat
@@ -1029,8 +1026,8 @@ def linearregressionSave(filt,var,coast):
 	elif coast == 'original':
 		startday=2
 	
-	hej=[35,54,79,120,154,194,219]  
-	corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] 
+	hej=[35] #,54,79,120,154,194,219]  
+	corrinds=[30.49] #,30.77,31.13,31.69,32.11,32.65,33.02] 
 	
 	
 	for ik in np.arange(0,len(hej),1):
@@ -1077,10 +1074,7 @@ def linearregressionSave(filt,var,coast):
 		dist,indXlon,indYlat=matfile['dist'][ik],matfile['indexXlon'][ik],matfile['indexYlat'][ik]
 		
 		Z=dsw[0].Zl.values
-		if np.logical_and(coast == 'original', filt == 'filt'):
-			TIME=ds.time2.values
-		else:
-			TIME=ds.time.values
+		TIME=ds.time.values
 		
 		if var == 'PHIHYD':
 			valinBrink=p
