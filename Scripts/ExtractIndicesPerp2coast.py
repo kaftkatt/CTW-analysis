@@ -97,7 +97,7 @@ Loni=LON[indlon].values
 dist_array = np.zeros(len(Lati)-1)
 
 p=0
-for jj,ii in (range(len(Lati)-1),range(len(Loni)-1)):
+for jj,ii in zip(range(len(Lati)-1),range(len(Loni)-1)):
     lat1 = Lati[jj]
     lon1 = Loni[ii]
     lat2 = Lati[jj+1]
