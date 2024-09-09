@@ -16,20 +16,8 @@ from scipy.io import savemat
 import SVBfunc
 
 from math import radians, cos, sin, asin, sqrt, atan, degrees, log
-i=0
 
-#hej=[55,80,195,220] 
-#hejVEL=np.zeros(4)
-#for i in range(4):
-#	hejVEL[i]=np.where(lat_acVEL==lat_ac[hej[i]])[0][0]
-	#hej[i]=np.where(lat_ac==indYlat[i][0]+1)[0][0]
-
-#hejVEL=hejVEL.astype(int) 
-
-
-
-
-coast='original'
+coast='smooth'
 if coast == 'original':
 	tstart=0
 	indstart=2
@@ -68,68 +56,70 @@ iniY=[]
 dist=[]
 dep=[]
 
-for i in hej2:
-	ind=i
-	
-	lon1=LON[lon_ac[ind]]
-	lat1=LAT[lat_ac[ind]]
-	lon2=LON[-1]
-	lat2=LAT[lat_ac[ind]]
-	a=SVBfunc.haversine(lon1, lat1, lon2, lat2)
-	
-	lon3=LON[-1]
-	lat3=LAT[0]
-	
-	b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
-	
-	deg=-atan(a/b)
-	R1=LON*cos(deg)-LAT*sin(deg)
-	R2=LON*sin(deg)+LAT*cos(deg)
-	
-	startX=R1.sel(XC=LON[lon_ac[ind]]+360,YC=LAT[lat_ac[ind]])
-	startY=R2.sel(XC=LON[lon_ac[ind]]+360,YC=LAT[lat_ac[ind]])
-	
-	indexX,indexY=np.where(np.isnan(R2.where(R2==startY).values)==False)
-	
-	Rcoast = R1[indexX,indexY]
-	
-	LONIN=R1[:indexX[0],indexY]
-	
-	LATIN=R2[(np.ones(len(R1[:indexX[0],indexY]))*indexX).astype(int),(indexY).astype(int)]
-	
-	R1Back=np.flip(LONIN.values*cos(-deg)-LATIN.values*sin(-deg))
-	R2Back=np.flip(LONIN.values*sin(-deg)+LATIN.values*cos(-deg))
-	
-	indlon=np.flip(np.where(np.logical_and(LON>min(R1Back),LON<max(R1Back)))[0])
-	indlat=np.flip(np.where(np.logical_and(LAT>min(R2Back),LAT<max(R2Back)))[0])                 	
-	
-	Lati=LAT[indlat].values
-	Loni=LON[indlon].values
-	
-	dist_array = np.zeros(len(Lati)-1)
-	
-	for jj in range(len(Lati)-1):
-		lat1 = Lati[jj]
-		lon1 = Loni[jj]
-		lat2 = Lati[jj+1]
-		lon2 = Loni[jj+1]
-		dist_array[jj]=  SVBfunc.haversine(lat1, lon1, lat2, lon2)
-	
-	
-	dist_rot = np.cumsum(dist_array)
-	dist_rot = np.insert(dist_rot,0,0)
-	
-	if np.any(dist_rot>=100):
-		hunKm=np.where(dist_rot>=100)[0][0]
-	else:
-		hunKm=len(dist_rot)
 
-	iniX.append(indlon[:hunKm])
-	iniY.append(indlat[:hunKm])
-	dist.append(dist_rot[:hunKm])
-	deppre=depth.values[indlat[:hunKm],indlon[:hunKm]]
-	dep.append(deppre[np.argpartition(deppre,range(10))])
-	
+ind=hej2[0]
+
+lon1=LON[lon_ac[ind-1]]
+lat1=LAT[lat_ac[ind-1]]
+lon2=LON[lon_ac[ind-1]]
+lat2=LAT[lat_ac[ind+1]]
+a=SVBfunc.haversine(lon1, lat1, lon2, lat2)
+
+lon3=LON[lon_ac[ind+1]]
+lat3=LAT[lat_ac[ind+1]]
+
+b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
+
+deg=-atan(a/b)
+R1=LON*cos(deg)-LAT*sin(deg)
+R2=LON*sin(deg)+LAT*cos(deg)
+
+startX=R1.sel(XC=LON[lon_ac[ind]]+360,YC=LAT[lat_ac[ind]])
+startY=R2.sel(XC=LON[lon_ac[ind]]+360,YC=LAT[lat_ac[ind]])
+
+indexX,indexY=np.where(np.isnan(R2.where(R2==startY).values)==False)
+
+Rcoast = R1[indexX,indexY]
+
+LONIN=R1[:indexX[0],indexY]
+
+LATIN=R2[(np.ones(len(R1[:indexX[0],indexY]))*indexX).astype(int),(indexY).astype(int)]
+
+R1Back=np.flip(LONIN.values*cos(-deg)-LATIN.values*sin(-deg))
+R2Back=np.flip(LONIN.values*sin(-deg)+LATIN.values*cos(-deg))
+
+indlon=np.flip(np.where(np.logical_and(LON>min(R1Back),LON<max(R1Back)))[0])
+indlat=np.flip(np.where(np.logical_and(LAT>min(R2Back),LAT<max(R2Back)))[0])                 	
+
+Lati=LAT[indlat].values
+Loni=LON[indlon].values
+
+dist_array = np.zeros(len(Lati)-1)
+
+p=0
+for jj,ii in (range(len(Lati)-1),range(len(Loni)-1)):
+    lat1 = Lati[jj]
+    lon1 = Loni[ii]
+    lat2 = Lati[jj+1]
+    lon2 = Loni[ii+1]
+    dist_array[p]=  SVBfunc.haversine(lat1, lon1, lat2, lon2)
+    p=p+1
+
+
+dist_rot = np.cumsum(dist_array)
+dist_rot = np.insert(dist_rot,0,0)
+
+if np.any(dist_rot>=100):
+    hunKm=np.where(dist_rot>=100)[0][0]
+else:
+    hunKm=len(dist_rot)
+
+iniX.append(indlon[:hunKm])
+iniY.append(indlat[:hunKm])
+dist.append(dist_rot[:hunKm])
+deppre=depth.values[indlat[:hunKm],indlon[:hunKm]]
+dep.append(deppre[np.argpartition(deppre,range(10))])
+
 
 
 
