@@ -58,15 +58,17 @@ dep=[]
 
 for ind in hej2:
 	
-	lon1=LON[lon_ac[ind-2]]
-	lat1=LAT[lat_ac[ind-2]]
-	lon2=LON[lon_ac[ind-2]]
-	lat2=LAT[lat_ac[ind+2]]
+	lon1=LON[lon_ac[ind-10]]
+	lat1=LAT[lat_ac[ind-10]]
+	lon2=LON[lon_ac[ind-10]]
+	lat2=LAT[lat_ac[ind+10]]
 	a=SVBfunc.haversine(lon1, lat1, lon2, lat2)
-	print(LON[lon_ac[ind-2]].values)
-	print(LON[lon_ac[ind+2]].values)
-	print(LAT[lat_ac[ind-2]].values)
-	print(LAT[lat_ac[ind+2]].values)
+	
+	print(LON[lon_ac[ind-10]].values)
+	print(LON[lon_ac[ind+10]].values)
+	print(LAT[lat_ac[ind-10]].values)
+	print(LAT[lat_ac[ind+10]].values)
+	
 	lon3=LON[lon_ac[ind+2]]
 	lat3=LAT[lat_ac[ind+2]]
 	
@@ -115,6 +117,12 @@ for ind in hej2:
 	    hunKm=np.where(dist_rot>=100)[0][0]
 	else:
 	    hunKm=len(dist_rot)
+	
+	if hunKm>=len(indlon):
+		hunKm=len(indlon)
+	elif hunKm>=len(indlat):
+		hunKm=len(indlat)
+	
 	
 	iniX.append(indlon[:hunKm])
 	iniY.append(indlat[:hunKm])
