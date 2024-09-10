@@ -36,8 +36,8 @@ lon_ac=ds.lonAC.values
 lat_ac=ds.latAC.values
 distAC=ds.dist.values
 
-hej2=[35,54,79,120,154,194,219]
-#hej2=np.arange(1,len(lon_ac)-1,1)
+#hej2=[35,54,79,120,154,194,219]
+hej2=np.arange(10,len(lon_ac)-10,1)
 
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
@@ -74,7 +74,7 @@ for ind in hej2:
 	
 	b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
 	
-	deg=-atan(a/b)
+	deg=atan(b/a)
 	R1=LON*cos(deg)-LAT*sin(deg)
 	R2=LON*sin(deg)+LAT*cos(deg)
 	
@@ -128,7 +128,7 @@ for ind in hej2:
 	iniY.append(indlat[:hunKm])
 	dist.append(dist_rot[:hunKm])
 	deppre=depth.values[indlat[:hunKm],indlon[:hunKm]]
-	dep.append(deppre[np.argpartition(deppre,range(10))])
+	dep.append(deppre)
 
 
 
