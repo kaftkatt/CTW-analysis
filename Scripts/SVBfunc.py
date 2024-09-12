@@ -611,9 +611,24 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 			
 			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
 			print('Day '+str(tt+2))
-	elif np.logical_or(var=='UVEL',var=='VVEL'): 
+			
+	else: 
+		print(var)
+		for tt in np.arange(0,day,1):
+	    		
+			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+				    
+			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1):
+				exec (f'VALb=recenter(dsw[tt].{VAR}[t],Z,LON,LAT,lon,lat)')
+				exec (f'VALn=recenter(dsn[tt].{VAR}[t],Z,LON,LAT,lon,lat)')
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+			VALMITpre[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+
 		
-		
+
 
 def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 
