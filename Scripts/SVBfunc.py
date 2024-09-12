@@ -536,120 +536,84 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
-
-def ExtractAndFiltCrossect(i,dsw,dsn,filt,detrend,var,corrind):
-
-	Z=dsw[0].Zl.values
-	hFacC = dsw[0].hFacC
-	hfac = np.ma.masked_values(hFacC, 0)
-	mask = np.ma.getmask(hfac)
+def recenter(vel,Z,LON,LAT,lon,lat):
+	recent=np.zeros(len(Z),np.shape(vel[0,:])
 	
-	matfile=loadmat('BT_P.mat')
-	x,dep,indXlon,indYlat=matfile['dist'],matfile['d'],matfile['indexXlon'],matfile['indexYlat']
+	for d in range(len(Z)):
+		interp=sciint.RegularGridInterpolator((LAT,LON),vel.values[d])
+		Recent[d]=interp(lat,lon)
+	
+	return Recent
 
-	maskin=mask[:,indYlat[i],indXlon[i]]
-	VALMITpre=np.zeros((72*5+144*3,np.size(maskin[:,0]),np.size(maskin[0,:])))
-	if var=='UVEL':
-		print('u')
-		for tt in np.arange(0,8,1):
+def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
+	
+	Z=dsw[0].Z.values
+	LAT = dsw[0].YC.values
+	LON = dsw[0].XC.values - 360
+	
+	if coast == 'smooth':
+		day=9
+		time12=dsw[0].time.values.astype(int)
+		time23=dsw[1].time.values.astype(int)
+		time34=dsw[2].time.values.astype(int)
+		time45=dsw[3].time.values.astype(int)
+		time56=dsw[4].time.values.astype(int)
+		time67=dsw[5].time.values.astype(int)
+		time78=dsw[6].time.values.astype(int)
+		time89=dsw[7].time.values.astype(int)
+		time910=dsw[8].time.values.astype(int)
+		
+		Time=np.concatenate((time12, time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
+		times=Time*1e-9
+	else:
+		day=8
+		time23=dsw[0].time.values.astype(int)
+		time34=dsw[1].time.values.astype(int)
+		time45=dsw[2].time.values.astype(int)
+		time56=dsw[3].time.values.astype(int)
+		time67=dsw[4].time.values.astype(int)
+		time78=dsw[5].time.values.astype(int)
+		time89=dsw[6].time.values.astype(int)
+		time910=dsw[7].time.values.astype(int)
+		
+		Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#
+		inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
+		times=Time[inds]*1e-9
+	
+	
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P.mat')
+	x,dep,lon,lat,deg=matfile['dist'],matfile['d'],matfile['lon'],matfile['lat'],matfile['degree']
+
+	
+	
+	VALMITpre=np.zeros((len(times), len(Z),len(lon)))
+	
+	if np.logical_or(var=='ashore',var=='cshore'):
+		print(var)
+		pathETA='/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
+		ds= xr.open_dataset(pathETA)
+			
+		for tt in np.arange(0,day,1):
 	    		
 			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
 				    
-			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1):
-				VALb=dsw[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALn=dsn[tt].UVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALmit=VALb-VALn
-				VALMIT[t,:,:]=VALmit
-			
-			if tt<=2:
-				VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
-				print('Day '+str(tt+2))
-			else:
-				VALMITpre[432+len(VALMIT[:,1,1])*(tt-3):432+len(VALMIT[:,1,1])*(tt-2),:,:]=VALMIT
-				print('Day '+str(tt+2))
-	elif var=='VVEL':
-		print('v')
-		for tt in np.arange(0,8,1):
-			VALMIT=np.zeros((len(dsw[tt].VVEL[:,1,1,1]),len(Z),len(indXlon[i])))
-				    
-			for t in np.arange(0,len(dsw[tt].VVEL[:,1,1,1]),1):
-				VALb=dsw[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALn=dsn[tt].VVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALmit=VALb-VALn
-				VALMIT[t,:,:]=VALmit
-			
-			if tt<=2:
-				VALMITpre[len(dsw[tt-1].VVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
-				print('Day '+str(tt+2))
-			else:
-				VALMITpre[432+len(VALMIT[:,1,1])*(tt-3):432+len(VALMIT[:,1,1])*(tt-2),:,:]=VALMIT        
-				print('Day '+str(tt+2))
-	elif var=='WVEL':
-		print('w')
-		for tt in np.arange(0,8,1):
-			VALMIT=np.zeros((len(dsw[tt].WVEL[:,1,1,1]),len(Z),len(indXlon[i])))
-				    
-			for t in np.arange(0,len(dsw[tt].WVEL[:,1,1,1]),1):
-				VALb=dsw[tt].WVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALn=dsn[tt].WVEL[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALmit=VALb-VALn
-				VALMIT[t,:,:]=VALmit
-			
-			if tt<=2:
-				VALMITpre[len(dsw[tt-1].WVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
-				print('Day '+str(tt+2))
-			else:
-				VALMITpre[432+len(VALMIT[:,1,1])*(tt-3):432+len(VALMIT[:,1,1])*(tt-2),:,:]=VALMIT        
-				print('Day '+str(tt+2))	
-	elif var=='PHIHYD':
-		print('phi')
-		for tt in np.arange(0,8,1):
-			VALMIT=np.zeros((len(dsw[tt].PHIHYD[:,1,1,1]),len(Z),len(indXlon[i])))
-			for t in np.arange(0,len(dsw[tt].PHIHYD[:,1,1,1]),1):
-				VALb=dsw[tt].PHIHYD[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALn=dsn[tt].PHIHYD[t,:,:,:].values[:,indYlat[i],indXlon[i]]
-				VALmit=VALb-VALn
-				VALMIT[t,:,:]=VALmit
-		
-			if tt<=2:
-				VALMITpre[len(dsw[tt-1].PHIHYD[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
-				print('Day '+str(tt+2))
-			else:
-				VALMITpre[432+len(VALMIT[:,1,1])*(tt-3):432+len(VALMIT[:,1,1])*(tt-2),:,:]=VALMIT
-				print('Day '+str(tt+2))
+			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1)					
+
+				Ub=recenter(dsw[tt].UVEL[t],Z,LON,LAT,lon,lat)
+				Vb=recenter(dsw[tt].VVEL[t],Z,LON,LAT,lon,lat)
+				Un=recenter(dsn[tt].UVEL[t],Z,LON,LAT,lon,lat)
+				Vn=recenter(dsn[tt].VVEL[t],Z,LON,LAT,lon,lat)
 				
-	VALfilt=np.zeros(np.shape(VALMITpre))
-	VALfilttwe=np.zeros((72*8,np.size(VALMITpre[0,:,0]),np.size(VALMITpre[0,0,:])))
-	
-	if filt==1:
-		fs=1/1200
-		fs2=1/600
-		print('Filtering begins')
-		for d in np.arange(np.size(VALMITpre,2)):
-	    		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
-	    		VALfilttwe[:,:,d]=VALfiltAll
-	    		VALfilt[:,:,d]=VALfiltout
-	else:
-		print('No filtering')
-		VALfilt = 0
-		VALfilttwe=0
-		inds=0
-
-	time23=dsw[0].time.values.astype(int)
-	time34=dsw[1].time.values.astype(int)
-	time45=dsw[2].time.values.astype(int)
-	time56=dsw[3].time.values.astype(int)
-	time67=dsw[4].time.values.astype(int)
-	time78=dsw[5].time.values.astype(int)
-	time89=dsw[6].time.values.astype(int)
-	time910=dsw[7].time.values.astype(int)
-
-	Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#, time910), axis=0)
-
-	times=Time*1e-9
-	
-
-	return(VALfilt,VALfilttwe,VALMITpre,x[i],Z,times,times[inds])
+				VALb=(sin(deg) * Ub +  Vb * cos(deg))
+				VALn=(sin(deg) * Un +  Vb * cos(deg))
+				VALmit=VALb-VALn
+				VALMIT[t,:,:]=VALmit
+			
+			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			print('Day '+str(tt+2))
+	elif np.logical_or(var=='UVEL',var=='VVEL'): 
+		
+		
 
 def ExtractAndFiltCrossectNEW(i,dsw,dsn,filt,detrend,var,corrind,coast):
 
