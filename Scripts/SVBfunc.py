@@ -616,9 +616,9 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		print(var)
 		for tt in np.arange(0,day,1):
 	    		
-			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+			VALMIT=np.zeros(times,len(Z),len(indXlon[i])))
 				    
-			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1):
+			for t in np.arange(0,times,1):
 				exec (f'VALb=recenter(dsw[tt].{VAR}[t],Z,LON,LAT,lon,lat)')
 				exec (f'VALn=recenter(dsn[tt].{VAR}[t],Z,LON,LAT,lon,lat)')
 				VALmit=VALb-VALn
