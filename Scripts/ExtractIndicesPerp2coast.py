@@ -235,6 +235,6 @@ for i in range(len(hej2)):
 fig.tight_layout()
 
 if len(hej2)>20:
-	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL.png')	
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png')	
 else:
-	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp.png')	
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp_res' + str(nr) + '.png')	
