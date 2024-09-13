@@ -6,6 +6,7 @@ import pylab as pl
 import scipy.signal as sig
 import scipy.io as sio
 import scipy.interpolate as sciint
+from scipy.interpolate import RegularGridInterpolator
 from xmitgcm import open_mdsdataset
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
@@ -18,6 +19,9 @@ import SVBfunc
 from math import radians, cos, sin, asin, sqrt, atan, degrees, log
 
 coast='smooth'
+nr=30 #The larger the number the larger the distance over which the angle is calculated
+#Thus the less accurate the angle. 
+
 if coast == 'original':
 	tstart=0
 	indstart=2
@@ -32,12 +36,12 @@ dsw, dsn = SVBfunc.loadNetCDFs(dirw, dirn, 'phiHyd',indstart)
 pathETA='/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
 ds= xr.open_dataset(pathETA)
 
-lon_ac=ds.lonAC.values
-lat_ac=ds.latAC.values
+lon_ac=ds.lonAC.values-1
+lat_ac=ds.latAC.values-1
 distAC=ds.dist.values
 
 #hej2=[35,54,79,120,154,194,219]
-hej2=np.arange(10,len(lon_ac)-10,1)
+hej2=np.arange(nr,len(lon_ac)-nr,1)
 
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
@@ -51,93 +55,90 @@ mask = np.ma.getmask(hfa)
 depth = dsw[0].Depth
 depthno = dsn[0].Depth
 
-iniX=[]
-iniY=[]
+interp = RegularGridInterpolator((LAT.values,LON.values), depth.values)
+
+lonNew=[]
+latNew=[]
 dist=[]
 dep=[]
+degree=[]
+finNR=[]
 
 for ind in hej2:
-	
-	lon1=LON[lon_ac[ind-10]]
-	lat1=LAT[lat_ac[ind-10]]
-	lon2=LON[lon_ac[ind-10]]
-	lat2=LAT[lat_ac[ind+10]]
-	a=SVBfunc.haversine(lon1, lat1, lon2, lat2)
-	
-	print(LON[lon_ac[ind-10]].values)
-	print(LON[lon_ac[ind+10]].values)
-	print(LAT[lat_ac[ind-10]].values)
-	print(LAT[lat_ac[ind+10]].values)
-	
-	lon3=LON[lon_ac[ind+2]]
-	lat3=LAT[lat_ac[ind+2]]
-	
-	b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
-	
-	deg=atan(b/a)
-	R1=LON*cos(deg)-LAT*sin(deg)
-	R2=LON*sin(deg)+LAT*cos(deg)
-	
-	startX=R1.sel(XC=LON[lon_ac[ind]]+360,YC=LAT[lat_ac[ind]])
-	startY=R2.sel(XC=LON[lon_ac[ind]]+360,YC=LAT[lat_ac[ind]])
-	
-	indexX,indexY=np.where(np.isnan(R2.where(R2==startY).values)==False)
-	
-	Rcoast = R1[indexX,indexY]
-	
-	LONIN=R1[:indexX[0],indexY]
-	
-	LATIN=R2[(np.ones(len(R1[:indexX[0],indexY]))*indexX).astype(int),(indexY).astype(int)]
-	
-	R1Back=np.flip(LONIN.values*cos(-deg)-LATIN.values*sin(-deg))
-	R2Back=np.flip(LONIN.values*sin(-deg)+LATIN.values*cos(-deg))
-	
-	indlon=np.flip(np.where(np.logical_and(LON>min(R1Back),LON<max(R1Back)))[0])
-	indlat=np.flip(np.where(np.logical_and(LAT>min(R2Back),LAT<max(R2Back)))[0])                 	
-	
-	Lati=LAT[indlat].values
-	Loni=LON[indlon].values
-	
-	dist_array = np.zeros(len(Lati)-1)
-	
-	p=0
-	for jj,ii in zip(range(len(Lati)-1),range(len(Loni)-1)):
-	    lat1 = Lati[jj]
-	    lon1 = Loni[ii]
-	    lat2 = Lati[jj+1]
-	    lon2 = Loni[ii+1]
-	    dist_array[p]=  SVBfunc.haversine(lat1, lon1, lat2, lon2)
-	    p=p+1
-	
-	
-	dist_rot = np.cumsum(dist_array)
-	dist_rot = np.insert(dist_rot,0,0)
-	
-	if np.any(dist_rot>=100):
-	    hunKm=np.where(dist_rot>=100)[0][0]
-	else:
-	    hunKm=len(dist_rot)
-	
-	if hunKm>=len(indlon):
-		hunKm=len(indlon)
-	elif hunKm>=len(indlat):
-		hunKm=len(indlat)
-	
-	
-	iniX.append(indlon[:hunKm])
-	iniY.append(indlat[:hunKm])
-	dist.append(dist_rot[:hunKm])
-	deppre=depth.values[indlat[:hunKm],indlon[:hunKm]]
-	dep.append(deppre)
+    nr=30
+    lon1=LON[lon_ac[ind-nr]]
+    lat1=LAT[lat_ac[ind-nr]]
+    lon2=LON[lon_ac[ind-nr]]
+    lat2=LAT[lat_ac[ind+nr]]
+    
+    a=SVBfunc.haversine(lon1, lat1, lon2, lat2) 
+     
+    lon3=LON[lon_ac[ind+nr]]
+    lat3=LAT[lat_ac[ind+nr]]
+    
+    b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
+    
+    if lon1 == lon3: 
+        deg=0
+    elif lat1==lat3:
+        deg=radians(270)
+    else:
+        deg=-atan(a/b)
+    
+    print(deg)
+    
+    R1=LON*cos(deg)-LAT*sin(deg)
+    R2=LON*sin(deg)+LAT*cos(deg)
+    indexX,indexY=np.where(np.logical_and(dsw.XC==LON[lon_ac[ind]]+360,dsw.YC==LAT[lat_ac[ind]]))
+    
+    Rcoast = R1[indexX,indexY]
+    
+    LONIN=np.arange(np.min(R1),R1[indexX,indexY],dsw.XC[1].values-dsw.XC[0].values)
+    LATIN=np.ones(len(LONIN))*R2[indexX,indexY].values[0,0]
+    
+    R1Back=np.flip(LONIN*cos(-deg)-LATIN*sin(-deg))
+    R2Back=np.flip(LONIN*sin(-deg)+LATIN*cos(-deg))
+    
+    
+    dist_array = np.zeros(len(R1Back)-1)
+    
+    p=0
+    for jj in range(len(R1Back)-1):
+        lat1 = R2Back[jj]
+        lon1 = R1Back[jj]
+        lat2 = R2Back[jj+1]
+        lon2 = R1Back[jj+1]
+        dist_array[p]=  SVBfunc.haversine(lat1, lon1, lat2, lon2)
+        p=p+1
+    
+    dist_rot = np.cumsum(dist_array)
+    dist_rot = np.insert(dist_rot,0,0)
+    
+    if np.any(dist_rot>=100):
+        hunKm=np.where(dist_rot>=100)[0][0]
+    else:
+        hunKm=len(dist_rot)
+    if hunKm>=len(R1Back):
+        hunKm=len(R1Back)
+    elif hunKm>=len(R1Back):
+        hunKm=len(R1Back)
+    
+    
+    lonNew.append(R1Back[:hunKm])
+    latNew.append(R2Back[:hunKm])
+    dist.append(dist_rot[:hunKm])
+    
+    deppre=interp((latNew[l],lonNew[l]))
+    dep.append(deppre)
+    degree.append(deg)
+    l=l+1
 
 
-
-
-mdic = {"dist": dist, "d":dep, 'indexXlon':iniX,'indexYlat':iniY }
+mdic = {"dist": dist, "d":dep, 'lon':lonNew,'lat':latNew, 'degree':degree }
 if len(hej2)>20:
-	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_PALL.mat", mdic)
+	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_PALL_res" + str(nr) + ".mat", mdic)
 else:
-	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_P.mat", mdic)
+	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_P_res" + str(nr) + ".mat", mdic)
 
 
 pathVEL='/home/athelandersson/NETCDFs/' + str(coast) + '/WVELAC.nc'
@@ -195,12 +196,12 @@ ax1.set_ylabel('Depth [m]')
 
 for i in range(len(dep)):
 	if len(hej2)>20:
-		ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,linewidth=2)
+		ax.scatter(lonNew[i],latNew[i],linewidth=2)
 		ax1.plot(dist[i],-dep[i],linewidth=2)
 	else:
-                ax.scatter(LON[iniX[i]].values,LAT[iniY[i]].values,color=colors[i],linewidth=2)
-                ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2)
-
+                ax.scatter(lonNew[i],latNew[i],color=colors[i],linewidth=2)
+                ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2,label=f'{LAT[lat_ac[hej2[0]]].values:.2f} °N')
+		ax1.legend()
 
 ax1.text(-0.1, 1.02, '(b)', fontweight='bold', color='k', 
         transform=ax1.transAxes)
