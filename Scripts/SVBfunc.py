@@ -582,7 +582,7 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
 	
 	
 	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P_res' + str(nr) + '.mat')
-	x,dep,lon,lat,deg=matfile['dist'],matfile['d'],matfile['lon'],matfile['lat'],matfile['degree']
+	x,dep,lon,lat,deg=matfile['dist'][0][i][0],matfile['d'][0][i][0],matfile['lon'][0][i][0],matfile['lat'][0][i][0],matfile['degree'][0][i]
 
 	
 	
