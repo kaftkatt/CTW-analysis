@@ -537,15 +537,15 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
 def recenter(vel,Z,LON,LAT,lon,lat):
-	recent=np.zeros(len(Z),np.shape(vel[0,:])
+	Recent=np.zeros((len(Z),len(lat)))
 	
 	for d in range(len(Z)):
 		interp=sciint.RegularGridInterpolator((LAT,LON),vel.values[d])
-		Recent[d]=interp(lat,lon)
+		Recent[d]=interp((lat,lon))
 	
 	return Recent
 
-def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
+def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
 	
 	Z=dsw[0].Z.values
 	LAT = dsw[0].YC.values
@@ -577,11 +577,11 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		time910=dsw[7].time.values.astype(int)
 		
 		Time=np.concatenate((time23, time34, time45, time56,time67, time78,time89, time910), axis=0)#
-		inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
-		times=Time[inds]*1e-9
+		#inds=np.append(np.arange(0,433,2),np.arange(433,792,1))
+		times=Time*1e-9
 	
 	
-	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P.mat')
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P_res' + str(nr) + '.mat')
 	x,dep,lon,lat,deg=matfile['dist'],matfile['d'],matfile['lon'],matfile['lat'],matfile['degree']
 
 	
@@ -595,9 +595,9 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 			
 		for tt in np.arange(0,day,1):
 	    		
-			VALMIT=np.zeros((len(dsw[tt].UVEL[:,1,1,1]),len(Z),len(indXlon[i])))
+			VALMIT=np.zeros((len(times),len(Z),len(lon[i])))
 				    
-			for t in np.arange(0,len(dsw[tt].UVEL[:,1,1,1]),1)					
+			for t in np.arange(0,len(times),1):					
 
 				Ub=recenter(dsw[tt].UVEL[t],Z,LON,LAT,lon,lat)
 				Vb=recenter(dsw[tt].VVEL[t],Z,LON,LAT,lon,lat)
@@ -609,14 +609,14 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 				VALmit=VALb-VALn
 				VALMIT[t,:,:]=VALmit
 			
-			VALMITpre[len(dsw[tt-1].UVEL[:,1,1,1])*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			VALMITpre[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
 			print('Day '+str(tt+2))
 			
 	else: 
 		print(var)
 		for tt in np.arange(0,day,1):
 	    		
-			VALMIT=np.zeros(times,len(Z),len(indXlon[i])))
+			VALMIT=np.zeros((len(times),len(Z),len(lon[i])))
 				    
 			for t in np.arange(0,times,1):
 				exec (f'VALb=recenter(dsw[tt].{VAR}[t],Z,LON,LAT,lon,lat)')

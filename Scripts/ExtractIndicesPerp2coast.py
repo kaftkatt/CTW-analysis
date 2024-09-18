@@ -40,8 +40,8 @@ lon_ac=ds.lonAC.values-1
 lat_ac=ds.latAC.values-1
 distAC=ds.dist.values
 
-#hej2=[35,54,79,120,154,194,219]
-hej2=np.arange(nr,len(lon_ac)-nr,1)
+hej2=[35,54,79,120,154,194,219]
+#hej2=np.arange(nr,len(lon_ac)-nr,1)
 
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
@@ -57,6 +57,8 @@ depthno = dsn[0].Depth
 
 interp = RegularGridInterpolator((LAT.values,LON.values), depth.values)
 
+l=0
+
 lonNew=[]
 latNew=[]
 dist=[]
@@ -65,14 +67,13 @@ degree=[]
 finNR=[]
 
 for ind in hej2:
-    nr=30
     lon1=LON[lon_ac[ind-nr]]
     lat1=LAT[lat_ac[ind-nr]]
     lon2=LON[lon_ac[ind-nr]]
     lat2=LAT[lat_ac[ind+nr]]
     
     a=SVBfunc.haversine(lon1, lat1, lon2, lat2) 
-     
+    
     lon3=LON[lon_ac[ind+nr]]
     lat3=LAT[lat_ac[ind+nr]]
     
@@ -89,11 +90,11 @@ for ind in hej2:
     
     R1=LON*cos(deg)-LAT*sin(deg)
     R2=LON*sin(deg)+LAT*cos(deg)
-    indexX,indexY=np.where(np.logical_and(dsw.XC==LON[lon_ac[ind]]+360,dsw.YC==LAT[lat_ac[ind]]))
+    indexX,indexY=np.where(np.logical_and(dsw[0].XC==LON[lon_ac[ind]]+360,dsw[0].YC==LAT[lat_ac[ind]]))
     
     Rcoast = R1[indexX,indexY]
     
-    LONIN=np.arange(np.min(R1),R1[indexX,indexY],dsw.XC[1].values-dsw.XC[0].values)
+    LONIN=np.arange(np.min(R1),R1[indexX,indexY],dsw[0].XC[1].values-dsw[0].XC[0].values)
     LATIN=np.ones(len(LONIN))*R2[indexX,indexY].values[0,0]
     
     R1Back=np.flip(LONIN*cos(-deg)-LATIN*sin(-deg))
@@ -199,8 +200,8 @@ for i in range(len(dep)):
 		ax.scatter(lonNew[i],latNew[i],linewidth=2)
 		ax1.plot(dist[i],-dep[i],linewidth=2)
 	else:
-                ax.scatter(lonNew[i],latNew[i],color=colors[i],linewidth=2)
-                ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2,label=f'{LAT[lat_ac[hej2[0]]].values:.2f} °N')
+		ax.scatter(lonNew[i],latNew[i],color=colors[i],linewidth=2)
+		ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2,label=f'{LAT[lat_ac[hej2[0]]].values:.2f} °N')
 		ax1.legend()
 
 ax1.text(-0.1, 1.02, '(b)', fontweight='bold', color='k', 
