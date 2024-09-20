@@ -25,14 +25,18 @@ levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 file = sio.loadmat('N2_lin.mat')
 N2 = file['N2']
 z = np.arange(0, -3500, -10)
+if coast == 'smooth':
+	pathw = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
+	pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
+	data_dirWITH = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
+elif coast == 'originial':
+	pathw = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01_SVB_febTS_output/'
+	pathn = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL/01_noSVB_febTS/'
+	data_dirWITH = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01b_SVB_febTS_output/'
 
-exp10_512x612x100_straight_SVB
 
-data_dirWITH = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
-data_dirNO = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
-
-dsw = open_mdsdataset(data_dirWITH, data_dirWITH, prefix=['eta'], default_dtype='>f4', levels=levels)
-dsn = open_mdsdataset(data_dirNO, data_dirNO, prefix=['eta'], default_dtype='>f4', levels=levels)
+dsw = open_mdsdataset(pathw, pathw, prefix=['eta'], default_dtype='>f4', levels=levels)
+dsn = open_mdsdataset(pathn, pathn, prefix=['eta'], default_dtype='>f4', levels=levels)
 
 LAT = dsw.YC
 LON = dsw.XC - 360
@@ -41,7 +45,7 @@ hFacC = dsw.hFacC
 hfa = np.ma.masked_values(hFacC[0, :, :], 0)
 mask = np.ma.getmask(hfa)
 
-data_dirWITH = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
+
 dswr = open_mdsdataset(data_dirWITH, data_dirWITH, prefix=['rhoRef'], default_dtype='>f4', levels=levels)
 
 depth = dsw.Depth
@@ -51,6 +55,10 @@ rho = dswr.rhoRef
 ind_lon = [-115.11813068276555, -115.939167, -116.605833, -117.1625, -118.24368, -119.714167, -120.471439,
            -120.7586085906775]
 ind_lat = [27.850440699318973, 30.556389, 31.857778, 32.715, 34.05223, 34.425833, 34.448113, 35.17364705813524]
+
+matfile=loadmat( str(coast) + '/BT_P_res30.mat')
+lon,lat=matfile['lon'][0],matfile['lat'][0]
+
 
 params = {'font.size': 16,
             'figure.figsize': (14, 8),
@@ -65,13 +73,13 @@ ax = fig.add_subplot(gs[0:, 0])
 ax.set_facecolor('tan')
 
 pc = ax.contourf(LON, LAT, np.ma.masked_array(depth, mask=mask), 50,
-                 vmin=0, vmax=5000, cmap=cmo.cm.deep) 
+                 vmin=0, vmax=5000, cmap=cmo.cm.deep, zorder=1) 
 
 cb = plt.colorbar(pc)  
 cn = ax.contour(LON, LAT, depth, colors=['0.2', '0.4', '0.6', '0.8'],
-                levels=[200, 500, 1000, 2000])
+                levels=[200, 500, 1000, 2000], zorder=2)
 cb.set_label('Depth [m]')
-ax.contour(LON[0,:], LAT[:,0], depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5)
+ax.contour(LON[0,:], LAT[:,0], depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5, zorder=3)
 
 axins = inset_axes(ax, width="28%", height="28%", loc='upper right',
                    axes_class=cartopy.mpl.geoaxes.GeoAxes,
@@ -84,6 +92,15 @@ axins.stock_img()
 
 axins.plot(LON, np.ones_like(LON) * 35.3, 's', color='r', markersize=14, fillstyle='none',
            transform=cartopy.crs.Orthographic(-118, 30.7))
+
+if linesperpcoast==1:
+	colors=[ '#4daf4a', '#a65628', '#984ea3',
+                   '#e41a1c', '#dede00','#377eb8'
+       ,'#ff7f00','#f781bf','#999999','tab:blue']
+
+	for i in range(len(dep)):
+		ax.scatter(lon[i][0],lat[i][0],color=colors[i],linewidth=1, zorder=4)
+
 
 for kk, ll, lab in zip(ind_lon, ind_lat,
                        ['Punta \n Eugenia', 'San Quintín', 'Ensenada', 'San Diego', 'Los Angeles', 'Santa Barbara',
