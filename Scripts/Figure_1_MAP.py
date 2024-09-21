@@ -12,6 +12,8 @@ import scipy.io as sio
 import pylab as pl
 import cartopy.mpl.geoaxes
 
+coast='original'
+linesperpcoast=1
 
 levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
           11, 12, 13, 14, 15, 16, 17,
@@ -22,14 +24,14 @@ levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
           58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
           74, 79, 84, 89, 94, 99, ]
           
-file = sio.loadmat('N2_lin.mat')
+file = sio.loadmat('/home/athelandersson/CTW-analysis/Files/Older/N2_lin.mat')
 N2 = file['N2']
 z = np.arange(0, -3500, -10)
 if coast == 'smooth':
 	pathw = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
 	pathn = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth/01_febTS_1000x'
 	data_dirWITH = '/data/SO2/sio-kramosmusalem/exp11_512x612x100_smooth_SVB/01_febTS_1000x'
-elif coast == 'originial':
+elif coast == 'original':
 	pathw = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01_SVB_febTS_output/'
 	pathn = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL/01_noSVB_febTS/'
 	data_dirWITH = '/data/SO2/sio-kramosmusalem/exp06_512x612x100_ORL_SVB/01b_SVB_febTS_output/'
@@ -56,7 +58,7 @@ ind_lon = [-115.11813068276555, -115.939167, -116.605833, -117.1625, -118.24368,
            -120.7586085906775]
 ind_lat = [27.850440699318973, 30.556389, 31.857778, 32.715, 34.05223, 34.425833, 34.448113, 35.17364705813524]
 
-matfile=loadmat( str(coast) + '/BT_P_res30.mat')
+matfile=sio.loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P_res30.mat')
 lon,lat=matfile['lon'][0],matfile['lat'][0]
 
 
@@ -79,7 +81,7 @@ cb = plt.colorbar(pc)
 cn = ax.contour(LON, LAT, depth, colors=['0.2', '0.4', '0.6', '0.8'],
                 levels=[200, 500, 1000, 2000], zorder=2)
 cb.set_label('Depth [m]')
-ax.contour(LON[0,:], LAT[:,0], depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5, zorder=3)
+ax.contour(LON, LAT, depthno, levels=[0], colors='brown', linestyles=':', linewidths=2.5, zorder=3)
 
 axins = inset_axes(ax, width="28%", height="28%", loc='upper right',
                    axes_class=cartopy.mpl.geoaxes.GeoAxes,
@@ -98,7 +100,7 @@ if linesperpcoast==1:
                    '#e41a1c', '#dede00','#377eb8'
        ,'#ff7f00','#f781bf','#999999','tab:blue']
 
-	for i in range(len(dep)):
+	for i in range(len(lon)):
 		ax.scatter(lon[i][0],lat[i][0],color=colors[i],linewidth=1, zorder=4)
 
 
@@ -121,7 +123,7 @@ for kk, ll, lab in zip(ind_lon, ind_lat,
 ax.text(0.93, 0.17, 'SVB', fontsize=24, horizontalalignment='center', fontweight='bold',
         transform=ax.transAxes)
         
-ax.plot(LON[0,45], LAT[40,0], '*', color='gold', markersize=20, markeredgecolor='w')
+ax.plot(LON[45], LAT[40], '*', color='gold', markersize=20, markeredgecolor='w')
 
 ax.text(0.08, 0.75, 'Santa \n Barbara \n Channel', color='w', fontsize=15, transform=ax.transAxes,
         fontweight='demibold', horizontalalignment='center')
@@ -158,6 +160,6 @@ ax2.text(-0.3, 1.05, '(b)', fontweight='bold',
          color='k', transform=ax2.transAxes)
 fig.tight_layout()
 
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/map.png')
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + 'map' + str(linesperpcoast) + '.png')
 
 
