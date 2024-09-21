@@ -109,18 +109,18 @@ for kk, ll, lab in zip(ind_lon, ind_lat,
                         'Point Conception', 'Port San Luis']):
 	ax.plot(kk, ll, 'o',markersize=14, color='r', markeredgecolor='k',zorder=5)
 	if lab == 'Point Conception':
-		ax.text(kk - 0.06, ll + 0.25, lab, fontsize=16)
+		ax.text(kk - 0.06, ll + 0.25, lab, fontsize=14)
 	elif lab == 'Santa Barbara':
-		ax.text(kk + 0.2, ll - 0.05, lab, fontsize=16)
+		ax.text(kk + 0.2, ll - 0.05, lab, fontsize=14)
 	elif lab == 'Port San Luis':
-		ax.text(kk + 0.2, ll - 0.1, lab, fontsize=16)
+		ax.text(kk + 0.2, ll - 0.1, lab, fontsize=14)
 	elif lab == 'Punta \n Eugenia':
-		ax.text(kk + 0.6, ll - 0.1, lab, fontsize=16, horizontalalignment='center')
+		ax.text(kk + 0.6, ll - 0.1, lab, fontsize=14, horizontalalignment='center')
 	else:
-		ax.text(kk + 0.16, ll - 0.05, lab, fontsize=16)
+		ax.text(kk + 0.16, ll - 0.05, lab, fontsize=14)
 
 
-ax.text(0.93, 0.17, 'SVB', fontsize=22, horizontalalignment='center', fontweight='bold',
+ax.text(0.93, 0.17, 'SVB', fontsize=20, horizontalalignment='center', fontweight='bold',
         transform=ax.transAxes)
         
 ax.plot(LON[45], LAT[40], '*', color='gold', markersize=20, markeredgecolor='w')
