@@ -68,6 +68,8 @@ def loadWVEL(dsw,dsn):
     times=Time*1e-9
       
     return Ww,Wn,times
+
+
 def createNetCDF(coast,prefix, varname):
 	
 	levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -536,6 +538,56 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
+def create_descriptive_file(t, Z, X, var, varname, units filename, title, description):
+    
+    """ This function creates a netCDF4 file for
+    the given variable given the filename and 
+    the time, x and z grid.
+    
+    :arg time: Time in seconds
+    :arg X: Depth 
+    :arg Y: Cross-shore distance
+    :arg var: Variable in question
+    :arg filename: Directory and name of netcdf file
+    :arg title: Title of version
+    :arg description: Details about version
+    """
+    
+    dataset = Dataset(filename, 'w')
+    file_time = dataset.createDimension('time', len(t))
+    file_z = dataset.createDimension('z', len(Z) )
+    file_x = dataset.createDimension('x', len(X) )
+
+    file_X = dataset.createVariable('X', 'f8', ('x'))
+    file_Z = dataset.createVariable('Y', 'f8', ('z'))
+    file_TIME = dataset.createVariable('TIME', 'f8', ('time'))
+	
+    VAR = dataset.createVariable(str(varname), 'f8', ('time','z','x'))
+
+    dataset.title = title
+    dataset.author = 'Amelia Thelandersson'
+    dataset.institution = 'Departamento de Oceanografía Física, Centro de Investigación Científica y de Educación Superior de Ensenada'
+    #dataset.source = 'bitbucket.org/CanyonsUBC/BuildCanyon/Bathymetry/GenerateTankBathymetry_Inserts.ipynb'
+    dataset.description = description
+    dataset.timeStamp = time.ctime(time.time())
+    file_X.standard_name = 'Crosshelf Distance'
+    file_X.units = 'km'
+    file_Z.standard_name = 'Depth'
+    file_Y.units = 'm'
+    file_time.standard_name = 'Time'
+    file_time.units = 'timedelta64[ns]'
+    file_time.calendar = 'gregorian'	
+    VAR.standard_name = str(varname)
+    VAR.units = str(units)
+    #VAR.positive = 'upward'
+
+    file_X[:] = X[:]
+    file_Z[:] = Z[:]
+    file_TIME[:] = t[:]
+    VAR[:] = var[:]
+
+    dataset.close()
+
 def recenter(vel,Z,LON,LAT,lon,lat):
 	Recent=np.zeros((len(Z),len(lat)))
 	
