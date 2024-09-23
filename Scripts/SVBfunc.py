@@ -538,7 +538,7 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
-def create_descriptive_file(t, Z, X, var, varname, units filename, title, description):
+def create_descriptive_file(t, Z, X, var, varname, units, filename, title, description):
     
     """ This function creates a netCDF4 file for
     the given variable given the filename and 
