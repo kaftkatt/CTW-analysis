@@ -612,6 +612,17 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
 
     dataset.close()
 
+def weightedmovingaverage(Data, length):
+    weighted = []
+    for i in range(length,len(Data)-length,1):
+                w=np.arange(0, length, 1)
+                weights=np.append(w,np.flip(w)) # weight matrix
+                matrix = Data[i - length : i + length]
+                matrix = weights * matrix # multiplication
+                wma = (matrix.sum()) / (weights.sum()) # WMA
+                weighted = np.append(weighted, wma) # add to array
+    return weighted
+
 def recenter(vel,Z,LON,LAT,lon,lat):
 	Recent=np.zeros((len(Z),len(lat)))
 	

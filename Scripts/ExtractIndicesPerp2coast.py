@@ -13,11 +13,12 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.gridspec import GridSpec
 from os.path import exists
 
-from scipy.io import savemat
+from scipy.io import savemat, loadmat
 import SVBfunc
 
 from math import radians, cos, sin, asin, sqrt, atan, degrees, log
 
+plotALL=0
 coast='smooth'
 nr=1 #The larger the number the larger the distance over which the angle is calculated
 #Thus the less accurate the angle. 
@@ -56,17 +57,6 @@ depth = dsw[0].Depth
 depthno = dsn[0].Depth
 
 interp = RegularGridInterpolator((LAT.values,LON.values), depth.values)
-
-def weightedmovingaverage(Data, length):
-    weighted = []
-    for i in range(length,len(Data)-length,1):
-                w=np.arange(0, length, 1)
-                weights=np.append(w,np.flip(w)) # weight matrix
-                matrix = Data[i - length : i + length]
-                matrix = weights * matrix # multiplication
-                wma = (matrix.sum()) / (weights.sum()) # WMA
-                weighted = np.append(weighted, wma) # add to array
-    return weighted
 
 shift=30
 lonWeight30=SVBfunc.weightedmovingaverage(LON[lon_ac], shift)
@@ -110,8 +100,6 @@ for ind in range(1,len(lonWeight30)-1,1):
         deg=radians(270)
     else:
         deg=-atan(a/b)
-    
-    print(deg)
     
     R1=LON*cos(deg)-LAT*sin(deg)
     R2=LON*sin(deg)+LAT*cos(deg)
@@ -161,7 +149,7 @@ for ind in range(1,len(lonWeight30)-1,1):
     degree.append(deg)
 
     if np.any(lat_ac[hej2ind]==lat_ac[ind+shift-1]):
-        print(lat_ac[hej2ind])
+        print(LAT[lat_ac[ind+shift-1]])
         lonNewSHORT.append(R1Back[:hunKm])
         latNewSHORT.append(R2Back[:hunKm])
         distSHORT.append(dist_rot[:hunKm])
@@ -177,7 +165,12 @@ mdichej2 = {"dist": distSHORT, "d":depSHORT, 'lon':lonNewSHORT,'lat':latNewSHORT
 
 savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_P_MovAv.mat", mdichej2)
 
-matfile=loadmat( '/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_PtestMOVav.mat')
+if plotALL==1:
+	filenam="/BT_PALL_MovAv.mat"
+else:
+	filenam="/BT_P_MovAv.mat"
+
+matfile=loadmat( '/home/athelandersson/CTW-analysis/Files/' + str(coast) + str(filenam))
 x,dep,lon,lat,deg=matfile['dist'][0],matfile['d'][0],matfile['lon'][0],matfile['lat'][0],matfile['degree'][0]
 
 
@@ -195,6 +188,10 @@ lat_acVEL=dsVEL.latAC.values
 lon_acVEL=dsVEL.lonAC.values
 
 ETA=ds.ValfiltAll.values[tstart:]
+
+colors=[ '#4daf4a', '#a65628', '#984ea3',
+                   '#e41a1c', '#dede00','#377eb8'
+       ,'#ff7f00','#f781bf','#999999','tab:blue']
 
 params = {'font.size': 16,
           'figure.figsize': (11, 12),
