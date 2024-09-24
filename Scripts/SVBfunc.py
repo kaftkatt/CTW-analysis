@@ -657,7 +657,7 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		times=Time*1e-9
 	
 	
-	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_PtestMOVav.mat')
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P_MovAv.mat')
 	x,dep,lon,lat,deg=matfile['dist'][0][i][0],matfile['d'][0][i][0],matfile['lon'][0][i][0],matfile['lat'][0][i][0],matfile['degree'][0][i]
 
 	
