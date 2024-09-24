@@ -19,7 +19,7 @@ import SVBfunc
 from math import radians, cos, sin, asin, sqrt, atan, degrees, log
 
 coast='smooth'
-nr=30 #The larger the number the larger the distance over which the angle is calculated
+nr=1 #The larger the number the larger the distance over which the angle is calculated
 #Thus the less accurate the angle. 
 
 if coast == 'original':
@@ -40,8 +40,8 @@ lon_ac=ds.lonAC.values-1
 lat_ac=ds.latAC.values-1
 distAC=ds.dist.values
 
-hej2=[35,54,79,120,154,194,219]
-#hej2=np.arange(nr,len(lon_ac)-nr,1)
+#hej2=[35,54,79,120,154,194,235]
+hej2=np.arange(nr,len(lon_ac)-nr,1)
 
 LAT = dsw[0].YC
 LON = dsw[0].XC - 360
@@ -57,7 +57,26 @@ depthno = dsn[0].Depth
 
 interp = RegularGridInterpolator((LAT.values,LON.values), depth.values)
 
-l=0
+def weightedmovingaverage(Data, length):
+    weighted = []
+    for i in range(length,len(Data)-length,1):
+                w=np.arange(0, length, 1)
+                weights=np.append(w,np.flip(w)) # weight matrix
+                matrix = Data[i - length : i + length]
+                matrix = weights * matrix # multiplication
+                wma = (matrix.sum()) / (weights.sum()) # WMA
+                weighted = np.append(weighted, wma) # add to array
+    return weighted
+
+shift=30
+lonWeight30=SVBfunc.weightedmovingaverage(LON[lon_ac], shift)
+latWeight30=SVBfunc.weightedmovingaverage(LAT[lat_ac], shift)
+
+hej2ind=np.array((35,54,79,120,154,194,240))
+loc=[]
+for i in hej2ind: 
+    loc.append(np.where(latWeight30>=LAT[lat_ac[i]].values)[0][0])
+
 
 lonNew=[]
 latNew=[]
@@ -66,16 +85,22 @@ dep=[]
 degree=[]
 finNR=[]
 
-for ind in hej2:
-    lon1=LON[lon_ac[ind-nr]]
-    lat1=LAT[lat_ac[ind-nr]]
-    lon2=LON[lon_ac[ind-nr]]
-    lat2=LAT[lat_ac[ind+nr]]
+lonNewSHORT=[]
+latNewSHORT=[]
+distSHORT=[]
+depSHORT=[]
+degreeSHORT=[]
+
+for ind in range(1,len(lonWeight30)-1,1):
+    lon1=lonWeight30[ind-nr]
+    lat1=latWeight30[ind-nr]
+    lon2=lonWeight30[ind-nr]
+    lat2=latWeight30[ind+nr]
     
     a=SVBfunc.haversine(lon1, lat1, lon2, lat2) 
     
-    lon3=LON[lon_ac[ind+nr]]
-    lat3=LAT[lat_ac[ind+nr]]
+    lon3=lonWeight30[ind+nr]
+    lat3=latWeight30[ind+nr]
     
     b=SVBfunc.haversine(lon2, lat2, lon3, lat3)
     
@@ -90,8 +115,8 @@ for ind in hej2:
     
     R1=LON*cos(deg)-LAT*sin(deg)
     R2=LON*sin(deg)+LAT*cos(deg)
-    indexX,indexY=np.where(np.logical_and(dsw[0].XC==LON[lon_ac[ind]]+360,dsw[0].YC==LAT[lat_ac[ind]]))
-    
+    indexX,indexY=np.where(np.logical_and(dsw[0].XC==LON[lon_ac[ind+shift-1]]+360,dsw[0].YC==LAT[lat_ac[ind+shift-1]]))
+   
     Rcoast = R1[indexX,indexY]
     
     LONIN=np.arange(np.min(R1),R1[indexX,indexY],dsw[0].XC[1].values-dsw[0].XC[0].values)
@@ -124,22 +149,36 @@ for ind in hej2:
     elif hunKm>=len(R1Back):
         hunKm=len(R1Back)
     
+    if max(R2Back[:hunKm])>max(LAT):
+        hunKm=np.where(R2Back<max(LAT).values)[0][-1]
     
     lonNew.append(R1Back[:hunKm])
     latNew.append(R2Back[:hunKm])
     dist.append(dist_rot[:hunKm])
     
-    deppre=interp((latNew[l],lonNew[l]))
+    deppre=interp((R2Back[:hunKm],R1Back[:hunKm]))
     dep.append(deppre)
     degree.append(deg)
-    l=l+1
+
+    if np.any(lat_ac[hej2ind]==lat_ac[ind+shift-1]):
+        print(lat_ac[hej2ind])
+        lonNewSHORT.append(R1Back[:hunKm])
+        latNewSHORT.append(R2Back[:hunKm])
+        distSHORT.append(dist_rot[:hunKm])
+        depSHORT.append(deppre)
+        degreeSHORT.append(deg)
 
 
-mdic = {"dist": dist, "d":dep, 'lon':lonNew,'lat':latNew, 'degree':degree }
-if len(hej2)>20:
-	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_PALL_res" + str(nr) + ".mat", mdic)
-else:
-	savemat("/home/athelandersson/CTW-analysis/Files/" + str(coast) + "/BT_P_res" + str(nr) + ".mat", mdic)
+mdicALL = {"dist": dist, "d":dep, 'lon':lonNew,'lat':latNew,'degree':degree }
+
+savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_PALL_MovAv.mat", mdicALL)
+
+mdichej2 = {"dist": distSHORT, "d":depSHORT, 'lon':lonNewSHORT,'lat':latNewSHORT,'degree':degreeSHORT }
+
+savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_P_MovAv.mat", mdichej2)
+
+matfile=loadmat( '/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_PtestMOVav.mat')
+x,dep,lon,lat,deg=matfile['dist'][0],matfile['d'][0],matfile['lon'][0],matfile['lat'][0],matfile['degree'][0]
 
 
 pathVEL='/home/athelandersson/NETCDFs/' + str(coast) + '/WVELAC.nc'
@@ -172,6 +211,8 @@ ax.set_facecolor('tan')
 pc = ax.contourf(LON, LAT, np.ma.masked_array(depth, mask=mask), 50,
 	         vmin=0, vmax=5000, cmap=cmocean.cm.deep) 
 
+
+
 cn = ax.contour(LON, LAT, depth, colors=['0.2', '0.4', '0.6', '0.8'],
 	        levels=[200,500, 1000, 2000])
 ax.contour(LON, LAT, depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5)
@@ -184,25 +225,25 @@ cbar_ax.set_label('Depth [m]')
 ax.set_xlabel('Lon [°]')
 ax.set_ylabel('Lat [°]')
 
+ax.scatter(LON[lon_ac[hej2ind]],LAT[lat_ac[hej2ind]])
+ax.scatter(lonWeight30[loc],latWeight30[loc])
+
 ax.set_aspect(1)
 ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k',transform=ax.transAxes)
 
-colors=[ '#4daf4a', '#a65628', '#984ea3',
-                   '#e41a1c', '#dede00','#377eb8'
-       ,'#ff7f00','#f781bf','#999999','tab:blue']
 
 ax1 = fig.add_subplot(gs[0, 1])
 ax1.set_xlabel('Distance from coast [km]')
 ax1.set_ylabel('Depth [m]')
 
 for i in range(len(dep)):
-	if len(hej2)>20:
-		ax.scatter(lonNew[i],latNew[i],linewidth=2)
-		ax1.plot(dist[i],-dep[i],linewidth=2)
+	if len(hej2ind)>20:
+		ax.scatter(lon[i][0],lat[i][0],linewidth=2)
+		ax1.plot(x[i][0],-dep[i][0],linewidth=2)
 	else:
-		ax.scatter(lonNew[i],latNew[i],color=colors[i],linewidth=2)
-		ax1.plot(dist[i],-dep[i],color=colors[i],linewidth=2,label=f'{LAT[lat_ac[hej2[0]]].values:.2f} °N')
-		ax1.legend()
+                ax.scatter(lon[i][0],lat[i][0],color=colors[i],linewidth=2)
+                ax1.plot(x[i][0],-dep[i][0],color=colors[i],linewidth=2)
+
 
 ax1.text(-0.1, 1.02, '(b)', fontweight='bold', color='k', 
         transform=ax1.transAxes)
@@ -214,11 +255,11 @@ vmax=5
 cbarall=0
 SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(c)')
 
-for i in range(len(hej2)):
-	if len(hej2)>20:
-		ax.axhline(y=distAC[hej2[i]],linewidth=2,alpha=0.7)
+for i in range(len(hej2ind)):
+	if len(hej2ind)>20:
+		ax.axhline(y=distAC[hej2ind[i]],linewidth=2,alpha=0.7)
 	else:
-		ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
+		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=2,alpha=0.7)
 
 ax = fig.add_subplot(gs[1, 1])
 
@@ -227,15 +268,14 @@ vmax=0.2
 cbarall=0
 SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,1,cbarall,'(d)')
 
-for i in range(len(hej2)):
-	if len(hej2)>20:
-		ax.axhline(y=distAC[hej2[i]],linewidth=2,alpha=0.7)
+for i in range(len(hej2ind)):
+	if len(hej2ind)>20:
+		ax.axhline(y=distAC[hej2ind[i]],linewidth=2,alpha=0.7)
 	else:
-		ax.axhline(y=distAC[hej2[i]],color=colors[i],linewidth=2,alpha=0.7)
+		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=2,alpha=0.7)
 
-fig.tight_layout()
 
-if len(hej2)>20:
+if len(dep)>20:
 	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png')	
 else:
 	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp_res' + str(nr) + '.png')	
