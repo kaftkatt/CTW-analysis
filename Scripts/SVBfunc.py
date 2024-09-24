@@ -538,16 +538,17 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
-def create_descriptive_file(t, Z, X, var, varname, units, filename, title, description):
+def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nameShort, units, filename, title, description): 
     
     """ This function creates a netCDF4 file for
     the given variable given the filename and 
     the time, x and z grid.
     
     :arg time: Time in seconds
-    :arg X: Depth 
-    :arg Y: Cross-shore distance
+    :arg Z: Depth 
+    :arg X: Cross-shore distance
     :arg var: Variable in question
+    :arg varfilt: Filtered version of variable in question
     :arg filename: Directory and name of netcdf file
     :arg title: Title of version
     :arg description: Details about version
@@ -559,10 +560,16 @@ def create_descriptive_file(t, Z, X, var, varname, units, filename, title, descr
     file_x = dataset.createDimension('x', len(X) )
 
     file_X = dataset.createVariable('X', 'f8', ('x'))
+    file_lon = dataset.createVariable('LON', 'f8', ('x'))
+    file_lat = dataset.createVariable('LAT', 'f8', ('x'))
+    file_depth = dataset.createVariable('Depth', 'f8', ('x'))
+    file_degree = dataset.createVariable('Degree Rot', 'f8', ('time'))
+	
     file_Z = dataset.createVariable('Y', 'f8', ('z'))
     file_TIME = dataset.createVariable('TIME', 'f8', ('time'))
 	
-    VAR = dataset.createVariable(str(varname), 'f8', ('time','z','x'))
+    VAR = dataset.createVariable(str(nameShort), 'f8', ('time','z','x'))
+    VARFILT = dataset.createVariable('Filt' + str(nameShort), 'f8', ('time','z','x'))
 
     dataset.title = title
     dataset.author = 'Amelia Thelandersson'
@@ -572,19 +579,36 @@ def create_descriptive_file(t, Z, X, var, varname, units, filename, title, descr
     dataset.timeStamp = time.ctime(time.time())
     file_X.standard_name = 'Crosshelf Distance'
     file_X.units = 'km'
+    file_lon.standard_name = 'Longitude'
+    file_lon.units = '°W'	
+    file_lat.standard_name = 'Latitude'
+    file_lat.units = '°N'
+    file_depth.standard_name = 'Depth with distance from coast'
+    file_lon.units = 'm'	
+    file_degree.standard_name = 'Degree of rotation'
+    file_lat.units = 'rad'
+	
     file_Z.standard_name = 'Depth'
     file_Y.units = 'm'
     file_time.standard_name = 'Time'
     file_time.units = 'timedelta64[ns]'
     file_time.calendar = 'gregorian'	
-    VAR.standard_name = str(varname)
+    VAR.standard_name = str(nameLong)
     VAR.units = str(units)
+	
+    VARFILT.standard_name = 'Filtered' + str(nameLong)
+    VARFILT.units = str(units)
     #VAR.positive = 'upward'
 
     file_X[:] = X[:]
     file_Z[:] = Z[:]
     file_TIME[:] = t[:]
+    file_lon[:] = lon[:]
+    file_lat[:] = lat[:]
+    file_degree[:] = deg[:]
+    file_depth[:] = dep[:]
     VAR[:] = var[:]
+    VARFILT[:] = varfilt[:]
 
     dataset.close()
 
@@ -678,7 +702,8 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
 			
 			VALMITpre[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
 			print('Day '+str(tt+2))
-
+			
+	return(VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times)
 		
 
 
