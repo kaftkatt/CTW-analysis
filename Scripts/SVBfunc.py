@@ -563,7 +563,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     file_lon = dataset.createVariable('LON', 'f8', ('x'))
     file_lat = dataset.createVariable('LAT', 'f8', ('x'))
     file_depth = dataset.createVariable('Depth', 'f8', ('x'))
-    file_degree = dataset.createVariable('Degree Rot', 'f8', ('time'))
+    file_degree = dataset.createVariable('Angle Rot', 'f8', ('time'))
 	
     file_Z = dataset.createVariable('Y', 'f8', ('z'))
     file_TIME = dataset.createVariable('TIME', 'f8', ('time'))
@@ -585,7 +585,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     file_lat.units = '°N'
     file_depth.standard_name = 'Depth with distance from coast'
     file_lon.units = 'm'	
-    file_degree.standard_name = 'Degree of rotation'
+    file_degree.standard_name = 'Angle of rotation'
     file_lat.units = 'rad'
 	
     file_Z.standard_name = 'Depth'
