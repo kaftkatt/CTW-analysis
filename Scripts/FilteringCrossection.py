@@ -7,6 +7,7 @@ for nr in NUM:
 		hej=[35,54,79,120,154,194,219]  
 		corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
 		varlist= ['ashore','cshore'] #['PHIHYD','UVEL','VVEL','WVEL','ashore','cshore']
+		varlistLONGNAME= ['Alongshore velocity','Crosshore velocity'] #['Hydrostatic Pressure Pot.(p/rho) Anomaly','U-Velocity','V-Velocity','Vertical Velocity','Alongshore velocity','Crosshore velocity']
 		
 		dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
 		dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'
@@ -15,40 +16,25 @@ for nr in NUM:
 			startday=1
 		elif coast == 'original':
 			startday=2
-	
+		k=0
 		for var in varlist:
+			varname=varlistLONGNAME[k]
+			if var=='PHIHYD':			
+				dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'phiHyd',startday)
+				units=dsw[0].PHIHYD.units
+			else:	
+				dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'dynVars',startday)
+				units='m/s'
+				
 			for i in range(len(hej)):
-				if var=='PHIHYD':			
-					dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'phiHyd',startday)
-				else:	
-					dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'dynVars',startday)
-				
-				VALfilt,VALMITpre,dist,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,corrind,coast,nr)
-				
+				VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,corrind,coast,nr)
 				
 				FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrind[i]) + str (nr) + 'no.nc'
-				ds = xr.Dataset({'VAL': (("time","z","x"), VALMITpre)
-							},
-						coords ={
-						"x" : dist,
-						"z" : Z,
-						 "time": times
-						},
-						)
 				
-				ds.to_netcdf(FILENAME)
-				
-				
-				FILENAMEfilt='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrind[i]) + str(nr) + 'filt.nc'
-				dsf = xr.Dataset({'VAL': (("time","z","x"), VALfilt)
-						    },
-						coords ={
-						"x" : dist,
-						"z" : Z,
-						"time": times
-						},
-						)
-				dsf.to_netcdf(FILENAMEfilt)
-	
+				title = 'Crossection of' + varname
+				description = 'Extracted crossection from MITgcm output. Using the provided longitude and latitude. If crosshore or alongshore velocity is specified they have been calculated from U and V velocity using the provided angle.' 
+				create_descriptive_file(times, Z, dist, dep,lon,lat,deg, VALMITpre, VALfilt, varname, var, units, FILENAME, title, description)
+			
+			k=k+1
 	
 	
