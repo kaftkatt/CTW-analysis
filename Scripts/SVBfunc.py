@@ -621,7 +621,7 @@ def recenter(vel,Z,LON,LAT,lon,lat):
 	
 	return Recent
 
-def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
+def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	
 	Z=dsw[0].Z.values
 	LAT = dsw[0].YC.values
@@ -657,7 +657,7 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
 		times=Time*1e-9
 	
 	
-	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P_res' + str(nr) + '.mat')
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_PtestMOVav.mat')
 	x,dep,lon,lat,deg=matfile['dist'][0][i][0],matfile['d'][0][i][0],matfile['lon'][0][i][0],matfile['lat'][0][i][0],matfile['degree'][0][i]
 
 	
@@ -671,9 +671,9 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
 			
 		for tt in np.arange(0,day,1):
 	    		
-			VALMIT=np.zeros((len(times),len(Z),len(lon[i])))
+			VALMIT=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
 				    
-			for t in np.arange(0,len(times),1):					
+			for t in np.arange(0,len(dsw[tt].time),1):					
 
 				Ub=recenter(dsw[tt].UVEL[t],Z,LON,LAT,lon,lat)
 				Vb=recenter(dsw[tt].VVEL[t],Z,LON,LAT,lon,lat)
@@ -692,9 +692,9 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast,nr):
 		print(var)
 		for tt in np.arange(0,day,1):
 	    		
-			VALMIT=np.zeros((len(times),len(Z),len(lon)))
+			VALMIT=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
 				    
-			for t in np.arange(0,times,1):
+			for t in np.arange(0,dsw[tt].time,1):
 				exec (f'VALb=recenter(dsw[tt].{VAR}[t],Z,LON,LAT,lon,lat)')
 				exec (f'VALn=recenter(dsn[tt].{VAR}[t],Z,LON,LAT,lon,lat)')
 				VALmit=VALb-VALn
