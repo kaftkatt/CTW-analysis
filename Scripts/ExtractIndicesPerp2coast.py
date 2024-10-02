@@ -19,7 +19,7 @@ import SVBfunc
 from math import radians, cos, sin, asin, sqrt, atan, degrees, log
 
 plotALL=0
-coast='smooth'
+coast='original'
 nr=1 #The larger the number the larger the distance over which the angle is calculated
 #Thus the less accurate the angle. 
 

@@ -21,6 +21,7 @@ elif coast == 'original':
 k=0
 for var in varlist:
 	varname=varlistLONGNAME[k]
+	k=k+1
 	if var=='PHIHYD':			
 		dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'phiHyd',startday)
 		units=dsw[0].PHIHYD.units
@@ -35,8 +36,7 @@ for var in varlist:
 		
 		title = 'Crossection of' + varname
 		description = 'Extracted crossection from MITgcm output. Using the provided longitude and latitude. If crosshore or alongshore velocity is specified they have been calculated from U and V velocity using the provided angle.' 
-		create_descriptive_file(times, Z, dist, dep,lon,lat,deg, VALMITpre, VALfilt, varname, var, units, FILENAME, title, description)
-		
-		k=k+1
+		SVBfunc.create_descriptive_file(times, Z, x, dep,lon,lat,deg, VALMITpre, VALfilt, varname, var, units, FILENAME, title, description)
+	
 	
 	

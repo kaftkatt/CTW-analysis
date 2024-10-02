@@ -1,4 +1,5 @@
 import xarray as xr
+import time as tiempo
 import numpy as np
 import matplotlib.pyplot as plt
 import cmocean
@@ -12,6 +13,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from matplotlib.gridspec import GridSpec
 from os.path import exists
 from scipy.io import loadmat
+from netCDF4 import Dataset
 
 from math import radians, cos, sin, asin, sqrt, atan, degrees
 
@@ -576,7 +578,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     dataset.institution = 'Departamento de Oceanografía Física, Centro de Investigación Científica y de Educación Superior de Ensenada'
     #dataset.source = 'bitbucket.org/CanyonsUBC/BuildCanyon/Bathymetry/GenerateTankBathymetry_Inserts.ipynb'
     dataset.description = description
-    dataset.timeStamp = time.ctime(time.time())
+    dataset.timeStamp = tiempo.ctime(tiempo.time())
     file_X.standard_name = 'Crosshelf Distance'
     file_X.units = 'km'
     file_lon.standard_name = 'Longitude'
@@ -584,15 +586,15 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     file_lat.standard_name = 'Latitude'
     file_lat.units = '°N'
     file_depth.standard_name = 'Depth with distance from coast'
-    file_lon.units = 'm'	
+    file_depth.units = 'm'	
     file_degree.standard_name = 'Angle of rotation'
-    file_lat.units = 'rad'
+    file_degree.units = 'rad'
 	
     file_Z.standard_name = 'Depth'
-    file_Y.units = 'm'
-    file_time.standard_name = 'Time'
-    file_time.units = 'timedelta64[ns]'
-    file_time.calendar = 'gregorian'	
+    file_Z.units = 'm'
+    file_TIME.standard_name = 'Time'
+    file_TIME.units = 'timedelta64[ns]'
+    file_TIME.calendar = 'gregorian'	
     VAR.standard_name = str(nameLong)
     VAR.units = str(units)
 	
@@ -605,7 +607,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     file_TIME[:] = t[:]
     file_lon[:] = lon[:]
     file_lat[:] = lat[:]
-    file_degree[:] = deg[:]
+    file_degree[:] = deg
     file_depth[:] = dep[:]
     VAR[:] = var[:]
     VARFILT[:] = varfilt[:]
@@ -713,7 +715,16 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 			
 			VALMITpre[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
 			print('Day '+str(tt+2))
-			
+
+	VALfilt=np.zeros(np.shape(VALMITpre))
+	fs=1/1200
+	fs2=0
+	
+	print('Filtering begins')
+	for d in np.arange(np.size(VALMITpre,2)):
+		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
+		VALfilt[:,:,d]=VALfiltAll
+	
 	return(VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times)
 		
 
