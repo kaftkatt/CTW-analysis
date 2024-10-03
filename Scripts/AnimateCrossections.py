@@ -52,7 +52,7 @@ var='ashore'
 clabelB='Alongshore Velocity [cms$^{-1}$]' 
 colormap=cmocean.cm.balance
 
-file = str(coast) + '/Locations/' + str(var) 
+file = '/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) 
 
 indicing=np.arange(0,648,3)
 
@@ -173,4 +173,4 @@ for ik in [0,3,5]:
     anim = FuncAnimation(fig, partial(animate, VAL=VAL, ik=ik,ax=arrax,caxin=cax,caxin1=cax1,caxin2=cax2),frames=3, repeat=False)
 
 
-    anim.save(str(coast) + '/' + str(var) + str(corrinds[ik]) +'.mp4', writer=writer, dpi=600)
+    anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/' + str(var) + str(corrinds[ik]) +'.mp4', writer=writer, dpi=600)
