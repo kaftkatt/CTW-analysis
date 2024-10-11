@@ -30,8 +30,8 @@ def animate(tt,VAL,ik,ax,caxin,caxin1,caxin2):
     if caxin2 != 0:
         for collll in caxin2.collections: 
             collll.remove
-            caxin2=ax[2].contourf(X[ik+2],Z[ik+2],np.ma.masked_array(VAL[ik+2][tt]*1e4,mask=mask[ik+2]) ,cmap=colormap,levels=levels)
-            ax[2].set_title(f'At {corrinds[ik+2]}°N \n Hour {hour[ik+2][tt]:.1f}', fontdict={'fontsize': 20})
+        caxin2=ax[2].contourf(X[ik+2],Z[ik+2],np.ma.masked_array(VAL[ik+2][tt]*1e4,mask=mask[ik+2]) ,cmap=colormap,levels=levels)
+        ax[2].set_title(f'At {corrinds[ik+2]}°N \n Hour {hour[ik+2][tt]:.1f}', fontdict={'fontsize': 20})
 
     caxin=ax[0].contourf(X[ik],Z[ik],np.ma.masked_array(VAL[ik][tt]*1e4,mask=mask[ik]) ,cmap=colormap,levels=levels)
     caxin1=ax[1].contourf(X[ik+1],Z[ik+1],np.ma.masked_array(VAL[ik+1][tt]*1e4,mask=mask[ik+1]) ,cmap=colormap,levels=levels)
@@ -100,15 +100,15 @@ ylab='Depth [m]'
 
 
 for ik in [0,3,5]:
-  
+    plt.close()
     fig = plt.figure()
     if ik==0:
         gs = GridSpec(nrows=1, ncols=3, width_ratios=[0.9,0.9,1.1],hspace=0.35)
     else: 
         gs = GridSpec(nrows=1, ncols=2, width_ratios=[0.9,1.1],hspace=0.35)
         
-    vmin=-np.nanmax(abs(VAL[ik][t]))*1e4
-    vmax=np.nanmax(abs(VAL[ik][t]))*1e4
+    vmin=-np.nanmax(abs(VAL[ik][24]))*1e4
+    vmax=np.nanmax(abs(VAL[ik][24]))*1e4
 
     levels=np.linspace(vmin,vmax,15)
 
@@ -122,12 +122,6 @@ for ik in [0,3,5]:
     ax.set_ylim([-1000,0])
 
     ax.set(ylabel=ylab,xlabel=xlab)
-
-
-    vmin=-np.nanmax(abs(VAL[ik+1][t]))*1e4
-    vmax=np.nanmax(abs(VAL[ik+1][t]))*1e4
-
-    levels=np.linspace(vmin,vmax,15)
 
     ax1 = fig.add_subplot(gs[0,1])
 
@@ -167,10 +161,7 @@ for ik in [0,3,5]:
         
         arrax=[ax,ax1,ax2]
 
-
-    fig.tight_layout()
-
-    anim = FuncAnimation(fig, partial(animate, VAL=VAL, ik=ik,ax=arrax,caxin=cax,caxin1=cax1,caxin2=cax2),frames=3, repeat=False)
+    anim = FuncAnimation(fig, partial(animate, VAL=VAL, ik=ik,ax=arrax,caxin=cax,caxin1=cax1,caxin2=cax2),frames=len(hour[0]), repeat=False)
 
 
     anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/' + str(var) + str(corrinds[ik]) +'.mp4', writer=writer, dpi=600)
