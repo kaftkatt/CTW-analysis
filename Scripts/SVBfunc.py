@@ -567,7 +567,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     file_depth = dataset.createVariable('Depth', 'f8', ('x'))
     file_degree = dataset.createVariable('Angle Rot', 'f8', ('time'))
 	
-    file_Z = dataset.createVariable('Y', 'f8', ('z'))
+    file_Z = dataset.createVariable('Z', 'f8', ('z'))
     file_TIME = dataset.createVariable('TIME', 'f8', ('time'))
 	
     VAR = dataset.createVariable(str(nameShort), 'f8', ('time','z','x'))
@@ -960,7 +960,7 @@ def get_Brink(file_fig):#,file_h): #, file_ratio):
     
     return(u,v,w,r,p,z,k,omega,xpl, xxx, zzz,zgr.transpose(),xgr.transpose(), epe, eke)
     
-def interpolate(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,mask):
+def interpolate(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr):
     
     #finding the coordinates for all points in the brink variable
     zpib,xpib=np.where(np.array(valinBrink[1])<1000)
@@ -983,7 +983,7 @@ def interpolate(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,mask):
     #Creating a grid of Z which does not include the values in the coast, 
     #similar to the grid from Brink
     grid_Z=np.zeros(np.shape(VALmit))
-    for i in np.arange(0,len(mask[0,:]),1):
+    for i in np.arange(0,len(VALmit[0,:]),1):
 	#finding the indices of the coast at one x-location
         coastz=np.where(VALmit[:,i]!=0) 
         if len(Z[coastz])>0:
@@ -1037,10 +1037,10 @@ def interpolate(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,mask):
     
     return valmit1d,valbrinkR,xpi,zpi,valbrinkint,grid_X,grid_Z,xpi,valmitint
 
-def lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,maskin):
+def lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr):
 
     Ypre,valbrinkR,xpi,zpi,valbrinkint,grid_X,grid_Z,xpi,valmitint=interpolate(VALmit,valinBrink,dist,xpl,
-                                                                              Z,z,zgr,xgr,maskin)
+                                                                              Z,z,zgr,xgr)
     Y=Ypre-np.mean(Ypre)
     
     
@@ -1066,23 +1066,18 @@ def lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,maskin):
     
     return beta_hat,yhat,X,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint
 
-def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,time,coast):
+def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,time,coast,var):
     
-    hFacC = dsw[0].hFacC
-    hfac = np.ma.masked_values(hFacC, 0)
-    mask = np.ma.getmask(hfac)
-
-
-    maskin=mask[:,indYlat,indXlon]
     VALMIT=np.zeros((len(time),len(Z),len(dist)))
     VALfit=np.zeros((len(time),len(Z),len(dist)))
     betas=np.zeros((len(time),len(valinBrink)+1))
     fit=np.zeros((len(time)))
     RMSE=np.zeros((len(time)))
+
     for t in np.arange(0,len(time),1):
             print(str(time[t]))
-            VALmit=ds.VAL[t,:,:].values
-            beta_hat,yhat,xbeta,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint=lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr,maskin)
+	    exec(f'global VALmit; VALmit=ds.{var}[t,:,:].values')
+            beta_hat,yhat,xbeta,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint=lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr)
             VALfit[t,:,:]=valout
             betas[t,:]=beta_hat
             VALMIT[t,:,:]=valmitint
@@ -1100,15 +1095,19 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,tim
     
     return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,maskin,valmitint
 
-def linearregressionSave(filt,var,coast):
+def linearregressionSave(filt,varin,coast):
 	if coast == 'smooth':
 		startday=1
 	elif coast == 'original':
 		startday=2
 	
-	hej=[35] #,54,79,120,154,194,219]  
-	corrinds=[30.49] #,30.77,31.13,31.69,32.11,32.65,33.02] 
-	
+	hej=[35,54,79,120,154,194,219]  
+	corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] 
+
+	if filt=='filt':
+		var= 'Filt' + str(varin)
+	else:
+		var=varin
 	
 	for ik in np.arange(0,len(hej),1):
 		print(str(corrinds[ik]))
@@ -1124,10 +1123,10 @@ def linearregressionSave(filt,var,coast):
 		eke=[]
 		
 		
-		for l in np.arange(0,25,1):
-			if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat') == True:
+		for l in np.arange(0,5,1):
+			if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'freq' + str(l) + '.mat') == True:
 				print('Mode ' + str(l))
-				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'mode' + str(l) + '.mat')	
+				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'freq' + str(l) + '.mat')	
 				u.append(uo.imag) 
 				v.append(vo)
 				w.append(wo.imag)
@@ -1148,13 +1147,11 @@ def linearregressionSave(filt,var,coast):
 				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars',startday)
 			
 		
-		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrinds[ik]) + str(filt)+ '.nc')
-		
-		matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P.mat')
-		dist,indXlon,indYlat=matfile['dist'][ik],matfile['indexXlon'][ik],matfile['indexYlat'][ik]
+		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrinds[ik]) + '.nc')
 		
 		Z=dsw[0].Zl.values
-		TIME=ds.time.values
+		TIME=ds.TIME.values
+		dist=ds.X.values
 		
 		if var == 'PHIHYD':
 			valinBrink=p
@@ -1164,9 +1161,9 @@ def linearregressionSave(filt,var,coast):
 			valinBrink=u
 		elif var == 'WVEL':
 			valinBrink=w
-		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,mask,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,indXlon,indYlat,dist,zgr,xgr,ds,filt,TIME,coast)
+		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,mask,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,TIME,coast,var)
 		
-		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/' + str(var) + '/LinReg' + str(corrinds[ik]) + str(filt)+ '.nc'
+		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/' + str(var) + '/LinReg' + str(corrinds[ik]) + '.nc'
 		ds = xr.Dataset({'valfit': (("time","z","x"), VALfit),
 				 'valmit': (("time","z","x"), VALmit),
 				 'varbrink': (("nrM","z","x"), varbrink),
