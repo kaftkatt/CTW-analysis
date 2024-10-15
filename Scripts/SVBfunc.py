@@ -1076,7 +1076,7 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,time,coast,var):
 
     for t in np.arange(0,len(time),1):
             print(str(time[t]))
-	    exec(f'global VALmit; VALmit=ds.{var}[t,:,:].values')
+            exec(f'global VALmit; VALmit=ds.{var}[t,:,:].values')
             beta_hat,yhat,xbeta,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint=lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr)
             VALfit[t,:,:]=valout
             betas[t,:]=beta_hat
@@ -1093,7 +1093,7 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,time,coast,var):
             fit[t]=100*(ssr/sst)
         
     
-    return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,maskin,valmitint
+    return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint
 
 def linearregressionSave(filt,varin,coast):
 	if coast == 'smooth':
@@ -1141,29 +1141,29 @@ def linearregressionSave(filt,varin,coast):
 			dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
 			dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'
 
-			if var == 'PHIHYD':
+			if varin == 'PHIHYD':
 				dsw,dsn=loadNetCDFs(dirw,dirn,'phiHyd',startday)
 			else:
 				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars',startday)
 			
 		
-		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrinds[ik]) + '.nc')
+		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(varin) + str(corrinds[ik]) + '.nc')
 		
 		Z=dsw[0].Zl.values
 		TIME=ds.TIME.values
 		dist=ds.X.values
 		
-		if var == 'PHIHYD':
+		if varin == 'PHIHYD':
 			valinBrink=p
-		elif var == 'ashore':
+		elif varin == 'ashore':
 			valinBrink=v
-		elif var == 'cshore':
+		elif varin == 'cshore':
 			valinBrink=u
-		elif var == 'WVEL':
+		elif varin == 'WVEL':
 			valinBrink=w
-		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,mask,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,TIME,coast,var)
+		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,TIME,coast,var)
 		
-		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/' + str(var) + '/LinReg' + str(corrinds[ik]) + '.nc'
+		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/' + str(varin) + '/LinReg' + str(corrinds[ik]) + '.nc'
 		ds = xr.Dataset({'valfit': (("time","z","x"), VALfit),
 				 'valmit': (("time","z","x"), VALmit),
 				 'varbrink': (("nrM","z","x"), varbrink),

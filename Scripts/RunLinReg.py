@@ -1,5 +1,5 @@
 import SVBfunc
-VAR=['ashore','cshore'] #['PHIHYD','VVEL','UVEL','WVEL']
+VAR=['PHIHYD','WVEL'] # , ashore]
 FILT=['no','filt']
 #COAST=['smooth','original']
 #for coast in COAST:
