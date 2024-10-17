@@ -988,14 +988,14 @@ def interpolate(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr):
         coastz=np.where(VALmit[:,i]!=0) 
         if len(Z[coastz])>0:
         #creating a vector of the same size as how many
-            places=np.arange(0,76,76/len(Z[coastz]))   
+            places=np.arange(0,len(Z),len(Z)/len(Z[coastz]))   
             #depth values we have that aren't the coast
             #Sometimes the vector became too long 
             if len(places)> len(Z[coastz]):           
                 places=places[:-1] 
             #making sure the last value in the vector of indices 
             #is 71 so we interpolate over the same start and finish vaues
-            places[-1]=76       
+            places[-1]=len(Z)       
             #Interpolating the values that arent the coast
             #to agree with the amount of depth values the 
             # the model outputs. Using the range of indices
@@ -1003,7 +1003,7 @@ def interpolate(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr):
             # that the depth values not on the coast correspond to
             # and then filling the rest with values between these.
              
-            grid_Z[:,i]=np.interp(np.arange(0,76,1),places,Z[coastz])
+            grid_Z[:,i]=np.interp(np.arange(0,len(Z),1),places,Z[coastz])
             
     
     grid_Z[grid_Z==0]=-2                                                              
@@ -1068,15 +1068,21 @@ def lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr):
 
 def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,time,coast,var):
     
+    indX=dist<=50
+    indZ=Z<=1500
+    
+    Z=Z[indZ]
+    dist=dist[indX]
+
     VALMIT=np.zeros((len(time),len(Z),len(dist)))
     VALfit=np.zeros((len(time),len(Z),len(dist)))
     betas=np.zeros((len(time),len(valinBrink)+1))
     fit=np.zeros((len(time)))
     RMSE=np.zeros((len(time)))
-
+    
     for t in np.arange(0,len(time),1):
             print(str(time[t]))
-            exec(f'global VALmit; VALmit=ds.{var}[t,:,:].values')
+            exec(f'global VALmit; VALmit=ds.{var}[t,indZ,indX].values')
             beta_hat,yhat,xbeta,valout,varbrink,grid_X,grid_Z,Y,xpi,Ypre,valmitint=lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr)
             VALfit[t,:,:]=valout
             betas[t,:]=beta_hat
@@ -1147,9 +1153,9 @@ def linearregressionSave(filt,varin,coast):
 				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars',startday)
 			
 		
-		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(varin) + str(corrinds[ik]) + '.nc')
+		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/new/' + str(varin) + str(corrinds[ik]) + '.nc')
 		
-		Z=dsw[0].Zl.values
+		Z=dsw[0].Z.values
 		TIME=ds.TIME.values
 		dist=ds.X.values
 		
@@ -1163,7 +1169,7 @@ def linearregressionSave(filt,varin,coast):
 			valinBrink=w
 		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,TIME,coast,var)
 		
-		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/' + str(varin) + '/LinReg' + str(corrinds[ik]) + '.nc'
+		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Peaks' + str(varin) + '/LinRegPeaks' + str(corrinds[ik]) + str(filt) + '.nc'
 		ds = xr.Dataset({'valfit': (("time","z","x"), VALfit),
 				 'valmit': (("time","z","x"), VALmit),
 				 'varbrink': (("nrM","z","x"), varbrink),
