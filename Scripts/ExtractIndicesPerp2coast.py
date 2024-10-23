@@ -250,7 +250,7 @@ ax = fig.add_subplot(gs[1, 0])
 vmin=-5
 vmax=5
 cbarall=0
-SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,0,cbarall,'(c)')
+SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(c)')
 
 for i in range(len(hej2ind)):
 	if len(hej2ind)>20:
@@ -263,7 +263,7 @@ ax = fig.add_subplot(gs[1, 1])
 vmin=-0.2
 vmax=0.2
 cbarall=0
-SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,1,cbarall,'(d)')
+SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,0,cbarall,'(d)')
 
 for i in range(len(hej2ind)):
 	if len(hej2ind)>20:
