@@ -8,8 +8,8 @@ nr=1
 #for coast in COASTS:
 hej=[35,54,79,120,154,194,219]  
 corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
-varlist= ['ashore','PHIHYD','WVEL'] #['ashore','cshore']
-varlistLONGNAME= ['Crosshore velocity','Hydrostatic Pressure Pot.(p/rho) Anomaly','U-Velocity','V-Velocity','Vertical Velocity'] #['Alongshore velocity','Crosshore velocity']
+varlist=['PHIHYD'] # ['ashore','PHIHYD','WVEL'] #['ashore','cshore']
+varlistLONGNAME= ['Hydrostatic Pressure Pot.(p/rho) Anomaly'] #['Crosshore velocity','Hydrostatic Pressure Pot.(p/rho) Anomaly','U-Velocity','V-Velocity','Vertical Velocity'] #['Alongshore velocity','Crosshore velocity']
 
 dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
 dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'

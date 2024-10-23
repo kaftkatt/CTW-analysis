@@ -625,11 +625,14 @@ def weightedmovingaverage(Data, length):
                 weighted = np.append(weighted, wma) # add to array
     return weighted
 
-def recenter(vel,Z,LON,LAT,lon,lat):
+def recenter(velin,Z,LON,LAT,lon,lat,maskin):
 	Recent=np.zeros((len(Z),len(lat)))
 	
 	for d in range(len(Z)):
-		interp=sciint.RegularGridInterpolator((LAT,LON),vel.values[d])
+		mask=maskin[d]
+		vel=velin[d].values
+		vel[np.where(mask==True)]=np.nan
+		interp=sciint.RegularGridInterpolator((LAT,LON),vel)
 		Recent[d]=interp((lat,lon))
 	
 	return Recent
@@ -639,6 +642,11 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	Z=dsw[0].Z.values
 	LAT = dsw[0].YC.values
 	LON = dsw[0].XC.values - 360
+	
+	hFacC = dsw[0].hFacC
+	
+	hfa = np.ma.masked_values(hFacC, 0)
+	maskin = np.ma.getmask(hfa)
 	
 	if coast == 'smooth':
 		day=9
@@ -688,10 +696,10 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 				    
 			for t in np.arange(0,len(dsw[tt].time),1):					
 
-				Ub=recenter(dsw[tt].UVEL[t],Z,LON,LAT,lon,lat)
-				Vb=recenter(dsw[tt].VVEL[t],Z,LON,LAT,lon,lat)
-				Un=recenter(dsn[tt].UVEL[t],Z,LON,LAT,lon,lat)
-				Vn=recenter(dsn[tt].VVEL[t],Z,LON,LAT,lon,lat)
+				Ub=recenter(dsw[tt].UVEL[t],Z,LON,LAT,lon,lat,maskin)
+				Vb=recenter(dsw[tt].VVEL[t],Z,LON,LAT,lon,lat,maskin)
+				Un=recenter(dsn[tt].UVEL[t],Z,LON,LAT,lon,lat,maskin)
+				Vn=recenter(dsn[tt].VVEL[t],Z,LON,LAT,lon,lat,maskin)
 				
 				VALb=(sin(deg) * Ub +  Vb * cos(deg))
 				VALn=(sin(deg) * Un +  Vb * cos(deg))
@@ -710,8 +718,8 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 			for t in np.arange(0,len(dsw[tt].time),1):
 				exec(f'global invarB; invarB=dsw[tt].{var}[t]')
 				exec(f'global invarN; invarN=dsn[tt].{var}[t]')
-				VALb=recenter(invarB,Z,LON,LAT,lon,lat)
-				VALn=recenter(invarN,Z,LON,LAT,lon,lat)
+				VALb=recenter(invarB,Z,LON,LAT,lon,lat,maskin)
+				VALn=recenter(invarN,Z,LON,LAT,lon,lat,maskin)
 				VALmit=VALb-VALn
 				VALMIT[t,:,:]=VALmit
 			
@@ -722,6 +730,8 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	fs=1/1200
 	fs2=0
 	
+	VALMITpre[np.isnan(VALMITpre)]=0
+
 	print('Filtering begins')
 	for d in np.arange(np.size(VALMITpre,2)):
 		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
@@ -1068,8 +1078,8 @@ def lin_reg(VALmit,valinBrink,dist,xpl,Z,z,zgr,xgr):
 
 def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,time,coast,var):
     
-    indX=dist<=50
-    indZ=Z<=1500
+    indX=dist<np.max(xgr)
+    indZ=Z>np.min(zgr)
     
     Z=Z[indZ]
     dist=dist[indX]
@@ -1099,7 +1109,7 @@ def fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,time,coast,var):
             fit[t]=100*(ssr/sst)
         
     
-    return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint
+    return VALfit,betas,xbeta,yhat,dist,VALMIT,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint,Z
 
 def linearregressionSave(filt,varin,coast):
 	if coast == 'smooth':
@@ -1107,8 +1117,8 @@ def linearregressionSave(filt,varin,coast):
 	elif coast == 'original':
 		startday=2
 	
-	hej=[35,54,79,120,154,194,219]  
-	corrinds=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] 
+	hej=[120,154,194,219] #[35,54,79, 
+	corrinds=[31.69,32.11,32.65,33.02] #[30.49,30.77,31.13,
 
 	if filt=='filt':
 		var= 'Filt' + str(varin)
@@ -1132,7 +1142,7 @@ def linearregressionSave(filt,varin,coast):
 		for l in np.arange(0,5,1):
 			if exists('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'freq' + str(l) + '.mat') == True:
 				print('Mode ' + str(l))
-				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'freq' + str(l) + '.mat')	
+				uo,vo,wo,ro,po,z,ko,omegao, xpl, xxx, zzz, zgr, xgr, epeo, ekeo = get_Brink('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/CrossectsPerp/dataSVB'+ str(corrinds[ik]) +'freq' + str(l) + '.mat')
 				u.append(uo.imag) 
 				v.append(vo)
 				w.append(wo.imag)
@@ -1153,7 +1163,7 @@ def linearregressionSave(filt,varin,coast):
 				dsw,dsn=loadNetCDFs(dirw,dirn,'dynVars',startday)
 			
 		
-		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/new/' + str(varin) + str(corrinds[ik]) + '.nc')
+		ds=xr.open_dataset('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(varin) + str(corrinds[ik]) + '.nc')
 		
 		Z=dsw[0].Z.values
 		TIME=ds.TIME.values
@@ -1167,7 +1177,7 @@ def linearregressionSave(filt,varin,coast):
 			valinBrink=u
 		elif varin == 'WVEL':
 			valinBrink=w
-		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,TIME,coast,var)
+		VALfit,betas,xbeta,yhat,dist,VALmit,varbrink,grid_X,grid_Z,fit,Y,xpi,Ypre,RMSE,valmitint,Z=fitmodes(dsw,dsn,valinBrink,xpl,Z,z,dist,zgr,xgr,ds,TIME,coast,var)
 		
 		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Peaks' + str(varin) + '/LinRegPeaks' + str(corrinds[ik]) + str(filt) + '.nc'
 		ds = xr.Dataset({'valfit': (("time","z","x"), VALfit),

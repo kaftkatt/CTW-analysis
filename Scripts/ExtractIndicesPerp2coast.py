@@ -157,13 +157,13 @@ for ind in range(1,len(lonWeight30)-1,1):
         degreeSHORT.append(deg)
 
 
-mdicALL = {"dist": dist, "d":dep, 'lon':lonNew,'lat':latNew,'degree':degree }
+#mdicALL = {"dist": dist, "d":dep, 'lon':lonNew,'lat':latNew,'degree':degree }
 
-savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_PALL_MovAv.mat", mdicALL)
+#savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_PALL_MovAv.mat", mdicALL)
 
-mdichej2 = {"dist": distSHORT, "d":depSHORT, 'lon':lonNewSHORT,'lat':latNewSHORT,'degree':degreeSHORT }
+#mdichej2 = {"dist": distSHORT, "d":depSHORT, 'lon':lonNewSHORT,'lat':latNewSHORT,'degree':degreeSHORT }
 
-savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_P_MovAv.mat", mdichej2)
+#savemat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + "/BT_P_MovAv.mat", mdichej2)
 
 if plotALL==1:
 	filenam="/BT_PALL_MovAv.mat"
@@ -206,13 +206,13 @@ gs = GridSpec(nrows=2, ncols=2)
 ax = fig.add_subplot(gs[0, 0])
 ax.set_facecolor('tan')
 pc = ax.contourf(LON, LAT, np.ma.masked_array(depth, mask=mask), 50,
-	         vmin=0, vmax=5000, cmap=cmocean.cm.deep) 
+	         vmin=0, vmax=5000,zorder=1, cmap=cmocean.cm.deep) 
 
 
 
 cn = ax.contour(LON, LAT, depth, colors=['0.2', '0.4', '0.6', '0.8'],
-	        levels=[200,500, 1000, 2000])
-ax.contour(LON, LAT, depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5)
+	        levels=[200,500, 1000, 2000],zorder=2)
+ax.contour(LON, LAT, depthno[:, :], levels=[0], colors='brown', linestyles=':', linewidths=2.5,zorder=3)
 divider = make_axes_locatable(ax)
 axdiv = divider.new_vertical(size = '5%', pad = 0.5)
 fig.add_axes(axdiv)
@@ -235,10 +235,10 @@ ax1.set_ylabel('Depth [m]')
 
 for i in range(len(dep)):
 	if len(hej2ind)>20:
-		ax.scatter(lon[i][0],lat[i][0],linewidth=2)
+		ax.scatter(lon[i][0],lat[i][0],linewidth=2,zorder=4)
 		ax1.plot(x[i][0],-dep[i][0],linewidth=2)
 	else:
-                ax.scatter(lon[i][0],lat[i][0],color=colors[i],linewidth=2)
+                ax.scatter(lon[i][0],lat[i][0],color=colors[i],linewidth=2,zorder=4)
                 ax1.plot(x[i][0],-dep[i][0],color=colors[i],linewidth=2)
 
 
@@ -273,6 +273,6 @@ for i in range(len(hej2ind)):
 
 
 if len(dep)>20:
-	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png')	
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png',transparent=True,bbox_inches='tight')	
 else:
-	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp_res' + str(nr) + '.png')	
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp_res' + str(nr) + '.png',transparent=True,bbox_inches='tight')	
