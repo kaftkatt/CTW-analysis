@@ -271,6 +271,7 @@ for i in range(len(hej2ind)):
 	else:
 		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=2,alpha=0.7)
 
+fig.tight_layout()
 
 if len(dep)>20:
 	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png',transparent=True,bbox_inches='tight')	
