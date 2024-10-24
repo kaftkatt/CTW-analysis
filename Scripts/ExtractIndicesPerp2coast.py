@@ -231,7 +231,7 @@ ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k',transform=ax.transAxes)
 
 ax1 = fig.add_subplot(gs[0, 1])
 ax1.set_xlabel('Distance from coast [km]')
-ax1.set_ylabel('Depth [m]')
+#ax1.set_ylabel('Depth [m]')
 
 for i in range(len(dep)):
 	if len(hej2ind)>20:
