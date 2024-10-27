@@ -124,9 +124,9 @@ cbar_ax = plt.colorbar(cax, cax=axdiv,orientation='horizontal')
 cbar_ax.ax.xaxis.set_label_position("top")
 cbar_ax.set_label('Vertical velocity [$10^{-6}$ ms$^{-1}$]')
 
-ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
+ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False)
 
-ax.set(ylabel=ylab)
+ax.set(xlabel=xlab)
 
 ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel2[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.2, '(b)', transform=ax.transAxes)
