@@ -204,6 +204,35 @@ fig = plt.figure()
 gs = GridSpec(nrows=2, ncols=2)
 
 ax = fig.add_subplot(gs[0, 0])
+
+vmin=-5
+vmax=5
+cbarall=0
+SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(a)')
+
+for i in range(len(hej2ind)):
+	if len(hej2ind)>20:
+		ax.axhline(y=distAC[hej2ind[i]],linewidth=4)
+	else:
+		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=4)
+
+ax = fig.add_subplot(gs[0, 1])
+
+vmin=-0.2
+vmax=0.2
+cbarall=0
+SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,0,cbarall,'(b)')
+
+for i in range(len(hej2ind)):
+	if len(hej2ind)>20:
+		ax.axhline(y=distAC[hej2ind[i]],linewidth=4)
+	else:
+		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=4)
+
+
+
+ax = fig.add_subplot(gs[1, 0])
+
 ax.set_facecolor('tan')
 pc = ax.contourf(LON, LAT, np.ma.masked_array(depth, mask=mask), 50,
 	         vmin=0, vmax=5000,zorder=1, cmap=cmocean.cm.deep) 
@@ -226,10 +255,10 @@ ax.scatter(LON[lon_ac[hej2ind]],LAT[lat_ac[hej2ind]])
 ax.scatter(lonWeight30[loc],latWeight30[loc])
 
 ax.set_aspect(1)
-ax.text(-0.1, 1.2, '(a)', fontweight='bold', color='k',transform=ax.transAxes)
+ax.text(-0.1, 1.2, '(c)', fontweight='bold', color='k',transform=ax.transAxes)
 
 
-ax1 = fig.add_subplot(gs[0, 1])
+ax1 = fig.add_subplot(gs[1, 1])
 ax1.set_xlabel('Distance from coast [km]')
 #ax1.set_ylabel('Depth [m]')
 
@@ -242,38 +271,15 @@ for i in range(len(dep)):
                 ax1.plot(x[i][0],-dep[i][0],color=colors[i],linewidth=2)
 
 
-ax1.text(-0.1, 1.02, '(b)', fontweight='bold', color='k', 
+ax1.text(-0.1, 1.02, '(d)', fontweight='bold', color='k', 
         transform=ax1.transAxes)
 
-ax = fig.add_subplot(gs[1, 0])
-
-vmin=-5
-vmax=5
-cbarall=0
-SVBfunc.plot_HOVMOLLER(ax,distVEL,TIMEVEL,WVEL*1e6,'','Vertical velocity  [$10^{-6}$ ms$^{-1}$]',vmin,vmax,fig,lat_acVEL,lon_acVEL,1,cbarall,'(c)')
-
-for i in range(len(hej2ind)):
-	if len(hej2ind)>20:
-		ax.axhline(y=distAC[hej2ind[i]],linewidth=2,alpha=0.7)
-	else:
-		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=2,alpha=0.7)
-
-ax = fig.add_subplot(gs[1, 1])
-
-vmin=-0.2
-vmax=0.2
-cbarall=0
-SVBfunc.plot_HOVMOLLER(ax,distAC,TIMEVEL,ETA*1e3,'','SSH  [mm]',vmin,vmax,fig,lat_ac,lon_ac,0,cbarall,'(d)')
-
-for i in range(len(hej2ind)):
-	if len(hej2ind)>20:
-		ax.axhline(y=distAC[hej2ind[i]],linewidth=2,alpha=0.7)
-	else:
-		ax.axhline(y=distAC[hej2ind[i]],color=colors[i],linewidth=2,alpha=0.7)
 
 fig.tight_layout()
 
+fig.patch.set_alpha(0.0)
+
 if len(dep)>20:
-	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png',transparent=True,bbox_inches='tight')	
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperpALL_res' + str(nr) + '.png',bbox_inches='tight')	
 else:
-	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp_res' + str(nr) + '.png',transparent=True,bbox_inches='tight')	
+	plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/indsperp_res' + str(nr) + '.png',bbox_inches='tight')	
