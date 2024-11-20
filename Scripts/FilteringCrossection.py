@@ -6,7 +6,14 @@ coast='original'
 nr=1
 #for nr in NUM: 
 #for coast in COASTS:
-hej=[35,54,79,120,154,194,219]  
+if all==1: 
+	file='/BT_PALL_MovAv.mat'
+	matfile=loadmat( str('coast') + '/BT_PALL_MovAv.mat')
+	x=matfile['dist'][0]
+	hej=range(len(x))
+else: 
+	hej=[35,54,79,120,154,194,219]  
+
 corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
 varlist=['PHIHYD'] # ['ashore','PHIHYD','WVEL'] #['ashore','cshore']
 varlistLONGNAME= ['Hydrostatic Pressure Pot.(p/rho) Anomaly'] #['Crosshore velocity','Hydrostatic Pressure Pot.(p/rho) Anomaly','U-Velocity','V-Velocity','Vertical Velocity'] #['Alongshore velocity','Crosshore velocity']
@@ -28,15 +35,25 @@ for var in varlist:
 	else:	
 		dsw,dsn=SVBfunc.loadNetCDFs(dirw,dirn,'dynVars',startday)
 		units='m/s'
-	
+	VALMIT=[]
+	VALFILT=[]
 	for i in range(len(hej)):
 		VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,corrind,coast)
 	
-		FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + str(corrind[i]) + '.nc'
-		
-		title = 'Crossection of' + varname
-		description = 'Extracted crossection from MITgcm output. Using the provided longitude and latitude. If crosshore or alongshore velocity is specified they have been calculated from U and V velocity using the provided angle.' 
-		SVBfunc.create_descriptive_file(times, Z, x, dep,lon,lat,deg, VALMITpre, VALfilt, varname, var, units, FILENAME, title, description)
+	VALMIT.append(VALMITpre)
+	VALFILT.append(VALfilt)
+	X.append(x)
+	DEP.append(dep)
+	LON.append(lon)
+	LAT.append(lat)
+	DEG.append(deg)
+	Zout.append(Z)
 	
+	FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + '.nc'
+	
+	title = 'Crossection of' + varname
+	description = 'Extracted crossection from MITgcm output. Using the provided longitude and latitude. If crosshore or alongshore velocity is specified they have been calculated from U and V velocity using the provided angle.' 
+	SVBfunc.create_descriptive_file(times, Zout, X, DEP,LON,LAT,DEG, VALMIT, VALFILT, varname, var, units, FILENAME, title, description)
+
 	
 	
