@@ -540,7 +540,7 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
-def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nameShort, units, filename, title, description): 
+def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLong, nameShort, units, filename, title, description): 
     
     """ This function creates a netCDF4 file for
     the given variable given the filename and 
@@ -558,11 +558,11 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     
     dataset = Dataset(filename, 'w')
     file_time = dataset.createDimension('time', len(t))
-    file_dist = dataset.createDimension('dist', len(X))
+    file_dist = dataset.createDimension('dist', len(distAC))
     file_z = dataset.createDimension('z', len(Z[0]) )
     file_x = dataset.createDimension('x', len(X[0]) )
     
-	
+    file_distAC = dataset.createVariable('X', 'f8', ('dist'))
     file_X = dataset.createVariable('X', 'f8', ('dist','x'))
     file_lon = dataset.createVariable('LON', 'f8', ('dist','x'))
     file_lat = dataset.createVariable('LAT', 'f8', ('dist','x'))
@@ -581,6 +581,8 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     #dataset.source = 'bitbucket.org/CanyonsUBC/BuildCanyon/Bathymetry/GenerateTankBathymetry_Inserts.ipynb'
     dataset.description = description
     dataset.timeStamp = tiempo.ctime(tiempo.time())
+    file_distAC.standard_name = 'Distance along the coast'
+    file_distAC.units = 'km'
     file_X.standard_name = 'Crosshelf Distance'
     file_X.units = 'km'
     file_lon.standard_name = 'Longitude'
@@ -604,6 +606,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     VARFILT.units = str(units)
     #VAR.positive = 'upward'
 
+    file_distAC[:]=distAC[:]	
     file_X[:] = X[:]
     file_Z[:] = Z[:]
     file_TIME[:] = t[:]
