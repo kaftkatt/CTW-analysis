@@ -2,17 +2,22 @@ import SVBfunc
 import xarray as xr
 COASTS=['original','smooth']
 NUM=['1','30']
-coast='original'
+coast='smooth'
 nr=1
 #for nr in NUM: 
 #for coast in COASTS:
+pathDIST= '/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
+dsDIST= xr.open_dataset(pathDIST)
+
 if all==1: 
 	file='/BT_PALL_MovAv.mat'
 	matfile=loadmat( str('coast') + '/BT_PALL_MovAv.mat')
 	x=matfile['dist'][0]
 	hej=range(len(x))
+	distAC=dsDIST.dist[31:-31].values
 else: 
-	hej=[35,54,79,120,154,194,219]  
+	hej=[35,54,79,120,154,194,219] 
+	distAC=dsDIST.dist[hej].values
 
 corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
 varlist=['PHIHYD'] # ['ashore','PHIHYD','WVEL'] #['ashore','cshore']
@@ -53,7 +58,7 @@ for var in varlist:
 	
 	title = 'Crossection of' + varname
 	description = 'Extracted crossection from MITgcm output. Using the provided longitude and latitude. If crosshore or alongshore velocity is specified they have been calculated from U and V velocity using the provided angle.' 
-	SVBfunc.create_descriptive_file(times, Zout, X, DEP,LON,LAT,DEG, VALMIT, VALFILT, varname, var, units, FILENAME, title, description)
+	SVBfunc.create_descriptive_file(times, Zout, X, DEP,LON,LAT,DEG, VALMIT, VALFILT, distAC,varname, var, units, FILENAME, title, description)
 
 	
 	
