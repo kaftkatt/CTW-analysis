@@ -40,14 +40,14 @@ for var in varlist:
 	for i in range(len(hej)):
 		VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,corrind,coast)
 	
-	VALMIT.append(VALMITpre)
-	VALFILT.append(VALfilt)
-	X.append(x)
-	DEP.append(dep)
-	LON.append(lon)
-	LAT.append(lat)
+	VALMIT.append(VALMITpre[:,:58,:58])
+	VALFILT.append(VALfilt[:,:58,:58])
+	X.append(x[:58])
+	DEP.append(dep[:58])
+	LON.append(lon[:58])
+	LAT.append(lat[:58])
 	DEG.append(deg)
-	Zout.append(Z)
+	Zout.append(Z[:58])
 	
 	FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + '.nc'
 	
