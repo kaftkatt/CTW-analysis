@@ -558,20 +558,22 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt, nameLong, nam
     
     dataset = Dataset(filename, 'w')
     file_time = dataset.createDimension('time', len(t))
-    file_z = dataset.createDimension('z', len(Z) )
-    file_x = dataset.createDimension('x', len(X) )
-
-    file_X = dataset.createVariable('X', 'f8', ('x'))
-    file_lon = dataset.createVariable('LON', 'f8', ('x'))
-    file_lat = dataset.createVariable('LAT', 'f8', ('x'))
-    file_depth = dataset.createVariable('Depth', 'f8', ('x'))
-    file_degree = dataset.createVariable('Angle Rot', 'f8', ('time'))
+    file_dist = dataset.createDimension('dist', len(X))
+    file_z = dataset.createDimension('z', len(Z[0]) )
+    file_x = dataset.createDimension('x', len(X[0]) )
+    
 	
-    file_Z = dataset.createVariable('Z', 'f8', ('z'))
-    file_TIME = dataset.createVariable('TIME', 'f8', ('time'))
+    file_X = dataset.createVariable('X', 'f8', ('dist','x'))
+    file_lon = dataset.createVariable('LON', 'f8', ('dist','x'))
+    file_lat = dataset.createVariable('LAT', 'f8', ('dist','x'))
+    file_depth = dataset.createVariable('Depth', 'f8', ('dist','x'))
+    file_degree = dataset.createVariable('Angle Rot', 'f8', ('dist'))
 	
-    VAR = dataset.createVariable(str(nameShort), 'f8', ('time','z','x'))
-    VARFILT = dataset.createVariable('Filt' + str(nameShort), 'f8', ('time','z','x'))
+    file_Z = dataset.createVariable('Z', 'f8', ('dist','z'))
+    file_TIME = dataset.createVariable('TIME', 'f8', ('dist','time'))
+	
+    VAR = dataset.createVariable(str(nameShort), 'f8', ('dist','time','z','x'))
+    VARFILT = dataset.createVariable('Filt' + str(nameShort), 'f8', ('dist','time','z','x'))
 
     dataset.title = title
     dataset.author = 'Amelia Thelandersson'
