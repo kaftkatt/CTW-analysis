@@ -562,7 +562,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLo
     file_z = dataset.createDimension('z', len(Z[0]) )
     file_x = dataset.createDimension('x', len(X[0]) )
     
-    file_distAC = dataset.createVariable('X', 'f8', ('dist'))
+    file_distAC = dataset.createVariable('DIST', 'f8', ('dist'))
     file_X = dataset.createVariable('X', 'f8', ('dist','x'))
     file_lon = dataset.createVariable('LON', 'f8', ('dist','x'))
     file_lat = dataset.createVariable('LAT', 'f8', ('dist','x'))
@@ -735,12 +735,16 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	fs=1/1200
 	fs2=0
 	
-	VALMITpre[np.isnan(VALMITpre)]=0
-
 	print('Filtering begins')
-	for d in np.arange(np.size(VALMITpre,2)):
-		VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALMITpre[:,:,d],filt,detrend,fs,fs2)
-		VALfilt[:,:,d]=VALfiltAll
+	for d in range(len(VALMITpre[0,:,0])):
+		VALprein=VALMITpre=[:,d,:]
+		if np.all(np.isnan(VALprein)):
+			VALfilt[:,d,np.isnan(VALprein[0])]=np.nan
+		else:
+			VALin=VALprein[:,~np.isnan(VALprein[0])]
+			VALdif,VALfiltout,VALfiltAll,inds = FiltDetrend(VALin,filt,detrend,fs,fs2)
+			VALfilt[:,d,np.isnan(VALprein[0])]=np.nan
+			VALfilt[:,d,~np.isnan(VALprein[0])]=VALfiltAll
 	
 	return(VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times)
 		

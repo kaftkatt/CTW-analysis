@@ -20,8 +20,8 @@ else:
 	distAC=dsDIST.dist[hej].values
 
 corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
-varlist=['PHIHYD'] # ['ashore','PHIHYD','WVEL'] #['ashore','cshore']
-varlistLONGNAME= ['Hydrostatic Pressure Pot.(p/rho) Anomaly'] #['Crosshore velocity','Hydrostatic Pressure Pot.(p/rho) Anomaly','U-Velocity','V-Velocity','Vertical Velocity'] #['Alongshore velocity','Crosshore velocity']
+varlist=['ashore','PHIHYD','WVEL'] #['ashore','cshore']
+varlistLONGNAME= ['Alongshore velocity','Hydrostatic Pressure Pot.(p/rho) Anomaly','Vertical Velocity'] #['Alongshore velocity','Crosshore velocity']
 
 dirn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/'
 dirw='/home/athelandersson/NETCDFs/' + str(coast) + '/'
@@ -42,6 +42,13 @@ for var in varlist:
 		units='m/s'
 	VALMIT=[]
 	VALFILT=[]
+	X=[]
+	DEP=[]
+	LON=[]
+	LAT=[]
+	DEG=[]
+	Zout=[]
+
 	for i in range(len(hej)):
 		VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,corrind,coast)
 	
