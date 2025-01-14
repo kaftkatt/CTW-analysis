@@ -612,7 +612,7 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLo
     file_TIME[:] = t[:]
     file_lon[:] = lon[:]
     file_lat[:] = lat[:]
-    file_degree[:] = deg
+    file_degree[:] = deg[:]
     file_depth[:] = dep[:]
     VAR[:] = var[:]
     VARFILT[:] = varfilt[:]
@@ -642,7 +642,7 @@ def recenter(velin,Z,LON,LAT,lon,lat,maskin):
 	
 	return Recent
 
-def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
+def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 	
 	Z=dsw[0].Z.values
 	LAT = dsw[0].YC.values
@@ -683,7 +683,12 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 		times=Time*1e-9
 	
 	
-	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_P_MovAv.mat')
+	if all==0:
+		filenameBT='/BT_P_MovAv.mat'
+	else:
+                filenameBT='/BT_PALL_MovAv.mat'
+	
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + str(filenameBT))
 	x,dep,lon,lat,deg=matfile['dist'][0][i][0],matfile['d'][0][i][0],matfile['lon'][0][i][0],matfile['lat'][0][i][0],matfile['degree'][0][i]
 
 	
@@ -737,7 +742,7 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,corrind,coast):
 	
 	print('Filtering begins')
 	for d in range(len(VALMITpre[0,:,0])):
-		VALprein=VALMITpre=[:,d,:]
+		VALprein=VALMITpre[:,d,:]
 		if np.all(np.isnan(VALprein)):
 			VALfilt[:,d,np.isnan(VALprein[0])]=np.nan
 		else:

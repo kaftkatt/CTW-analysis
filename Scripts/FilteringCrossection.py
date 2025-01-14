@@ -1,9 +1,11 @@
 import SVBfunc
 import xarray as xr
+from scipy.io import loadmat
 COASTS=['original','smooth']
 NUM=['1','30']
 coast='smooth'
 nr=1
+all=1
 #for nr in NUM: 
 #for coast in COASTS:
 pathDIST= '/home/athelandersson/NETCDFs/' + str(coast) + '/ETANAC.nc'
@@ -11,7 +13,7 @@ dsDIST= xr.open_dataset(pathDIST)
 
 if all==1: 
 	file='/BT_PALL_MovAv.mat'
-	matfile=loadmat( str('coast') + '/BT_PALL_MovAv.mat')
+	matfile=loadmat( '/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/BT_PALL_MovAv.mat')
 	x=matfile['dist'][0]
 	hej=range(len(x))
 	distAC=dsDIST.dist[31:-31].values
@@ -19,7 +21,6 @@ else:
 	hej=[35,54,79,120,154,194,219] 
 	distAC=dsDIST.dist[hej].values
 
-corrind=[30.49,30.77,31.13,31.69,32.11,32.65,33.02] #[30.49,31.69,32.11] # 30.4884, 31.6852, 32.1068
 varlist=['ashore','PHIHYD','WVEL'] #['ashore','cshore']
 varlistLONGNAME= ['Alongshore velocity','Hydrostatic Pressure Pot.(p/rho) Anomaly','Vertical Velocity'] #['Alongshore velocity','Crosshore velocity']
 
@@ -50,20 +51,21 @@ for var in varlist:
 	Zout=[]
 
 	for i in range(len(hej)):
-		VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,corrind,coast)
-	
-	VALMIT.append(VALMITpre[:,:,:58])
-	VALFILT.append(VALfilt[:,:,:58])
-	X.append(x[:58])
-	DEP.append(dep[:58])
-	LON.append(lon[:58])
-	LAT.append(lat[:58])
-	DEG.append(deg)
-	Zout.append(Z)
+		
+		VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times=SVBfunc.CrossectExctraction(i,dsw,dsn,1,1,var,all,coast)
+		
+		VALMIT.append(VALMITpre[:,:,:58])
+		VALFILT.append(VALfilt[:,:,:58])
+		X.append(x[:58])
+		DEP.append(dep[:58])
+		LON.append(lon[:58])
+		LAT.append(lat[:58])
+		DEG.append(deg)
+		Zout.append(Z)
 	
 	FILENAME='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/Locations/' + str(var) + '.nc'
 	
-	title = 'Crossection of' + varname
+	title = 'Crossection of ' + varname
 	description = 'Extracted crossection from MITgcm output. Using the provided longitude and latitude. If crosshore or alongshore velocity is specified they have been calculated from U and V velocity using the provided angle.' 
 	SVBfunc.create_descriptive_file(times, Zout, X, DEP,LON,LAT,DEG, VALMIT, VALFILT, distAC,varname, var, units, FILENAME, title, description)
 
