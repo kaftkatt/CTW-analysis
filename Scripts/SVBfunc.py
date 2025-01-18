@@ -7,6 +7,7 @@ import pylab as pl
 import scipy.signal as sig
 import scipy.io as sio
 import scipy.interpolate as sciint
+from scipy.interpolate import RegularGridInterpolator
 from xmitgcm import open_mdsdataset
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
@@ -240,41 +241,20 @@ def loadingcoastpts(hFacCuse,Z,LAT,LON,prevalue,nt,t,var):
 
 
 #For dynvars and pressure, just don't forget to change the depth
-def varsalongcoasts(hFacCuse,LAT,LON,Z,valvar,nt,dep,plot,var):
-
-    
-    lat_fix, lon_fix=findlonlat(hFacCuse,dep,1)
-    
-    dist_array = np.zeros(len(lon_fix[5:-5]))
-    p=0
-    for ii,jj in zip(lon_fix[5:-5],lat_fix[5:-5]):
-        lat1 = LAT[jj-2]
-        lon1 = LON[ii-2]
-        lat2 = LAT[jj-1]
-        lon2 = LON[ii-1]
-        p=p+1
-        dist_array[p-1]=  haversine(lat1, lon1, lat2, lon2)
-
-    dist_cummul = np.cumsum(dist_array)
-    rangedep=np.arange(0,71,10)
-    val = np.zeros((nt,len(lon_fix[5:-5]))) 
-    dd=0
-
-    for h in range(nt):
-        p=0
-        for n in np.arange(5,len(lon_fix)-5,1):
-            p=p+1
-            
-            value=np.mean(valvar[h-1,lat_fix[n-5:n+5]-1,lon_fix[n-5:n+5]-1])
-            val[h-1,p-1] = value
-
-    lon_fix=lon_fix[5:-5]
-    lat_fix=lat_fix[5:-5]
+def varsalongcoasts(LAT,LON,Z,valvar,nt,dep,plot,var,path):
+    ds= xr.open_dataset(path)
+    x=ds.x.values
+    y=ds.y.values
+    dist_cummul=ds.dist.values
+    val=np.zeros((len(valvar[:,0,0]),len(dist_cummul)))
+    for i in range(len(valvar[:,0,0])):
+    	interpval = RegularGridInterpolator((LAT.values,LON.values), valvar[i])
+    	val[i,:]=interpval((y,x))
    
     if plot==7:
-    	plotpointsAC(LON,LAT,lon_fix,lat_fix,var)
+    	plotpointsAC(LON,LAT,x,y,var)
     
-    return val[:,val[0,:]!=0],lon_fix[val[0,:]!=0],lat_fix[val[0,:]!=0],dist_cummul[val[0,:]!=0]
+    return val,x,y,dist_cummul
     
 # When you want a diagonal across the area    
 def varsalldepths(hFacCuse,LAT,LON,Z,valvar,name,name2,name3,nt,t,FILENAME):
@@ -465,19 +445,18 @@ def FiltDetrend(VAL,filt,detrend,fs,fs2):
 		
 	return(VALdif,VALfilt,VALfiltAll,inds)
        	
-def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend,fs,fs2):
+def SavingFilteredValues(val,ds, FILENAME,filt,detrend,fs,fs2):
 	
-	dist = dsw.x.values
-	TIME=dsw.time.values #TIME = dsw.time.astype(int).values*1e-9
-	VAL = valw.values-valn.values
-	lon_ac=dsw.lonAC.values
-	lat_ac=dsw.latAC.values
+	dist = ds.x.values
+	TIME=ds.time.values #TIME = dsw.time.astype(int).values*1e-9
+	VAL = val.values
+	lon_ac=ds.lonAC.values
+	lat_ac=ds.latAC.values
 	
 	valdet,valfilt,valfiltall,inds = FiltDetrend(VAL,filt,detrend,fs,fs2)
 
-	ds = xr.Dataset({'Valdet': (("time","dist"),valdet),
-                 	'Valfilt':(("time","dist"),valfilt),
-                 	'ValfiltAll':(("time2","dist"),valfiltall),
+	dsout = xr.Dataset({'Valdet': (("time","dist"),valdet),
+                 	'Valfilt':(("time","dist"),valfiltall),
                  	'Valorig':(("time","dist"),VAL),
                  	'lonAC':(("dist"),lon_ac),
                  	'latAC':(("dist"),lat_ac)
@@ -485,11 +464,10 @@ def SavingFilteredValues(valw,valn,dsw, FILENAME,filt,detrend,fs,fs2):
                  	   },
                 	coords ={
                     	"time": TIME,
-                    	"time2": TIME[inds],
                    	 "dist":dist
                 	},
                 	)
-	ds.to_netcdf(FILENAME)
+	dsout.to_netcdf(FILENAME)
 
 def FFRQ(Wdif,Wfilt,timemin,dist):
 
@@ -1376,7 +1354,7 @@ def plotpointsAC(LON,LAT,lon_inds,lat_inds,var):
 	dirw = '/home/athelandersson/NETCDFs/smooth/'
 	dirn = '/home/athelandersson/NETCDFs/smooth_NO/'
 
-	dsw,dsn=loadNetCDFs(dirw,dirn,'rhoAnoma')
+	dsw,dsn=loadNetCDFs(dirw,dirn,'rhoAnoma',2)
 	depth = dsw[0].Depth
 	
 	fig, ax = plt.subplots(1,1,figsize=(10,9))
@@ -1386,15 +1364,12 @@ def plotpointsAC(LON,LAT,lon_inds,lat_inds,var):
 	cn = ax.contour(LON,LAT,depth, colors=['0.3','0.6'], 
                 	levels=[0,500])
 
-	for ii,jj in zip(lon_inds,lat_inds):
-
-    		ax.plot(LON[ii-1],LAT[jj-1],'o', 
-            		markersize=4, color='r')
+	ax.plot(lon_inds,lat_inds,'o',markersize=4, color='r')
 
 	# To show it begins and ends where it should
-	ax.plot(LON[lon_inds[0]],LAT[lat_inds[0]],'o', 
+	ax.plot(lon_inds[0],lat_inds[0],'o', 
            	markersize=10, color='orange') 
-	ax.plot(LON[lon_inds[-1]],LAT[lat_inds[-1]],'o', 
+	ax.plot(lon_inds[-1],lat_inds[-1],'o', 
            	markersize=10, color='blue') 
 
 

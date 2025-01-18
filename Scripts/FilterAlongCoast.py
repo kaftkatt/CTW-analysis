@@ -16,8 +16,10 @@ for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN'
   fs=1/1200
   fs2=0
   
-  FILENAME='/home/athelandersson/NETCDFs/' + str(coast) + '/' + str(varname)+ 'AC.nc'
+  FILENAMEw='/home/athelandersson/NETCDFs/' + str(coast) + '/' + str(varname)+ 'AC_SVB.nc'
+  FILENAMEn='/home/athelandersson/NETCDFs/' + str(coast) + '_NO/' + str(varname)+ 'AC_NoSVB.nc'
 
-  SVBfunc.SavingFilteredValues(valw,valn,dswALL,FILENAME,1,1,fs,fs2)
+  SVBfunc.SavingFilteredValues(valn,dsnALL,FILENAMEn,1,1,fs,fs2)
+  SVBfunc.SavingFilteredValues(valw,dswALL,FILENAMEw,1,1,fs,fs2)
 
 
