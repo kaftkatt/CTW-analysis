@@ -8,7 +8,7 @@ import pylab as pl
 
 from SVBfunc import haversine
 
-coast = 'original'
+coast = 'smooth'
 
 i=0
 varname='dynVars'
@@ -189,4 +189,4 @@ ax.set_xlim(-122,-114)
 ax.set_ylim(27,35.3)
 ax.set_aspect(1)
 
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/fig2Waves.png', transparent=True,bbox_inches='tight')
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + '/fig2Waves.png',bbox_inches='tight')
