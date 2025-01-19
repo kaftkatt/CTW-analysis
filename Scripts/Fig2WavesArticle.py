@@ -8,7 +8,7 @@ import pylab as pl
 
 from SVBfunc import haversine
 
-coast = 'smooth'
+coast = 'original'
 
 i=0
 varname='dynVars'
@@ -121,7 +121,7 @@ cbar_ax.ax.xaxis.set_label_position("top")
 cbar_ax.set_label('SSH [mm]')
 
 ax.text(-0.1,1.2, '(a)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIME[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.87, f'Surface \nDay {TIME[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -136,7 +136,7 @@ ax.contour(LON,LAT,depth,  colors=['0.2','0.4','0.6','0.8'],
                 levels=[0,500,700,1000])
 
 ax.text(-0.1,1.2, '(c)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIME2[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.87, f'Surface \nDay {TIME2[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -168,8 +168,8 @@ ax.set_xlim(-122,-114)
 ax.set_ylim(27,35.3)
 ax.set_aspect(1)
 
-vmin=-0.000002*1e6
-vmax=0.000002*1e6
+vmin=-0.00002*1e6
+vmax=0.00002*1e6
 
 ax = fig.add_subplot(gs[1,1]) 
 ax.set_facecolor('tan')
