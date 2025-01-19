@@ -518,7 +518,7 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
-def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLong, nameShort, units, filename, title, description): 
+def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,varn,varfiltn,varw,varfiltw,distAC, nameLong, nameShort, units, filename, title, description): 
     
     """ This function creates a netCDF4 file for
     the given variable given the filename and 
@@ -552,6 +552,10 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLo
 	
     VAR = dataset.createVariable(str(nameShort), 'f8', ('dist','time','z','x'))
     VARFILT = dataset.createVariable('Filt' + str(nameShort), 'f8', ('dist','time','z','x'))
+    VARn = dataset.createVariable('N'+str(nameShort), 'f8', ('dist','time','z','x'))
+    VARFILTn = dataset.createVariable('NFilt' + str(nameShort), 'f8', ('dist','time','z','x'))
+    VARw = dataset.createVariable('W'+str(nameShort), 'f8', ('dist','time','z','x'))
+    VARFILTw = dataset.createVariable('FiltW' + str(nameShort), 'f8', ('dist','time','z','x'))
 
     dataset.title = title
     dataset.author = 'Amelia Thelandersson'
@@ -579,10 +583,17 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLo
     file_TIME.calendar = 'gregorian'	
     VAR.standard_name = str(nameLong)
     VAR.units = str(units)
+    VARn.standard_name = 'No SVB' + str(nameLong)
+    VARn.units = str(units)
+    VARw.standard_name = 'With SVB' +  str(nameLong)
+    VARw.units = str(units)
 	
     VARFILT.standard_name = 'Filtered' + str(nameLong)
     VARFILT.units = str(units)
-    #VAR.positive = 'upward'
+    VARFILTn.standard_name = 'Filtered, No SVB' + str(nameLong)
+    VARFILTn.units = str(units)
+    VARFILTw.standard_name = 'Filtered, With SVB' + str(nameLong)
+    VARFILTw.units = str(units)
 
     file_distAC[:]=distAC[:]	
     file_X[:] = X[:]
@@ -594,6 +605,10 @@ def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,distAC, nameLo
     file_depth[:] = dep[:]
     VAR[:] = var[:]
     VARFILT[:] = varfilt[:]
+    VARn[:] = varn[:]
+    VARFILTn[:] = varfiltn[:]
+    VARw[:] = varw[:]
+    VARFILTw[:] = varfiltw[:]
 
     dataset.close()
 
@@ -631,6 +646,11 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 	hfa = np.ma.masked_values(hFacC, 0)
 	maskin = np.ma.getmask(hfa)
 	
+	hFacCn = dsn[0].hFacC
+	
+	hfan = np.ma.masked_values(hFacCn, 0)
+	maskinn = np.ma.getmask(hfan)
+
 	if coast == 'smooth':
 		day=9
 		time12=dsw[0].time.values.astype(int)
@@ -664,7 +684,7 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 	if all==0:
 		filenameBT='/BT_P_MovAv.mat'
 	else:
-                filenameBT='/BT_PALL_MovAv.mat'
+                filenameBT='/BT_PALL_MovAv2025.mat'
 	
 	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/' + str(coast) + str(filenameBT))
 	x,dep,lon,lat,deg=matfile['dist'][0][i][0],matfile['d'][0][i][0],matfile['lon'][0][i][0],matfile['lat'][0][i][0],matfile['degree'][0][i]
@@ -672,6 +692,8 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 	
 	
 	VALMITpre=np.zeros((len(times), len(Z),len(lon)))
+	VALMITpren=np.zeros((len(times), len(Z),len(lon)))
+	VALMITprew=np.zeros((len(times), len(Z),len(lon)))
 	
 	if np.logical_or(var=='ashore',var=='cshore'):
 		print(var)
@@ -681,6 +703,8 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 		for tt in np.arange(0,day,1):
 	    		
 			VALMIT=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
+			VALMITn=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
+			VALMITw=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
 				    
 			for t in np.arange(0,len(dsw[tt].time),1):					
 
@@ -693,8 +717,12 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 				VALn=(sin(deg) * Un +  Vb * cos(deg))
 				VALmit=VALb-VALn
 				VALMIT[t,:,:]=VALmit
+				VALMITn[t,:,:]=VALn
+				VALMITw[t,:,:]=VALb
 			
 			VALMITpre[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			VALMITpren[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMITn
+			VALMITprew[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMITw
 			print('Day '+str(tt+2))
 			
 	else: 
@@ -702,6 +730,8 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 		for tt in np.arange(0,day,1):
 	    		
 			VALMIT=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
+			VALMITn=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
+			VALMITw=np.zeros((len(dsw[tt].time),len(Z),len(lon)))
 			
 			for t in np.arange(0,len(dsw[tt].time),1):
 				exec(f'global invarB; invarB=dsw[tt].{var}[t]')
@@ -710,17 +740,27 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 				VALn=recenter(invarN,Z,LON,LAT,lon,lat,maskin)
 				VALmit=VALb-VALn
 				VALMIT[t,:,:]=VALmit
+				VALMITn[t,:,:]=VALn  
+				VALMITw[t,:,:]=VALb
 			
 			VALMITpre[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMIT
+			VALMITpren[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMITn
+			VALMITprew[len(dsw[tt-1].time)*tt:len(VALMIT[:,1,1])*(tt+1),:,:]=VALMITw
 			print('Day '+str(tt+2))
 
 	VALfilt=np.zeros(np.shape(VALMITpre))
+	VALfiltn=np.zeros(np.shape(VALMITpren))
+	VALfiltw=np.zeros(np.shape(VALMITprew))
+	
 	fs=1/1200
 	fs2=0
 	
 	print('Filtering begins')
 	for d in range(len(VALMITpre[0,:,0])):
 		VALprein=VALMITpre[:,d,:]
+		VALpreinn=VALMITpren[:,d,:]
+		VALpreinw=VALMITprew[:,d,:]
+
 		if np.all(np.isnan(VALprein)):
 			VALfilt[:,d,np.isnan(VALprein[0])]=np.nan
 		else:
@@ -729,7 +769,23 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 			VALfilt[:,d,np.isnan(VALprein[0])]=np.nan
 			VALfilt[:,d,~np.isnan(VALprein[0])]=VALfiltAll
 	
-	return(VALfilt,VALMITpre,x,dep,lon,lat,deg,Z,times)
+		if np.all(np.isnan(VALpreinn)):
+			VALfiltn[:,d,np.isnan(VALpreinn[0])]=np.nan
+		else:
+			VALinn=VALpreinn[:,~np.isnan(VALpreinn[0])]
+			VALdifn,VALfiltoutn,VALfiltAlln,indsn = FiltDetrend(VALinn,filt,detrend,fs,fs2)
+			VALfiltn[:,d,np.isnan(VALpreinn[0])]=np.nan
+			VALfiltn[:,d,~np.isnan(VALpreinn[0])]=VALfiltAlln
+		if np.all(np.isnan(VALpreinw)):
+			VALfiltw[:,d,np.isnan(VALpreinw[0])]=np.nan
+		else:
+			VALinw=VALpreinw[:,~np.isnan(VALpreinw[0])]
+			VALdifw,VALfiltoutw,VALfiltAllw,indsw = FiltDetrend(VALinw,filt,detrend,fs,fs2)
+			VALfiltw[:,d,np.isnan(VALpreinw[0])]=np.nan
+			VALfiltw[:,d,~np.isnan(VALpreinw[0])]=VALfiltAllw
+	
+	
+	return(VALfilt,VALMITpre,VALfiltn,VALMITpren,VALfiltw,VALMITprew,x,dep,lon,lat,deg,Z,times)
 		
 
 
