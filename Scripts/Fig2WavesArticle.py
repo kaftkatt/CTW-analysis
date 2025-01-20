@@ -8,7 +8,7 @@ import pylab as pl
 
 from SVBfunc import haversine
 
-coast = 'smooth'
+coast = 'original'
 
 i=0
 varname='dynVars'
