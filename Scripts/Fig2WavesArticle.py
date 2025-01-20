@@ -8,7 +8,7 @@ import pylab as pl
 
 from SVBfunc import haversine
 
-coast = 'smooth'
+coast = 'original'
 
 i=0
 varname='dynVars'
@@ -85,16 +85,28 @@ plt.rcParams['savefig.dpi'] = 300
 fig = plt.figure()
 gs = GridSpec(nrows=2, ncols=2,hspace=0.1)
 
-vmin=-0.0009*10
-vmax=0.0009*10
+if coast == 'smooth': 
+	vminSSH=-0.0001
+	vmaxSSH=0.0001
+	vminvel=-0.0000002*1e6
+	vmaxvel=0.0000002*1e6
+elif coast == 'original': 
+        vminSSH=-0.0001
+        vmaxSSH=0.0001
+        vminvel=-0.000002*1e6
+        vmaxvel=0.000002*1e6
 
 xlab='Longitude [°]'
 ylab='Latitude [°]'
 
+if coast== 'original':
+	timelab=TIME[0]/(60*24)
+else:
+	timelab=TIME2[0]/(60*60*24)
 ax = fig.add_subplot(gs[0,0]) 
 
 ax.set_facecolor('tan')
-cax = ax.pcolormesh(LON,LAT,np.ma.masked_array((ETAw1-ETAn1)*1000, mask=mask[0,:,:]),cmap=cmocean.cm.curl,vmin=vmin,vmax=vmax)
+cax = ax.pcolormesh(LON,LAT,np.ma.masked_array((ETAw1-ETAn1)*1000, mask=mask[0,:,:]),cmap=cmocean.cm.curl,vmin=vminSSH,vmax=vmaxSSH)
 ax.contour(LON,LAT,depth,  colors=['0.2','0.4','0.6','0.8'], 
                 levels=[0,500,700,1000])
 
@@ -108,7 +120,7 @@ cbar_ax.ax.xaxis.set_label_position("top")
 cbar_ax.set_label('SSH [mm]')
 
 ax.text(-0.1,1.2, '(a)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIME[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.87, f'Surface \nDay {timelab}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -118,24 +130,22 @@ ax.set(ylabel=ylab)
 ax = fig.add_subplot(gs[1,0]) 
 
 ax.set_facecolor('tan')
-cax = ax.pcolormesh(LON,LAT,np.ma.masked_array((ETAw2-ETAn2)*1000, mask=mask[0,:,:]),cmap=cmocean.cm.curl,vmin=vmin,vmax=vmax)
+cax = ax.pcolormesh(LON,LAT,np.ma.masked_array((ETAw2-ETAn2)*1000, mask=mask[0,:,:]),cmap=cmocean.cm.curl,vmin=vminSSH,vmax=vmaxSSH)
 ax.contour(LON,LAT,depth,  colors=['0.2','0.4','0.6','0.8'], 
                 levels=[0,500,700,1000])
 
 ax.text(-0.1,1.2, '(c)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIME2[0]/(60*60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.87, f'Surface \nDay {timelab}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
 ax.set_aspect(1)
 ax.set(ylabel=ylab,xlabel=xlab)
 
-vmin=-0.000002*1e6
-vmax=0.000002*1e6
 
 ax = fig.add_subplot(gs[0,1]) 
 ax.set_facecolor('tan')
-cax = ax.pcolormesh(LON,LAT,np.ma.masked_array(Ww-Wn, mask=mask[51,:,:])*1e6,cmap=cmocean.cm.balance,vmin=vmin,vmax=vmax)
+cax = ax.pcolormesh(LON,LAT,np.ma.masked_array(Ww-Wn, mask=mask[51,:,:])*1e6,cmap=cmocean.cm.balance,vmin=vminvel,vmax=vmaxvel)
 ax.contour(LON,LAT,depth, colors=['0.2','0.4','0.6','0.8'], 
                 levels=[0,500,700,1000])
 
@@ -150,7 +160,7 @@ ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False)
 
 ax.tick_params(axis='x',which='both', top=False, bottom=True, labelbottom=False)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.87, f'{dsw.Z.values[51]:.1f} m depth \nDay {timelab}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.2, '(b)', transform=ax.transAxes)
 
 
@@ -160,7 +170,7 @@ ax.set_aspect(1)
 
 ax = fig.add_subplot(gs[1,1]) 
 ax.set_facecolor('tan')
-cax = ax.pcolormesh(LON,LAT,np.ma.masked_array(Ww2-Wn2, mask=mask[51,:,:])*1e6,cmap=cmocean.cm.balance,vmin=vmin,vmax=vmax)
+cax = ax.pcolormesh(LON,LAT,np.ma.masked_array(Ww2-Wn2, mask=mask[51,:,:])*1e6,cmap=cmocean.cm.balance,vmin=vminvel,vmax=vmaxvel)
 ax.contour(LON,LAT,depth, colors=['0.2','0.4','0.6','0.8'], 
                 levels=[0,500,700,1000])
 
@@ -168,7 +178,7 @@ ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False)
 
 ax.set(xlabel=xlab)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel2[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.87, f'{dsw.Z.values[51]:.1f} m depth \nDay {timelab}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.15, '(d)', transform=ax.transAxes)
 
 
