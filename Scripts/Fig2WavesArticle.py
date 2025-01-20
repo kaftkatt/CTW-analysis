@@ -8,7 +8,7 @@ import pylab as pl
 
 from SVBfunc import haversine
 
-coast = 'original'
+coast = 'smooth'
 
 i=0
 varname='dynVars'
@@ -86,10 +86,10 @@ fig = plt.figure()
 gs = GridSpec(nrows=2, ncols=2,hspace=0.1)
 
 if coast == 'smooth': 
-	vminSSH=-0.0001
-	vmaxSSH=0.0001
-	vminvel=-0.0000002*1e6
-	vmaxvel=0.0000002*1e6
+	vminSSH=-0.01
+	vmaxSSH=0.01
+	vminvel=-0.000002*1e6
+	vmaxvel=0.000002*1e6
 elif coast == 'original': 
         vminSSH=-0.0001
         vmaxSSH=0.0001
