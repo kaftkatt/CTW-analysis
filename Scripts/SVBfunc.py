@@ -445,13 +445,13 @@ def FiltDetrend(VAL,filt,detrend,fs,fs2):
 		
 	return(VALdif,VALfilt,VALfiltAll,inds)
        	
-def SavingFilteredValues(val,ds, FILENAME,filt,detrend,fs,fs2):
+def SavingFilteredValues(val,ds, FILENAME,filt,detrend,fs,fs2,start):
 	
-	dist = ds.x.values
+	dist = ds.x[start:].values
 	TIME=ds.time.values #TIME = dsw.time.astype(int).values*1e-9
-	VAL = val.values
-	lon_ac=ds.lonAC.values
-	lat_ac=ds.latAC.values
+	VAL = val
+	lon_ac=ds.lonAC[start:].values
+	lat_ac=ds.latAC[start:].values
 	
 	valdet,valfilt,valfiltall,inds = FiltDetrend(VAL,filt,detrend,fs,fs2)
 
