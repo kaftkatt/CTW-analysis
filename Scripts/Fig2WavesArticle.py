@@ -8,7 +8,7 @@ import pylab as pl
 
 from SVBfunc import haversine
 
-coast = 'original'
+coast = 'smooth'
 
 i=0
 varname='dynVars'
@@ -36,19 +36,6 @@ Ww2=dsw2.WVEL[0,51,:,:].values
 Wn2=dsn2.WVEL[0,51,:,:].values
 time2=dsw2.time.values.astype(int)
 TIMEvel2=time2*1e-9
-
-i2=6
-varname='dynVars'
-pathn3='/home/athelandersson/NETCDFs/'+ str(coast) + '_NO/'+ str(varname)+'noSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-pathw3='/home/athelandersson/NETCDFs/'+ str(coast) + '/'+ str(varname)+'withSVB'+ str(2+i2)+'_'+ str(3+i2) +'.nc'
-        
-dsw3  = xr.open_dataset(pathw3)
-dsn3 = xr.open_dataset(pathn3)
-
-Ww3=dsw3.WVEL[0,51,:,:].values
-Wn3=dsn3.WVEL[0,51,:,:].values
-time3=dsw3.time.values.astype(int)
-TIMEvel3=time3*1e-9
 
 
 i=0
@@ -96,10 +83,10 @@ plt.rcParams['figure.dpi'] = 300
 plt.rcParams['savefig.dpi'] = 300
 
 fig = plt.figure()
-gs = GridSpec(nrows=2, ncols=2,hspace=0.01)
+gs = GridSpec(nrows=2, ncols=2,hspace=0.1)
 
-vmin=-0.009*10
-vmax=0.009*10
+vmin=-0.0009*10
+vmax=0.0009*10
 
 xlab='Longitude [°]'
 ylab='Latitude [°]'
@@ -143,6 +130,9 @@ ax.set_ylim(27,35.3)
 ax.set_aspect(1)
 ax.set(ylabel=ylab,xlabel=xlab)
 
+vmin=-0.000002*1e6
+vmax=0.000002*1e6
+
 ax = fig.add_subplot(gs[0,1]) 
 ax.set_facecolor('tan')
 cax = ax.pcolormesh(LON,LAT,np.ma.masked_array(Ww-Wn, mask=mask[51,:,:])*1e6,cmap=cmocean.cm.balance,vmin=vmin,vmax=vmax)
@@ -167,9 +157,6 @@ ax.text(-0.1,1.2, '(b)', transform=ax.transAxes)
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
 ax.set_aspect(1)
-
-vmin=-0.00002*1e6
-vmax=0.00002*1e6
 
 ax = fig.add_subplot(gs[1,1]) 
 ax.set_facecolor('tan')
