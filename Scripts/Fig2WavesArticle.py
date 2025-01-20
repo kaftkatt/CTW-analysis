@@ -86,13 +86,13 @@ fig = plt.figure()
 gs = GridSpec(nrows=2, ncols=2,hspace=0.1)
 
 if coast == 'smooth': 
-	vminSSH=-0.01
-	vmaxSSH=0.01
+	vminSSH=-0.2
+	vmaxSSH=0.2
 	vminvel=-0.000002*1e6
 	vmaxvel=0.000002*1e6
 elif coast == 'original': 
-        vminSSH=-0.0001
-        vmaxSSH=0.0001
+        vminSSH=-0.2
+        vmaxSSH=0.2
         vminvel=-0.000002*1e6
         vmaxvel=0.000002*1e6
 
