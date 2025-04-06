@@ -37,8 +37,8 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars','eta']:
 		for VAR in ['UVEL','VVEL','WVEL','SALT','THETA']:
 			pathn= '/home/athelandersson/NETCDFs/' +  str(coast) + '_NO/' + str(VAR)+ 'ACnoSVBPREFILT.nc'
 			pathw= '/home/athelandersson/NETCDFs/' +  str(coast) + '/' + str(VAR)+'ACwithSVBPREFILT.nc'
-			coordPathW='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/PAC/pac505mSVB.nc'
-			coordPathN='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/PAC/pac505mNoSVB.nc'
+			coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mSVB.nc'
+			coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mNoSVB.nc'
 			for l in np.arange(0,ts,1):
 				
 				exec (f'W=dsw[l].{VAR}[:,51,:,:].values')
@@ -81,8 +81,8 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars','eta']:
 		VAR='ETAN'
 		pathn= '/home/athelandersson/NETCDFs/' +  str(coast) + '_NO/' + str(VAR)+ 'ACnoSVBPREFILT.nc'
 		pathw= '/home/athelandersson/NETCDFs/' +  str(coast) + '/' + str(VAR)+'ACwithSVBPREFILT.nc'
-		coordPathW='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/PAC/pac20mSVB.nc'
-		coordPathN='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/PAC/pac20mNoSVB.nc'
+		coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac20mSVB.nc'
+		coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac20mNoSVB.nc'
 		for l in np.arange(0,ts,1):
 			
 			exec (f'W=dsw[l].{VAR}[:,:,:].values')
@@ -129,8 +129,8 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars','eta']:
 			
 		pathn= '/home/athelandersson/NETCDFs/' +  str(coast) + '_NO/' + str(VAR)+ 'ACnoSVBPREFILT.nc'
 		pathw= '/home/athelandersson/NETCDFs/' +  str(coast) + '/' + str(VAR)+'ACwithSVBPREFILT.nc'
-		coordPathW='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/PAC/pac505mSVB.nc'
-		coordPathN='/home/athelandersson/CTW-analysis/Files/' + str(coast) + '/PAC/pac505mNoSVB.nc'
+		coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mSVB.nc'
+		coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mNoSVB.nc'
 		for l in np.arange(0,ts,1):
 			
 			exec (f'W=dsw[l].{VAR}[:,51,:,:].values')

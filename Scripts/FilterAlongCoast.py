@@ -2,7 +2,7 @@ import xarray as xr
 import SVBfunc
 import numpy as np
 
-coast='smooth'
+coast='original'
 
 for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN']:
 
@@ -17,10 +17,7 @@ for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN'
   lonacn = dsnALL.lonAC.values
   latacn = dsnALL.latAC.values
   
-  if coast == 'original':
-     start=np.where(latacn>29.91)[0][0]
-  else:
-     start=np.where(latacn>29.9)[0][0]
+  start=np.where(latacn>29.9)[0][0]
   
   startSVB=np.where(latac==latacn[start])[0][-1]
   
