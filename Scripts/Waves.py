@@ -6,7 +6,7 @@ import xarray as xr
 import cmocean
 import pylab as pl
 
-from SVBfunc import haversine
+from SVBfuncPlotting import haversine
 
 coast = 'smooth'
 

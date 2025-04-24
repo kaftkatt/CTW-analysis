@@ -4,8 +4,8 @@ import SVBfunc
 import xarray as xr
 # In[141]:
 
-dep=51
-coast='original'
+dep=50
+coast='smooth'
 
 if coast== 'original':
   tstart=2
@@ -37,12 +37,12 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars','eta']:
 		for VAR in ['UVEL','VVEL','WVEL','SALT','THETA']:
 			pathn= '/home/athelandersson/NETCDFs/' +  str(coast) + '_NO/' + str(VAR)+ 'ACnoSVBPREFILT.nc'
 			pathw= '/home/athelandersson/NETCDFs/' +  str(coast) + '/' + str(VAR)+'ACwithSVBPREFILT.nc'
-			coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mSVB.nc'
-			coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mNoSVB.nc'
+			coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac620mSVB.nc'
+			coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac620mNoSVB.nc'
 			for l in np.arange(0,ts,1):
 				
-				exec (f'W=dsw[l].{VAR}[:,51,:,:].values')
-				exec (f'N=dsn[l].{VAR}[:,51,:,:].values')
+				exec (f'W=dsw[l].{VAR}[:,dep,:,:].values')
+				exec (f'N=dsn[l].{VAR}[:,dep,:,:].values')
 				
 				TIMEdyn=dsw[l].time.astype(int).values*1e-9
 				ntdyn = np.size(TIMEdyn)
@@ -129,12 +129,12 @@ for var in ['phiHyd', 'rhoAnoma', 'dynVars','eta']:
 			
 		pathn= '/home/athelandersson/NETCDFs/' +  str(coast) + '_NO/' + str(VAR)+ 'ACnoSVBPREFILT.nc'
 		pathw= '/home/athelandersson/NETCDFs/' +  str(coast) + '/' + str(VAR)+'ACwithSVBPREFILT.nc'
-		coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mSVB.nc'
-		coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac505mNoSVB.nc'
+		coordPathW='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac620mSVB.nc'
+		coordPathN='/home/athelandersson/CTW-analysis/Files/smooth/PAC/pac620mNoSVB.nc'
 		for l in np.arange(0,ts,1):
 			
-			exec (f'W=dsw[l].{VAR}[:,51,:,:].values')
-			exec (f'N=dsn[l].{VAR}[:,51,:,:].values')
+			exec (f'W=dsw[l].{VAR}[:,dep,:,:].values')
+			exec (f'N=dsn[l].{VAR}[:,dep,:,:].values')
 			
 			TIMEdyn=dsw[l].time.astype(int).values*1e-9
 			ntdyn = np.size(TIMEdyn)

@@ -2,7 +2,7 @@ import xarray as xr
 import SVBfunc
 import numpy as np
 
-coast='original'
+coast='smooth'
 
 for varname in ['PHIHYD', 'RHOAnoma', 'SALT','THETA','UVEL','VVEL','WVEL','ETAN']:
 
