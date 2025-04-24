@@ -72,7 +72,7 @@ omega=(2*np.pi)/(23*60*60 + 56*60 + 4.1)
 
 #### Begin Plotting ####
 params = {'font.size': 24,
-          'figure.figsize': (20, 16),
+          'figure.figsize': (20, 18),
          'font.family':'sans'}
 pl.rcParams.update(params)
 plt.rcParams['figure.dpi'] = 300
@@ -119,7 +119,7 @@ ax1.set(xlabel=xlab, ylabel=ylab)
 ax1.text(-0.08, 1.05, '(b)', fontweight='bold', color='k', 
         transform=ax1.transAxes)
 
-cax1 = ax1.pcolormesh(freqfilto[1,:]*(24*3600),distVEL[:end],psdfilt[:end,:]*const,vmin=vmin,vmax=vmax, cmap=cmocean.cm.balance)
+cax1 = ax1.pcolormesh(freqfilto[1,:]*(24*3600),distVEL[:end],psdfilto[:end,:]*const,vmin=vmin,vmax=vmax, cmap=cmocean.cm.balance)
 
 ax1.set_xlim((0,0.000016*(24*3600)))
 
@@ -144,8 +144,8 @@ for nr in np.arange(0,len(loclatIn),2):
         axin.plot((freqfilt[1])*(24*3600),(psdfilt[loclatIn[nr]]*const)+nr,c='k',linewidth=2,zorder=20) 
         axin.scatter((2*omega*np.sin(np.deg2rad(lat_acVEL[loclatIn[nr]]))*24*3600)/(2*np.pi),nr,color='blue',marker="|",s=1000)
         axin.plot((freqfilto[1])*(24*3600),(psdfilto[loclatIn[nr]]*const)+nr,alpha=0.6,c='k',linewidth=2,linestyle='dashed',zorder=10) 
-        ax1.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=4)
-        ax.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=4)
+    ax1.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=4)
+    ax.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=4)
     
 
 axin.axvline((freqfilt[1][np.argmax(psdfilt[loclatIn[nr]])])*(24*3600),linestyle='dotted',color='k')
