@@ -1,5 +1,12 @@
+
+
+
+
 import numpy as np
 from math import cos, sin, asin
+import cmocean
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.pyplot as plt
 
 def haversine(lon1, lat1, lon2, lat2):
 
@@ -64,3 +71,39 @@ def FFRQ(var,timemin,dist):
         freq[ii,:] =  FFTfreq
 
     return psd, freq
+
+def plot_HOVMOLLER(ax,LON,TIME,VAL,title,ctitle,vmin,vmax,fig,lat,lon,lab,cbarall,nr):
+    xlab='Time [days]'
+    if lab==1:
+        ylab='Distance [km]' #'Depth [m]'
+    else:
+        ylab=''
+
+    ax.set(xlabel=xlab, ylabel=ylab)
+    ax.set_xticks([2880, 4320, 5760, 7200, 8640, 10080, 11520, 12960, 14400])
+    ax.set_xticklabels([2, 3, 4, 5, 6, 7, 8, 9, 10])
+    ax.set_title(title)
+
+    if ctitle=='SSH [mm]':
+        cax = ax.pcolormesh(TIME,LON,np.transpose(VAL),cmap=cmocean.cm.curl,vmin=vmin,vmax=vmax) 
+    else:    
+        cax = ax.pcolormesh(TIME,LON,np.transpose(VAL),cmap=cmocean.cm.balance,vmin=vmin,vmax=vmax) 
+   
+    if cbarall==1:
+    ##FOR THE SAME COLORBAR FOR ALL OF THE PLOTS
+        cbar_ax = fig.add_axes([1, 0.15, 0.03, 0.6])
+        fig.colorbar(cax, cax=cbar_ax)
+        cbar_ax.set_ylabel(ctitle)
+    else:
+    ##FOR A COLORBAR FOR EACH PLOT
+        divider = make_axes_locatable(ax)
+        axdiv = divider.new_vertical(size = '5%', pad = 0.5)
+        fig.add_axes(axdiv)
+        cbar_ax = plt.colorbar(cax, cax=axdiv,orientation='horizontal')
+        cbar_ax.ax.xaxis.set_label_position("top")
+        cbar_ax.set_label(ctitle)
+    #ax.set_aspect(1./ax.get_data_ratio())
+    ax.text(-0.15, 1.05, nr, fontweight='bold', color='k', 
+        transform=ax.transAxes)
+
+

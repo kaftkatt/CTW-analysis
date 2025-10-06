@@ -518,6 +518,62 @@ def FFRQ(Wdif,Wfilt,timemin,dist):
 
 
 ## FOR LINEAR REGRESSION -------------------------------------------------------------------------
+
+
+def createDataSet(ashore,cshore,t,Z,LON,LAT,filename):
+    title = 'Rotated velocities'
+    description = 'Rotated Velocities from MITgcm output. Using the provided longitude and latitude. Calculated from U and V velocity using different angles along the coast.' 
+
+    dataset = Dataset(filename, 'w')
+    file_time = dataset.createDimension('time', len(t))
+    file_z = dataset.createDimension('z', len(Z))
+    file_x = dataset.createDimension('x', len(LON) )
+    file_y = dataset.createDimension('y', len(LAT) )
+    
+    file_TIME = dataset.createVariable('TIME', 'f8', ('time'))
+    file_Z = dataset.createVariable('Z', 'f8', ('z'))
+    file_XC = dataset.createVariable('XC', 'f8', ('x'))
+    file_YC = dataset.createVariable('YC', 'f8', ('y'))
+    
+    ASHORE = dataset.createVariable('ASHORE', 'f8', ('time','z','y','x'))
+    CSHORE = dataset.createVariable('CSHORE', 'f8', ('time','z','y','x'))
+    
+    dataset.title = title
+    dataset.author = 'Amelia Thelandersson'
+    dataset.institution = 'Departamento de Oceanografía Física, Centro de Investigacín Científica y de Educación Superior de Ensenada'
+    dataset.description = description
+    
+    dataset.timeStamp = tiempo.ctime(tiempo.time())
+    
+    file_XC.standard_name = 'Longitude'
+    file_XC.units = '  W'      
+    file_YC.standard_name = 'Latitude'
+    file_YC.units = '  N'
+    file_Z.standard_name = 'Depth'
+    file_Z.units = 'm'      
+    
+    file_TIME.standard_name = 'Time'
+    file_TIME.units = 'timedelta64[ns]'
+    file_TIME.calendar = 'gregorian'
+    
+    ASHORE.standard_name = 'Alongshore Velocity'
+    ASHORE.units = 'm/s'
+    CSHORE.standard_name = 'Crosshore Velocity'
+    CSHORE.units = 'm/s'
+    
+    file_Z[:] = Z[:]
+    file_TIME[:] = t[:]
+    file_XC[:] = LON[:]
+    file_YC[:] = LAT[:]
+    
+    ASHORE[:] = ashore[:]
+    CSHORE[:] = cshore[:]
+    
+    
+    dataset.close()
+    
+
+
 def create_descriptive_file(t, Z, X,dep,lon,lat,deg, var, varfilt,varn,varfiltn,varw,varfiltw,distAC, nameLong, nameShort, units, filename, title, description): 
     
     """ This function creates a netCDF4 file for
@@ -624,16 +680,118 @@ def weightedmovingaverage(Data, length):
     return weighted
 
 def recenter(velin,Z,LON,LAT,lon,lat,maskin):
-	Recent=np.zeros((len(Z),len(lat)))
-	
-	for d in range(len(Z)):
-		mask=maskin[d]
-		vel=velin[d].values
-		vel[np.where(mask==True)]=np.nan
-		interp=sciint.RegularGridInterpolator((LAT,LON),vel)
-		Recent[d]=interp((lat,lon))
+	if lat.ndim>1:
+		Recent=np.zeros((np.shape(velin[:,1:-1,1:-1])))
+
+		for d in range(len(Z)):
+			mask=maskin[d]
+			vel=velin[d].values
+			vel[np.where(mask==True)]=np.nan
+			interp=sciint.RegularGridInterpolator((LAT,LON),vel)
+			Recent[d]=interp((lat,lon))
+
+	else:
+		Recent=np.zeros((len(Z),len(lat)))
+
+		for d in range(len(Z)):
+			mask=maskin[d]
+			vel=velin[d].values
+			vel[np.where(mask==True)]=np.nan
+			interp=sciint.RegularGridInterpolator((LAT,LON),vel)
+			Recent[d]=interp((lat,lon))
 	
 	return Recent
+def rotatedvelocities(dsw,dsn):
+	
+	times=dsw.time.values.astype(int)
+	Z=dsw.Z.values
+	LAT = dsw.YC[1:-1].values
+	LON = dsw.XC[1:-1].values - 360
+	
+	LATin = dsw.YC.values
+	LONin = dsw.XC.values - 360
+	
+	LONGRID,LATGRID=np.meshgrid(LON, LAT)
+	
+	LATG = dsw.YG.values
+	LONG = dsw.XG.values - 360
+	
+	LONGRIDV,LATGRIDV=np.meshgrid(LON, LATG)
+	LONGRIDU,LATGRIDU=np.meshgrid(LONG, LAT)
+	
+	# Mask for U-vel
+	hFacW = dsw.hFacW
+	
+	hfaw = np.ma.masked_values(hFacW, 0)
+	maskinW = np.ma.getmask(hfaw)
+	
+	hFacWn = dsn.hFacW
+	
+	hfanw = np.ma.masked_values(hFacWn, 0)
+	maskinnW = np.ma.getmask(hfanw)
+	
+	# Mask for V-vel
+	hFacS = dsw.hFacS
+	
+	hfas = np.ma.masked_values(hFacS, 0)
+	maskinS = np.ma.getmask(hfas)
+	
+	hFacSn = dsn.hFacS
+	
+	hfans = np.ma.masked_values(hFacSn, 0)
+	maskinnS = np.ma.getmask(hfans)
+	
+	# Load the angles 
+	filenameBT='/BT_PALLnewmethod.mat'
+	matfile=loadmat('/home/athelandersson/CTW-analysis/Files/smooth'+ str(filenameBT))
+	latout=matfile['lat'][0]
+	lonout=matfile['lon'][0]
+	degin=matfile['degree'][0]
+	
+	lonin=np.zeros(len(lonout))
+	latin=np.zeros(len(latout))
+	for i in range(len(latout)):
+		latin[i]=latout[i][0][0]
+		lonin[i]=lonout[i][0][0]
+	
+	degs,order=np.unique(degin,return_index=True)
+	latscomp=latin[np.sort(order)]
+	
+	ASHOREn=np.zeros((len(times), len(Z),len(LAT),len(LON)))
+	ASHOREw=np.zeros((len(times), len(Z),len(LAT),len(LON)))
+	CSHOREn=np.zeros((len(times), len(Z),len(LAT),len(LON)))
+	CSHOREw=np.zeros((len(times), len(Z),len(LAT),len(LON)))
+	
+	for t in np.arange(0,len(times),1):                                      
+		Ub=recenter(dsw.UVEL[t],Z,LONG,LATin,LONGRID,LATGRID,maskinW)
+		Vb=recenter(dsw.VVEL[t],Z,LONin,LATG,LONGRID,LATGRID,maskinS)
+		Un=recenter(dsn.UVEL[t],Z,LONG,LATin,LONGRID,LATGRID,maskinnW)
+		Vn=recenter(dsn.VVEL[t],Z,LONin,LATG,LONGRID,LATGRID,maskinnS)
+		print(t)
+		p=0
+		for k in np.arange(len(LAT)):
+			if LAT[k]<latscomp[0]:
+				print(f'Current latitude {LAT[k]:.1f} smaller than first latitude {latin[0]:.1f}')
+			elif LAT[k]>latscomp[-1]:
+				print(f'Current latitude {LAT[k]:.1f} larger than last latitude {latin[-1]:.1f}')
+			elif np.logical_and(LAT[k]>latscomp[p],LAT[k]>latscomp[p+1]):
+				p=p
+			elif LAT[k]>latscomp[p+1]:
+				p=p+1
+			
+			deg=degin[np.sort(order)][p]
+			VALb=(sin(deg) * Ub[:,k,:] +  Vb[:,k,:] * cos(deg))
+			VALn=(sin(deg) * Un[:,k,:] +  Vn[:,k,:] * cos(deg))
+			
+			CVALb=(cos(deg) * Ub[:,k,:] -  Vb[:,k,:] * sin(deg))
+			CVALn=(cos(deg) * Un[:,k,:] -  Vn[:,k,:] * sin(deg))
+			
+			ASHOREn[t,:,k,:]=VALn
+			ASHOREw[t,:,k,:]=VALb
+			CSHOREn[t,:,k,:]=CVALn
+			CSHOREw[t,:,k,:]=CVALb
+	
+	return ASHOREn,ASHOREw,CSHOREn,CSHOREw,times,Z,LON,LAT
 
 def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 	
@@ -713,8 +871,12 @@ def CrossectExctraction(i,dsw,dsn,filt,detrend,var,all,coast):
 				Un=recenter(dsn[tt].UVEL[t],Z,LON,LAT,lon,lat,maskin)
 				Vn=recenter(dsn[tt].VVEL[t],Z,LON,LAT,lon,lat,maskin)
 				
-				VALb=(sin(deg) * Ub +  Vb * cos(deg))
-				VALn=(sin(deg) * Un +  Vb * cos(deg))
+				if var=='ashore':
+					VALb=(sin(deg) * Ub +  Vb * cos(deg))
+					VALn=(sin(deg) * Un +  Vn * cos(deg))
+				elif var=='cshore':
+					VALb=(cos(deg) * Ub[:,k,:] -  Vb[:,k,:] * sin(deg))
+					CVALn=(cos(deg) * Un[:,k,:] -  Vn[:,k,:] * sin(deg))
 				VALmit=VALb-VALn
 				VALMIT[t,:,:]=VALmit
 				VALMITn[t,:,:]=VALn
@@ -1373,10 +1535,41 @@ def get_snapshot_at_level(t,dep,dsw,dsn,var):
         Ww=dsw[ind].WVEL[t,dep,:,:].values
         Wn=dsn[ind].WVEL[t,dep,:,:].values
         W = Ww-Wn
-    elif var=='ETAn':
+    elif var=='ETAN':
         W=dsn[ind].ETAN[t,:,:].values
-    else:
-        W=dsw[ind].ETAN[t,:,:].values
+    elif var == 'RHOAnoma':
+        Ww=dsw[ind].RHOAnoma[t,dep,:,:].values
+        Wn=dsn[ind].RHOAnoma[t,dep,:,:].values
+        W = Ww-Wn
+    elif var == 'VVEL':
+        Ww=dsw[ind].VVEL[t,dep,:,:].values
+        Wn=dsn[ind].VVEL[t,dep,:,:].values
+        W = Ww-Wn
+    elif var == 'UVEL':
+        Ww=dsw[ind].UVEL[t,dep,:,:].values
+        Wn=dsn[ind].UVEL[t,dep,:,:].values
+        W = Ww-Wn
+    elif var == 'UVELiw':
+        Ww=dsw[ind].UVEL[t,:,:,:].values
+        Wn=dsn[ind].UVEL[t,:,:,:].values
+        print(np.shape(Wn))
+        W = Ww-Wn
+    elif var == 'VVELiw':
+        Ww=dsw[ind].VVEL[t,:,:,:].values
+        Wn=dsn[ind].VVEL[t,:,:,:].values
+        W = Ww-Wn
+    elif var == 'PHIHYDiw':
+        Ww=dsw[ind].PHIHYD[t,:,1:-1,1:-1].values
+        Wn=dsn[ind].PHIHYD[t,:,1:-1,1:-1].values
+        W = Ww-Wn
+    elif var == 'ASHORE':
+        Ww=dsw[ind].ASHORE[t,:,:,:].values
+        Wn=dsn[ind].ASHORE[t,:,:,:].values
+        W = Ww-Wn
+    elif var == 'CSHORE':
+        Ww=dsw[ind].CSHORE[t,:,:,:].values
+        Wn=dsn[ind].CSHORE[t,:,:,:].values
+        W = Ww-Wn
     return(W)
 
 def plotMap(ax,LON,LAT,depth,mask,fig,nr):

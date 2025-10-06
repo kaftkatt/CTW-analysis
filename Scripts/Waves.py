@@ -165,7 +165,7 @@ ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 ax.set( ylabel=ylab)
 
 ax.text(-0.1,1.2, '(a)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIME[ind]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Smoothened \nSurface \nDay {TIME[ind]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -180,11 +180,11 @@ ax.contour(LON,LAT,depth,  colors=['0.2','0.6'],
 
 
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
-ax.set(ylabel=ylab)
+ax.set(ylabel=ylab,xlabel=xlab)
 cbar_ax.set_label('SSH [mm]')
 
 ax.text(-0.1,1.05, '(e)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIME[ind2]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Smoothened \nSurface \nDay {TIME[ind2]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -206,10 +206,10 @@ cbar_ax.ax.xaxis.set_label_position("top")
 cbar_ax.set_label('SSH [mm]')
 
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
-ax.set( ylabel=ylab)
+ax.tick_params(axis='y',which='both', left=False, labelleft=False)
 
 ax.text(-0.1,1.2, '(b)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIMEo[indo]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Original \nSurface \nDay {TIMEo[indo]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -223,12 +223,12 @@ ax.contour(LONo,LATo,deptho,  colors=['0.2','0.6'],
                 levels=[0,500])
 
 
-ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
-ax.set(ylabel=ylab)
+ax.tick_params(axis='y',which='both', left=False, labelleft=False)
+ax.set(xlabel=xlab)
 cbar_ax.set_label('SSH [mm]')
 
 ax.text(-0.1,1.05, '(f)', transform=ax.transAxes)
-ax.text(0.4,0.87, f'Surface \nDay {TIMEo[ind2o]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Original \nSurface \nDay {TIMEo[ind2o]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 
 ax.set_xlim(-122,-114) 
 ax.set_ylim(27,35.3)
@@ -257,7 +257,7 @@ cbar_ax.set_label('Vertical velocity [$10^{-6}$ ms$^{-1}$]')
 ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False) 
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Smoothened \n480 m depth \nDay {TIMEvel[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.2, '(c)', transform=ax.transAxes)
 
 ax.set_xlim(-122,-114) 
@@ -272,9 +272,9 @@ ax.contour(LON,LAT,depth, colors=['0.2','0.6'],
                 levels=[0,500])
 
 ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False) 
-ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
+ax.set(xlabel=xlab)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel2[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Smoothened \n480 m depth \nDay {TIMEvel2[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.05, '(g)', transform=ax.transAxes)
 
 
@@ -300,7 +300,7 @@ cbar_ax.set_label('Vertical velocity [$10^{-6}$ ms$^{-1}$]')
 ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False) 
 ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvelo[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.text(0.4,0.93, f'Original \n480 m depth \nDay {TIMEvelo[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.2, '(d)', transform=ax.transAxes)
 
 ax.set_xlim(-122,-114) 
@@ -315,9 +315,9 @@ ax.contour(LONo,LATo,deptho, colors=['0.2','0.6'],
                 levels=[0,500])
 
 ax.tick_params(axis='y',which='both', left=True, right=False, labelleft=False) 
-ax.tick_params(axis='x',which='both', bottom=True, top=False, labelbottom=False)
 
-ax.text(0.4,0.87, f'480 m depth \nDay {TIMEvel2o[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
+ax.set(xlabel=xlab)
+ax.text(0.4,0.93, f'Original \n480 m depth \nDay {TIMEvel2o[0]/(60*24)}', transform=ax.transAxes,horizontalalignment='left')
 ax.text(-0.1,1.05, '(h)', transform=ax.transAxes)
 
 

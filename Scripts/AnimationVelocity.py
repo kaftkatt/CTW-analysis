@@ -37,7 +37,7 @@ def animate(t):
     vmin=-0.000002
     vmax=0.000002
     print(t)
-    W = SVBfunc.get_snapshot_at_level( t,dep,dsw,dsn)
+    W = SVBfunc.get_snapshot_at_level( t,dep,dsw,dsn,'WVEL')
     
 
     cax.set_array(np.ma.masked_array(W,mask=maskw[dep,:,:]))
@@ -104,16 +104,36 @@ ax.contour(LON,LAT,depth,  colors=['0.2','0.4'],
                 levels=[0,500])
 ax.set(xlabel=xlab, ylabel=ylab)
 
+ind_lon = [-115.11813068276555, -115.939167, -116.605833, -117.1625, -118.24368, -119.714167, -120.471439,
+           -120.7586085906775]
+ind_lat = [27.850440699318973, 30.556389, 31.857778, 32.715, 34.05223, 34.425833, 34.448113, 35.17364705813524]
+
+for kk, ll, lab in zip(ind_lon, ind_lat,
+                       ['Punta \n Eugenia', 'San Quintín', 'Ensenada', 'San Diego', 'Los Angeles', 'Santa Barbara',
+                        'Point Conception', 'Port San Luis']):
+	ax.plot(kk, ll, 'o', color='r', markeredgecolor='k',zorder=5)
+	if lab == 'Point Conception':
+		ax.text(kk - 0.06, ll + 0.25, lab)
+	elif lab == 'Santa Barbara':
+		ax.text(kk + 0.2, ll - 0.05, lab)
+	elif lab == 'Port San Luis':
+		ax.text(kk + 0.2, ll - 0.1, lab)
+	elif lab == 'Punta \n Eugenia':
+		ax.text(kk + 0.6, ll - 0.1, lab, horizontalalignment='center')
+	else:
+		ax.text(kk + 0.16, ll - 0.05, lab)
+
 ax.set_title(f'At depth {Z[dep].values:.2f} m. After {tt:.1f} hours')
-ax.set_xlim(-122,-114)     
+ax.set_xlim(-118.5,-117.3)     
 cbar = plt.colorbar(cax)
 cbar.set_label('Vertical velocity [m/s]')
-ax.set_ylim(27,35.3)
+ax.set_ylim(32.3,33.5)
+
 
 anim = FuncAnimation(fig, animate,frames=575, repeat=False)
 
     
-anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + 'WVEL.mp4', writer=writer, dpi=600)
+anim.save('/home/athelandersson/CTW-analysis/Figures/' + str(coast) + 'WVELzoomNorth.mp4', writer=writer, dpi=600)
 
 
 

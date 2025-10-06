@@ -10,6 +10,9 @@ from scipy.io import loadmat
 
 from SVBfuncPlotting import FFRQ, closest
 
+shift=1.8
+space=1
+
 coasto='original'
 pathVELo='/home/athelandersson/NETCDFs/' + str(coasto) + '/WVELAC.nc'
 dsVELo= xr.open_dataset(pathVELo)
@@ -63,7 +66,7 @@ loclatIn,loclonIn=closest(lat_acVEL,latloc,lon_acVEL,lonloc)
 #Find the last element before the islands
 end=np.where(lat_acVEL>latin[-1])[0][0]
 
-#Perform the fast fourier transform 
+#Perform the fast fourier transform
 psdfilt, freqfilt=FFRQ(WVEL,TIMEVEL,distVEL)
 psdfilto, freqfilto=FFRQ(WVELo,TIMEVELo,distVEL)
 
@@ -134,22 +137,22 @@ for ll, lab in zip(ind_lat,
 
 axin = fig.add_subplot(gs[:,2:])
 
-for nr in np.arange(0,len(loclatIn),2):
-    axin.axhline(nr,color='red',zorder=1)
+for nr in np.arange(0,len(loclatIn),space):
+    axin.axhline(shift*nr,color='red',zorder=1)
     if nr == 0:
-        axin.plot((freqfilt[1])*(24*3600),(psdfilt[loclatIn[nr]]*const)+nr,c='k',linewidth=2,zorder=20,label='Smoothened') 
-        axin.plot((freqfilto[1])*(24*3600),(psdfilto[loclatIn[nr]]*const)+nr,alpha=0.6,c='k',linewidth=2,linestyle='dashed',zorder=10,label='Original') 
-        axin.scatter((2*omega*np.sin(np.deg2rad(lat_acVEL[loclatIn[nr]]))*24*3600)/(2*np.pi),nr,color='blue',marker="|",s=1000,label='Inertial Frequency')
+        axin.plot((freqfilt[1])*(24*3600),(psdfilt[loclatIn[nr]]*const)+shift*nr,c='k',linewidth=2,zorder=20,label='Smoothened') 
+        axin.plot((freqfilto[1])*(24*3600),(psdfilto[loclatIn[nr]]*const)+shift*nr,alpha=0.6,c='k',linewidth=2,linestyle='dashed',zorder=10,label='Original') 
+        axin.scatter((2*omega*np.sin(np.deg2rad(lat_acVEL[loclatIn[nr]]))*24*3600)/(2*np.pi),shift*nr,color='blue',marker="|",s=1000,label='Inertial Frequency')
     else:
-        axin.plot((freqfilt[1])*(24*3600),(psdfilt[loclatIn[nr]]*const)+nr,c='k',linewidth=2,zorder=20) 
-        axin.scatter((2*omega*np.sin(np.deg2rad(lat_acVEL[loclatIn[nr]]))*24*3600)/(2*np.pi),nr,color='blue',marker="|",s=1000)
-        axin.plot((freqfilto[1])*(24*3600),(psdfilto[loclatIn[nr]]*const)+nr,alpha=0.6,c='k',linewidth=2,linestyle='dashed',zorder=10) 
-    ax1.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=4)
-    ax.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=4)
+        axin.plot((freqfilt[1])*(24*3600),(psdfilt[loclatIn[nr]]*const)+shift*nr,c='k',linewidth=2,zorder=20) 
+        axin.scatter((2*omega*np.sin(np.deg2rad(lat_acVEL[loclatIn[nr]]))*24*3600)/(2*np.pi),shift*nr,color='blue',marker="|",s=1000)
+        axin.plot((freqfilto[1])*(24*3600),(psdfilto[loclatIn[nr]]*const)+shift*nr,alpha=0.6,c='k',linewidth=2,linestyle='dashed',zorder=10) 
+    ax1.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=3)
+    ax.axhline(distVEL[loclatIn[nr]],color='red',linestyle='dashed',linewidth=3)
     
 
 axin.axvline((freqfilt[1][np.argmax(psdfilt[loclatIn[nr]])])*(24*3600),linestyle='dotted',color='k')
-axin.legend()
+axin.legend(loc='upper left',fontsize=20)
 xlab='Frequency [cpd]'
 ylab='PSD [$10^{-4}$  ms$^{-1}$Hz$^{-1}$]'
 
@@ -167,5 +170,5 @@ axin.text(-0.08, 1, '(c)', fontweight='bold', color='k',
         transform=axin.transAxes)
 
 fig.tight_layout()
-plt.savefig('/home/athelandersson/CTW-analysis/Figures/Article/Power.png')
+plt.savefig('/home/athelandersson/CTW-analysis/Figures/Article/Power' + str(space) + '.png')
 
