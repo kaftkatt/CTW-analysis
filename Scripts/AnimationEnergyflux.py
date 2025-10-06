@@ -62,7 +62,7 @@ hFacCusew=hFacCw.values
 hfa = np.ma.masked_values(hFacCusew, 0)
 maskw = np.ma.getmask(hfa)
 
-dz=np.ma.masked_array(np.tile(Z[:-1]-Z[1:],(len(maskw[0,0,:]),len(maskw[0,:,0]),1)),mask=maskw).T
+dz=np.ma.masked_array(np.tile(Z[:-1]-Z[1:],(len(maskw[0,0,:]),len(maskw[0,:,0]),1)).T,mask=maskw)
 
 timeout=np.arange(2880,14400,20)
 print(len(timeout))
