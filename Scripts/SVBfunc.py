@@ -1505,6 +1505,10 @@ def openBrink(loc):
 
 ## FOR PLOTTING ----------------------------------------------------------------------------------
 
+def fluxInternalWave(p,vel,dz):
+    Flux=((p[:-1]*vel[:-1])-(p[1:]*vel[1:]))/2*dz
+    return Flux.sum(axis=0)
+
 def get_snapshot_at_level(t,dep,dsw,dsn,var):
     ind=0
     if t>=72 and t <(72*2):
@@ -1559,16 +1563,20 @@ def get_snapshot_at_level(t,dep,dsw,dsn,var):
         Wn=dsn[ind].VVEL[t,:,:,:].values
         W = Ww-Wn
     elif var == 'PHIHYDiw':
-        Ww=dsw[ind].PHIHYD[t,:,1:-1,1:-1].values
-        Wn=dsn[ind].PHIHYD[t,:,1:-1,1:-1].values
+        Ww=dsw[ind].PHIHYD[t,:,:,:].values
+        Wn=dsn[ind].PHIHYD[t,:,:,:].values
+        W = Ww-Wn
+    elif var == 'PHIHYD':
+        Ww=dsw[ind].PHIHYD[t,dep,:,:].values
+        Wn=dsn[ind].PHIHYD[t,dep,:,:].values
         W = Ww-Wn
     elif var == 'ASHORE':
-        Ww=dsw[ind].ASHORE[t,:,:,:].values
-        Wn=dsn[ind].ASHORE[t,:,:,:].values
+        Ww=dsw[ind].ASHORE[t,dep,:,:].values
+        Wn=dsn[ind].ASHORE[t,dep,:,:].values
         W = Ww-Wn
     elif var == 'CSHORE':
-        Ww=dsw[ind].CSHORE[t,:,:,:].values
-        Wn=dsn[ind].CSHORE[t,:,:,:].values
+        Ww=dsw[ind].CSHORE[t,dep,:,:].values
+        Wn=dsn[ind].CSHORE[t,dep,:,:].values
         W = Ww-Wn
     return(W)
 
